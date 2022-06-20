@@ -12,6 +12,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <micrometer-tracing-bom.version>1.0.0-SNAPSHOT</micrometer-tracing-bom.version>
         <junit.version>5.8.2</junit.version>
         <assertj.version>3.23.1</assertj.version>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -29,6 +30,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing-bom</artifactId>
+                <version>${micrometer-tracing-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>${junit.version}</version>
@@ -43,5 +51,24 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
 
 </project>
