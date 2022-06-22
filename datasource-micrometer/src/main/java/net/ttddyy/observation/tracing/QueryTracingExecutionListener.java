@@ -3,8 +3,6 @@ package net.ttddyy.observation.tracing;
 import java.net.URI;
 import java.sql.Connection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.DataSource;
 
@@ -19,6 +17,7 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
 import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNames;
 
 
@@ -31,7 +30,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 
 	private final ObservationRegistry observationRegistry;
 
-	private final Map<String, ConnectionAttributes> connectionAttributesMap = new ConcurrentHashMap<>();
+	private ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
 
 	private ConnectionKeyValuesProvider connectionKeyValuesProvider = new ConnectionKeyValuesProvider() {};
 
@@ -48,7 +47,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		QueryContext queryContext = new QueryContext();
 		queryContext.setDataSourceName(executionInfo.getDataSourceName());
 
-		ConnectionAttributes connectionAttributes = this.connectionAttributesMap.get(executionInfo.getConnectionId());
+		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(executionInfo.getConnectionId());
 		if (connectionAttributes != null) {
 			queryContext.setUrl(connectionAttributes.connectionUrl);
 		}
@@ -150,7 +149,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		connectionAttributes.connectionUrl = connectionUrl;
 
 		String connectionId = connectionInfo.getConnectionId();
-		this.connectionAttributesMap.put(connectionId, connectionAttributes);
+		this.connectionAttributesManager.put(connectionId, connectionAttributes);
 
 		// TODO: share this logic
 		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class);
@@ -173,7 +172,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 
 	private void handleConnectionClose(MethodExecutionContext executionContext) {
 		String connectionId = executionContext.getConnectionInfo().getConnectionId();
-		this.connectionAttributesMap.remove(connectionId);
+		this.connectionAttributesManager.remove(connectionId);
 	}
 
 	/**
@@ -195,6 +194,10 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		return url;
 	}
 
+	public void setConnectionContextManager(ConnectionAttributesManager connectionAttributesManager) {
+		this.connectionAttributesManager = connectionAttributesManager;
+	}
+
 	public void setConnectionKeyValuesProvider(ConnectionKeyValuesProvider connectionKeyValuesProvider) {
 		this.connectionKeyValuesProvider = connectionKeyValuesProvider;
 	}
@@ -203,11 +206,4 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		this.queryKeyValuesProvider = queryKeyValuesProvider;
 	}
 
-	static class ConnectionAttributes {
-
-		ConnectionInfo connectionInfo;
-
-		URI connectionUrl;
-
-	}
 }

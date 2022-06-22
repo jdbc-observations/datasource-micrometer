@@ -27,7 +27,7 @@ public class QueryTracingObservationHandler extends DefaultTracingObservationHan
 	public void tagSpan(Context context, Span span) {
 		super.tagSpan(context, span);
 
-		ConnectionContext connectionContext = (ConnectionContext) context;
+		QueryContext connectionContext = (QueryContext) context;
 		URI url = connectionContext.getUrl();
 		if (url != null) {
 			span.remoteIpAndPort(url.getHost(), url.getPort());

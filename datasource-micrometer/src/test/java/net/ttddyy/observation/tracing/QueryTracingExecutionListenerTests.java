@@ -1,6 +1,7 @@
 package net.ttddyy.observation.tracing;
 
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Statement;
@@ -17,6 +18,7 @@ import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
+import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -66,6 +68,40 @@ class QueryTracingExecutionListenerTests {
 				.hasNameEqualTo("query")
 				.hasTag("jdbc.query[0]", "SELECT 1")
 				.doesNotHaveTagWithKey("jdbc.row-count")
+		;
+	}
+
+	@Test
+	void queryConnectionContext() throws Exception {
+		this.registry.observationConfig().observationHandler(new QueryTracingObservationHandler(this.tracer));
+		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+
+		ConnectionInfo connectionInfo = new ConnectionInfo();
+		connectionInfo.setDataSourceName("myDS");
+
+		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
+		connectionAttributes.connectionInfo = connectionInfo;
+		connectionAttributes.connectionUrl = URI.create("mysql://localhost:5555/mydatabase");
+		ConnectionAttributesManager connectionAttributesManager = mock(ConnectionAttributesManager.class);
+		given(connectionAttributesManager.get("id-1")).willReturn(connectionAttributes);
+		listener.setConnectionContextManager(connectionAttributesManager);
+
+		Method execute = Statement.class.getMethod("execute", String.class);
+
+		ExecutionInfo executionInfo = new ExecutionInfo();
+		executionInfo.setConnectionId("id-1");
+		executionInfo.setDataSourceName("myDS");
+		executionInfo.setMethod(execute);
+		List<QueryInfo> queryInfos = new ArrayList<>();
+
+		listener.beforeQuery(executionInfo, queryInfos);
+		listener.afterQuery(executionInfo, queryInfos);
+
+		assertThat(tracer)
+				.onlySpan()
+				.hasRemoteServiceNameEqualTo("myDS")
+				.hasIpEqualTo("localhost")
+				.hasPortEqualTo(5555)
 		;
 	}
 
