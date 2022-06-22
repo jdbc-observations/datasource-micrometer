@@ -24,7 +24,7 @@ import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNam
  */
 public class QueryTracingExecutionListener implements QueryExecutionListener, MethodExecutionListener {
 
-	InternalLogger logger = InternalLoggerFactory.getInstance(QueryTracingExecutionListener.class);
+	private static final InternalLogger logger = InternalLoggerFactory.getInstance(QueryTracingExecutionListener.class);
 
 	private final ObservationRegistry observationRegistry;
 
@@ -138,7 +138,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		try (Observation.Scope scope = scopeToUse) {
 			Observation observation = scope.getCurrentObservation();
 			if (logger.isDebugEnabled()) {
-				logger.debug("Continued the child observation in after query [" + observation + "]");
+				logger.debug("Continued the child observation in after getConnection [" + observation + "]");
 			}
 			final Throwable throwable = executionContext.getThrown();
 			if (throwable != null) {
