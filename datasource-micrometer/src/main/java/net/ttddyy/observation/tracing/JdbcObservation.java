@@ -7,6 +7,33 @@ import io.micrometer.observation.docs.DocumentedObservation;
  * @author Tadaya Tsuyukubo
  */
 public enum JdbcObservation implements DocumentedObservation {
+
+	/**
+	 * Span created when a JDBC connection takes place.
+	 */
+	CONNECTION {
+		@Override
+		public String getName() {
+			return "connection";
+		}
+
+		@Override
+		public String getContextualName() {
+			return "connection";
+		}
+
+		@Override
+		public KeyName[] getLowCardinalityKeyNames() {
+			return new KeyName[] { ConnectionKeyNames.DATASOURCE_DRIVER };
+		}
+
+		@Override
+		public String getPrefix() {
+			return "jdbc";
+		}
+	},
+
+
 	QUERY {
 		@Override
 		public String getName() {
@@ -51,6 +78,30 @@ public enum JdbcObservation implements DocumentedObservation {
 				return "jdbc.row-count";
 			}
 		}
+	}
+
+	enum ConnectionKeyNames implements KeyName {
+
+		/**
+		 * Name of the JDBC datasource driver.
+		 */
+		DATASOURCE_DRIVER {
+			@Override
+			public String getKeyName() {
+				return "jdbc.datasource.driver";
+			}
+		},
+
+		/**
+		 * Name of the JDBC datasource pool.
+		 */
+		DATASOURCE_POOL {
+			@Override
+			public String getKeyName() {
+				return "jdbc.datasource.pool";
+			}
+		},
+
 	}
 
 }

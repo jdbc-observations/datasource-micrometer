@@ -1,13 +1,20 @@
 package net.ttddyy.observation.tracing;
 
+import java.net.URI;
+import java.sql.Connection;
 import java.util.List;
 
+import javax.sql.DataSource;
+
+import io.micrometer.common.lang.Nullable;
 import io.micrometer.common.util.internal.logging.InternalLogger;
 import io.micrometer.common.util.internal.logging.InternalLoggerFactory;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.listener.MethodExecutionContext;
+import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNames;
 
@@ -15,11 +22,13 @@ import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNam
 /**
  * @author Tadaya Tsuyukubo
  */
-public class QueryTracingExecutionListener implements QueryExecutionListener {
+public class QueryTracingExecutionListener implements QueryExecutionListener, MethodExecutionListener {
 
 	InternalLogger logger = InternalLoggerFactory.getInstance(QueryTracingExecutionListener.class);
 
 	private final ObservationRegistry observationRegistry;
+
+	private ConnectionKeyValuesProvider connectionKeyValuesProvider = new ConnectionKeyValuesProvider() {};
 
 	private QueryKeyValuesProvider queryKeyValuesProvider = new QueryKeyValuesProvider() {};
 
@@ -82,6 +91,86 @@ public class QueryTracingExecutionListener implements QueryExecutionListener {
 //		String sql = queryInfoList.stream().map(QueryInfo::getQuery).collect(Collectors.joining("\n"));
 //		this.strategy.afterQuery(execInfo.getConnectionId(), execInfo.getStatement(), sql, execInfo.getThrowable());
 	}
+
+	@Override
+	public void beforeMethod(MethodExecutionContext executionContext) {
+		String methodName = executionContext.getMethod().getName();
+		Object target = executionContext.getTarget();
+		if (target instanceof DataSource && methodName.equals("getConnection")) {
+			handleGetConnectionBefore(executionContext);
+		}
+	}
+
+	@Override
+	public void afterMethod(MethodExecutionContext executionContext) {
+		String methodName = executionContext.getMethod().getName();
+		Object target = executionContext.getTarget();
+		if (target instanceof DataSource && methodName.equals("getConnection")) {
+			handleGetConnectionAfter(executionContext);
+		}
+	}
+
+	private void handleGetConnectionBefore(MethodExecutionContext executionContext) {
+		ConnectionContext connectionContext = new ConnectionContext();
+		executionContext.addCustomValue(ConnectionContext.class.getName(), connectionContext);
+
+		Observation observation = Observation.createNotStarted(JdbcObservation.CONNECTION.getName(), connectionContext, this.observationRegistry)
+				.contextualName(JdbcObservation.CONNECTION.getContextualName())
+				.keyValuesProvider(this.connectionKeyValuesProvider)
+				.start();
+		executionContext.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
+	}
+
+	private void handleGetConnectionAfter(MethodExecutionContext executionContext) {
+		String dataSourceName = executionContext.getProxyConfig().getDataSourceName();
+		Connection connection = (Connection) executionContext.getResult();
+		URI connectionUrl = getConnectionUrl(connection);
+
+		ConnectionContext connectionContext = executionContext.getCustomValue(ConnectionContext.class.getName(), ConnectionContext.class);
+		connectionContext.setDataSourceName(dataSourceName);
+		connectionContext.setUrl(connectionUrl);
+
+		// TODO: reuse this connection info in query span
+
+		// TODO: share this logic
+		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class);
+		if (scopeToUse == null) {
+			return;
+		}
+
+		try (Observation.Scope scope = scopeToUse) {
+			Observation observation = scope.getCurrentObservation();
+			if (logger.isDebugEnabled()) {
+				logger.debug("Continued the child observation in after query [" + observation + "]");
+			}
+			final Throwable throwable = executionContext.getThrown();
+			if (throwable != null) {
+				observation.error(throwable);
+			}
+			observation.stop();
+		}
+	}
+
+
+	/**
+	 * This attempts to get the ip and port from the JDBC URL. Ex. localhost and 5555 from
+	 * {@code
+	 * jdbc:mysql://localhost:5555/mydatabase}.
+	 * Taken from Spring Cloud Sleuth.
+	 */
+	private @Nullable URI getConnectionUrl(Connection connection) {
+		URI url = null;
+		try {
+			String urlAsString = connection.getMetaData().getURL().substring(5); // strip "jdbc:"
+			url = URI.create(urlAsString.replace(" ", "")); // Remove all white space
+			// according to RFC 2396;
+		}
+		catch (Exception e) {
+			// remote address is optional
+		}
+		return url;
+	}
+
 
 	public void setQueryKeyValuesProvider(QueryKeyValuesProvider queryKeyValuesProvider) {
 		this.queryKeyValuesProvider = queryKeyValuesProvider;
