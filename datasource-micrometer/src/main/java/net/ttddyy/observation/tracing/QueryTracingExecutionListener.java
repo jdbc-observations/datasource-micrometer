@@ -40,7 +40,12 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 
 	@Override
 	public void beforeQuery(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList) {
-		Observation observation = childObservation();
+		QueryContext queryContext = new QueryContext();
+		Observation observation = Observation.createNotStarted(JdbcObservation.QUERY.getName(), queryContext, this.observationRegistry)
+				.contextualName(JdbcObservation.QUERY.getContextualName())
+				.keyValuesProvider(this.queryKeyValuesProvider)
+				.start();
+
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new child observation before query [" + observation + "]");
 		}
@@ -56,17 +61,10 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		}
 	}
 
-	private Observation childObservation() {
-		QueryContext queryContext = new QueryContext();
-
-		return Observation.createNotStarted(JdbcObservation.QUERY.getName(), queryContext, this.observationRegistry)
-				.contextualName(JdbcObservation.QUERY.getContextualName())
-				.keyValuesProvider(this.queryKeyValuesProvider)
-				.start();
-	}
-
 	@Override
 	public void afterQuery(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList) {
+		boolean hasRowCount = executionInfo.getMethod().getName().equals("executeUpdate") && executionInfo.getThrowable() == null;
+
 		Observation.Scope scopeToUse = executionInfo.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class);
 		if (scopeToUse == null) {
 			return;
@@ -77,19 +75,18 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 			if (logger.isDebugEnabled()) {
 				logger.debug("Continued the child observation in after query [" + observation + "]");
 			}
+
+			if (hasRowCount) {
+				int rowCount = (int) executionInfo.getResult();
+				observation.highCardinalityKeyValue(QueryHighCardinalityKeyNames.ROW_COUNT.getKeyName(), String.valueOf(rowCount));
+			}
+
 			final Throwable throwable = executionInfo.getThrowable();
 			if (throwable != null) {
 				observation.error(throwable);
 			}
 			observation.stop();
 		}
-
-//		if (execInfo.getMethod().getName().equals("executeUpdate") && execInfo.getThrowable() == null) {
-//			this.strategy.addQueryRowCount(execInfo.getConnectionId(), execInfo.getStatement(),
-//					(int) execInfo.getResult());
-//		}
-//		String sql = queryInfoList.stream().map(QueryInfo::getQuery).collect(Collectors.joining("\n"));
-//		this.strategy.afterQuery(execInfo.getConnectionId(), execInfo.getStatement(), sql, execInfo.getThrowable());
 	}
 
 	@Override
@@ -171,6 +168,9 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		return url;
 	}
 
+	public void setConnectionKeyValuesProvider(ConnectionKeyValuesProvider connectionKeyValuesProvider) {
+		this.connectionKeyValuesProvider = connectionKeyValuesProvider;
+	}
 
 	public void setQueryKeyValuesProvider(QueryKeyValuesProvider queryKeyValuesProvider) {
 		this.queryKeyValuesProvider = queryKeyValuesProvider;
