@@ -3,6 +3,8 @@ package net.ttddyy.observation.tracing;
 import java.net.URI;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.DataSource;
 
@@ -11,6 +13,7 @@ import io.micrometer.common.util.internal.logging.InternalLogger;
 import io.micrometer.common.util.internal.logging.InternalLoggerFactory;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
@@ -28,6 +31,8 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 
 	private final ObservationRegistry observationRegistry;
 
+	private final Map<String, ConnectionAttributes> connectionAttributesMap = new ConcurrentHashMap<>();
+
 	private ConnectionKeyValuesProvider connectionKeyValuesProvider = new ConnectionKeyValuesProvider() {};
 
 	private QueryKeyValuesProvider queryKeyValuesProvider = new QueryKeyValuesProvider() {};
@@ -41,6 +46,13 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 	@Override
 	public void beforeQuery(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList) {
 		QueryContext queryContext = new QueryContext();
+		queryContext.setDataSourceName(executionInfo.getDataSourceName());
+
+		ConnectionAttributes connectionAttributes = this.connectionAttributesMap.get(executionInfo.getConnectionId());
+		if (connectionAttributes != null) {
+			queryContext.setUrl(connectionAttributes.connectionUrl);
+		}
+
 		Observation observation = Observation.createNotStarted(JdbcObservation.QUERY.getName(), queryContext, this.observationRegistry)
 				.contextualName(JdbcObservation.QUERY.getContextualName())
 				.keyValuesProvider(this.queryKeyValuesProvider)
@@ -105,6 +117,9 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		if (target instanceof DataSource && methodName.equals("getConnection")) {
 			handleGetConnectionAfter(executionContext);
 		}
+		else if (target instanceof Connection && methodName.equals("close")) {
+			handleConnectionClose(executionContext);
+		}
 	}
 
 	private void handleGetConnectionBefore(MethodExecutionContext executionContext) {
@@ -119,7 +134,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 	}
 
 	private void handleGetConnectionAfter(MethodExecutionContext executionContext) {
-		String dataSourceName = executionContext.getProxyConfig().getDataSourceName();
+		String dataSourceName = executionContext.getConnectionInfo().getDataSourceName();
 		Connection connection = (Connection) executionContext.getResult();
 		URI connectionUrl = getConnectionUrl(connection);
 
@@ -127,7 +142,15 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		connectionContext.setDataSourceName(dataSourceName);
 		connectionContext.setUrl(connectionUrl);
 
-		// TODO: reuse this connection info in query span
+		// TODO: thrown error check
+		ConnectionInfo connectionInfo = executionContext.getConnectionInfo();
+
+		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
+		connectionAttributes.connectionInfo = connectionInfo;
+		connectionAttributes.connectionUrl = connectionUrl;
+
+		String connectionId = connectionInfo.getConnectionId();
+		this.connectionAttributesMap.put(connectionId, connectionAttributes);
 
 		// TODO: share this logic
 		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class);
@@ -148,6 +171,10 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		}
 	}
 
+	private void handleConnectionClose(MethodExecutionContext executionContext) {
+		String connectionId = executionContext.getConnectionInfo().getConnectionId();
+		this.connectionAttributesMap.remove(connectionId);
+	}
 
 	/**
 	 * This attempts to get the ip and port from the JDBC URL. Ex. localhost and 5555 from
@@ -174,5 +201,13 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 
 	public void setQueryKeyValuesProvider(QueryKeyValuesProvider queryKeyValuesProvider) {
 		this.queryKeyValuesProvider = queryKeyValuesProvider;
+	}
+
+	static class ConnectionAttributes {
+
+		ConnectionInfo connectionInfo;
+
+		URI connectionUrl;
+
 	}
 }

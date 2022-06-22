@@ -13,10 +13,10 @@ import javax.sql.DataSource;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 import io.micrometer.tracing.test.simple.SimpleTracer;
+import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
-import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -51,6 +51,8 @@ class QueryTracingExecutionListenerTests {
 		queryInfo.setQuery("SELECT 1");
 
 		ExecutionInfo executionInfo = new ExecutionInfo();
+		executionInfo.setConnectionId("id-1");
+		executionInfo.setDataSourceName("myDS");
 		executionInfo.setMethod(execute);
 		List<QueryInfo> queryInfos = Arrays.asList(queryInfo);
 
@@ -75,6 +77,8 @@ class QueryTracingExecutionListenerTests {
 		Method executeUpdate = Statement.class.getMethod("executeUpdate", String.class);
 
 		ExecutionInfo executionInfo = new ExecutionInfo();
+		executionInfo.setConnectionId("id-1");
+		executionInfo.setDataSourceName("myDS");
 		executionInfo.setMethod(executeUpdate);
 		executionInfo.setResult(99);
 		List<QueryInfo> queryInfos = new ArrayList<>();
@@ -93,7 +97,6 @@ class QueryTracingExecutionListenerTests {
 
 		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
 
-		ProxyConfig proxyConfig = ProxyConfig.Builder.create().dataSourceName("myDS").build();
 		Method getConnection = DataSource.class.getMethod("getConnection");
 
 		DatabaseMetaData metaData = mock(DatabaseMetaData.class);
@@ -101,8 +104,12 @@ class QueryTracingExecutionListenerTests {
 		given(connection.getMetaData()).willReturn(metaData);
 		given(metaData.getURL()).willReturn("jdbc:mysql://localhost:5555/mydatabase");
 
+		ConnectionInfo connectionInfo = new ConnectionInfo();
+		connectionInfo.setConnectionId("id-1");
+		connectionInfo.setDataSourceName("myDS");
+
 		MethodExecutionContext executionContext = new MethodExecutionContext();
-		executionContext.setProxyConfig(proxyConfig);
+		executionContext.setConnectionInfo(connectionInfo);
 		executionContext.setMethod(getConnection);
 		executionContext.setTarget(mock(DataSource.class));
 		executionContext.setResult(connection);
