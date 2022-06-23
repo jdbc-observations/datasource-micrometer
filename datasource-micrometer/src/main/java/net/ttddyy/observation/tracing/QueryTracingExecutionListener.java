@@ -2,6 +2,7 @@ package net.ttddyy.observation.tracing;
 
 import java.net.URI;
 import java.sql.Connection;
+import java.time.Instant;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -126,7 +127,6 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 			else if ("rollback".equals(methodName)) {
 				handleConnectionRollback(executionContext);
 			}
-
 		}
 	}
 
@@ -159,6 +159,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		connectionAttributes.connectionInfo = connectionInfo;
 		connectionAttributes.connectionUrl = connectionUrl;
 		connectionAttributes.scope = scopeToUse;
+		connectionAttributes.connectionContext = connectionContext;
 
 		String connectionId = connectionInfo.getConnectionId();
 		this.connectionAttributesManager.put(connectionId, connectionAttributes);
@@ -198,9 +199,21 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 	}
 
 	private void handleConnectionCommit(MethodExecutionContext executionContext) {
+		String connectionId = executionContext.getConnectionInfo().getConnectionId();
+		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
+		if (connectionAttributes == null) {
+			return;
+		}
+		connectionAttributes.connectionContext.setCommitAt(Instant.now());
 	}
 
 	private void handleConnectionRollback(MethodExecutionContext executionContext) {
+		String connectionId = executionContext.getConnectionInfo().getConnectionId();
+		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
+		if (connectionAttributes == null) {
+			return;
+		}
+		connectionAttributes.connectionContext.setRollbackAt(Instant.now());
 	}
 
 	/**
@@ -222,7 +235,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		return url;
 	}
 
-	public void setConnectionContextManager(ConnectionAttributesManager connectionAttributesManager) {
+	public void setConnectionAttributesManager(ConnectionAttributesManager connectionAttributesManager) {
 		this.connectionAttributesManager = connectionAttributesManager;
 	}
 

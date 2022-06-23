@@ -1,6 +1,8 @@
 package net.ttddyy.observation.tracing;
 
 import java.net.URI;
+import java.time.Instant;
+import java.util.concurrent.TimeUnit;
 
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.tracing.Span;
@@ -32,5 +34,18 @@ public class ConnectionTracingObservationHandler extends DefaultTracingObservati
 			span.remoteIpAndPort(url.getHost(), url.getPort());
 		}
 		span.remoteServiceName(connectionContext.getDataSourceName());
+
+		// commit
+		Instant commitAt = connectionContext.getCommitAt();
+		if (commitAt != null) {
+			span.event("commit", TimeUnit.SECONDS.toNanos(commitAt.getEpochSecond()) + commitAt.getNano(), TimeUnit.NANOSECONDS);
+		}
+
+		// rollback
+		Instant rollbackAt = connectionContext.getRollbackAt();
+		if (rollbackAt != null) {
+			span.event("rollback", TimeUnit.SECONDS.toNanos(rollbackAt.getEpochSecond()) + rollbackAt.getNano(), TimeUnit.NANOSECONDS);
+		}
+
 	}
 }

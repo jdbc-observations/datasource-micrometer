@@ -13,9 +13,7 @@ import javax.sql.DataSource;
 
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
-import io.micrometer.tracing.test.simple.SimpleSpan;
 import io.micrometer.tracing.test.simple.SimpleTracer;
-import io.micrometer.tracing.test.simple.SpanAssert;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
@@ -24,13 +22,15 @@ import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttr
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static io.micrometer.tracing.test.simple.SpanAssert.assertThat;
 import static io.micrometer.tracing.test.simple.TracerAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 /**
+ * Tests for {@link QueryTracingExecutionListener}.
+ *
  * @author Tadaya Tsuyukubo
  */
 class QueryTracingExecutionListenerTests {
@@ -87,7 +87,7 @@ class QueryTracingExecutionListenerTests {
 		connectionAttributes.connectionUrl = URI.create("mysql://localhost:5555/mydatabase");
 		ConnectionAttributesManager connectionAttributesManager = mock(ConnectionAttributesManager.class);
 		given(connectionAttributesManager.get("id-1")).willReturn(connectionAttributes);
-		listener.setConnectionContextManager(connectionAttributesManager);
+		listener.setConnectionAttributesManager(connectionAttributesManager);
 
 		Method execute = Statement.class.getMethod("execute", String.class);
 
@@ -181,6 +181,43 @@ class QueryTracingExecutionListenerTests {
 				.hasIpEqualTo("localhost")
 				.hasPortEqualTo(5555)
 		;
+	}
+
+	@Test
+	void commitAndRollback() throws Exception {
+		Method commitMethod = Connection.class.getMethod("commit");
+		Method rollbackMethod = Connection.class.getMethod("rollback");
+
+		ConnectionContext connectionContext = new ConnectionContext();
+		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
+		ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
+		connectionAttributes.connectionContext = connectionContext;
+		connectionAttributesManager.put("id-1", connectionAttributes);
+
+		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+		listener.setConnectionAttributesManager(connectionAttributesManager);
+
+		ConnectionInfo connectionInfo = new ConnectionInfo();
+		connectionInfo.setConnectionId("id-1");
+
+		MethodExecutionContext commitExecutionContext = new MethodExecutionContext();
+		commitExecutionContext.setConnectionInfo(connectionInfo);
+		commitExecutionContext.setMethod(commitMethod);
+		commitExecutionContext.setTarget(mock(Connection.class));
+
+		listener.afterMethod(commitExecutionContext);
+
+		assertThat(connectionContext.getCommitAt()).isNotNull();
+
+		// check rollback
+		MethodExecutionContext rollbackExecutionContext = new MethodExecutionContext();
+		rollbackExecutionContext.setConnectionInfo(connectionInfo);
+		rollbackExecutionContext.setMethod(rollbackMethod);
+		rollbackExecutionContext.setTarget(mock(Connection.class));
+
+		listener.afterMethod(rollbackExecutionContext);
+
+		assertThat(connectionContext.getRollbackAt()).isNotNull();
 	}
 
 }
