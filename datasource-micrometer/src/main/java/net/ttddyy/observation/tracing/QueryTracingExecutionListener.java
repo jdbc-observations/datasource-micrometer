@@ -104,7 +104,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 	public void beforeMethod(MethodExecutionContext executionContext) {
 		String methodName = executionContext.getMethod().getName();
 		Object target = executionContext.getTarget();
-		if (target instanceof DataSource && methodName.equals("getConnection")) {
+		if (target instanceof DataSource && "getConnection".equals(methodName)) {
 			handleGetConnectionBefore(executionContext);
 		}
 	}
@@ -113,11 +113,20 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 	public void afterMethod(MethodExecutionContext executionContext) {
 		String methodName = executionContext.getMethod().getName();
 		Object target = executionContext.getTarget();
-		if (target instanceof DataSource && methodName.equals("getConnection")) {
+		if (target instanceof DataSource && "getConnection".equals(methodName)) {
 			handleGetConnectionAfter(executionContext);
 		}
-		else if (target instanceof Connection && methodName.equals("close")) {
-			handleConnectionClose(executionContext);
+		else if (target instanceof Connection) {
+			if ("close".equals(methodName)) {
+				handleConnectionClose(executionContext);
+			}
+			else if ("commit".equals(methodName)) {
+				handleConnectionCommit(executionContext);
+			}
+			else if ("rollback".equals(methodName)) {
+				handleConnectionRollback(executionContext);
+			}
+
 		}
 	}
 
@@ -141,38 +150,57 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		connectionContext.setDataSourceName(dataSourceName);
 		connectionContext.setUrl(connectionUrl);
 
+		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class);
+
 		// TODO: thrown error check
 		ConnectionInfo connectionInfo = executionContext.getConnectionInfo();
 
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
 		connectionAttributes.connectionInfo = connectionInfo;
 		connectionAttributes.connectionUrl = connectionUrl;
+		connectionAttributes.scope = scopeToUse;
 
 		String connectionId = connectionInfo.getConnectionId();
 		this.connectionAttributesManager.put(connectionId, connectionAttributes);
 
-		// TODO: share this logic
-		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class);
-		if (scopeToUse == null) {
+		// TODO: clean up
+		final Throwable throwable = executionContext.getThrown();
+		if (throwable != null && scopeToUse != null) {
+			try (Observation.Scope scope = scopeToUse) {
+				Observation observation = scope.getCurrentObservation();
+				observation.error(throwable);
+				observation.stop();
+				// normal case, observation is stopped when connection is closed.
+			}
+		}
+	}
+
+	private void handleConnectionClose(MethodExecutionContext executionContext) {
+		String connectionId = executionContext.getConnectionInfo().getConnectionId();
+		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.remove(connectionId);
+		if (connectionAttributes == null) {
 			return;
 		}
 
+		Observation.Scope scopeToUse = connectionAttributes.scope;
+		if (scopeToUse == null) {
+			return;
+		}
 		try (Observation.Scope scope = scopeToUse) {
 			Observation observation = scope.getCurrentObservation();
-			if (logger.isDebugEnabled()) {
-				logger.debug("Continued the child observation in after getConnection [" + observation + "]");
-			}
 			final Throwable throwable = executionContext.getThrown();
 			if (throwable != null) {
 				observation.error(throwable);
 			}
 			observation.stop();
 		}
+
 	}
 
-	private void handleConnectionClose(MethodExecutionContext executionContext) {
-		String connectionId = executionContext.getConnectionInfo().getConnectionId();
-		this.connectionAttributesManager.remove(connectionId);
+	private void handleConnectionCommit(MethodExecutionContext executionContext) {
+	}
+
+	private void handleConnectionRollback(MethodExecutionContext executionContext) {
 	}
 
 	/**

@@ -13,7 +13,9 @@ import javax.sql.DataSource;
 
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
+import io.micrometer.tracing.test.simple.SimpleSpan;
 import io.micrometer.tracing.test.simple.SimpleTracer;
+import io.micrometer.tracing.test.simple.SpanAssert;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
@@ -22,6 +24,7 @@ import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttr
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static io.micrometer.tracing.test.simple.SpanAssert.assertThat;
 import static io.micrometer.tracing.test.simple.TracerAssert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -134,6 +137,7 @@ class QueryTracingExecutionListenerTests {
 		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
 
 		Method getConnection = DataSource.class.getMethod("getConnection");
+		Method closeMethod = Connection.class.getMethod("close");
 
 		DatabaseMetaData metaData = mock(DatabaseMetaData.class);
 		Connection connection = mock(Connection.class);
@@ -153,9 +157,24 @@ class QueryTracingExecutionListenerTests {
 		listener.beforeMethod(executionContext);
 		assertThat(tracer.currentSpan()).isNotNull();
 		listener.afterMethod(executionContext);
+		assertThat(tracer.currentSpan()).isNotNull();
+
+		// "getConnection" starts a span but it will not end until "Connection#close".
+		assertThat(tracer.currentSpan()).isNotEnded();
+		assertThat(tracer.getSpans()).hasSize(1);
+
+		// "Connection#close()" will close the span
+		MethodExecutionContext secondExecutionContext = new MethodExecutionContext();
+		secondExecutionContext.setConnectionInfo(connectionInfo);
+		secondExecutionContext.setMethod(closeMethod);
+		secondExecutionContext.setTarget(mock(Connection.class));
+
+		listener.beforeMethod(secondExecutionContext);
+		assertThat(tracer.currentSpan()).isNotNull();
+		listener.afterMethod(secondExecutionContext);
 		assertThat(tracer.currentSpan()).isNull();
 
-		assertThat(tracer)
+		assertThat(this.tracer)
 				.onlySpan()
 				.hasNameEqualTo("connection")
 				.hasRemoteServiceNameEqualTo("myDS")
