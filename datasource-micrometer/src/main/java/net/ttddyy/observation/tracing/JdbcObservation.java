@@ -56,6 +56,31 @@ public enum JdbcObservation implements DocumentedObservation {
 		public String getPrefix() {
 			return "jdbc";
 		}
+	},
+
+	/**
+	 * Span created when working with JDBC result set.
+	 */
+	RESULT_SET {
+		@Override
+		public String getName() {
+			return "result-set";
+		}
+
+		@Override
+		public String getContextualName() {
+			return "result-set";
+		}
+
+		@Override
+		public KeyName[] getHighCardinalityKeyNames() {
+			return new KeyName[] { QueryHighCardinalityKeyNames.ROW_COUNT };
+		}
+
+		@Override
+		public String getPrefix() {
+			return "jdbc";
+		}
 	};
 
 	enum QueryHighCardinalityKeyNames implements KeyName {

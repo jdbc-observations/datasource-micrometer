@@ -2,8 +2,12 @@ package net.ttddyy.observation.tracing;
 
 import java.net.URI;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -19,6 +23,7 @@ import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
+import net.ttddyy.observation.tracing.ConnectionAttributesManager.ResultSetAttributes;
 import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNames;
 
 
@@ -37,6 +42,8 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 
 	private QueryKeyValuesProvider queryKeyValuesProvider = new QueryKeyValuesProvider() {};
 
+	private ResultSetKeyValuesProvider resultSetKeyValuesProvider = new ResultSetKeyValuesProvider() {};
+
 	public QueryTracingExecutionListener(ObservationRegistry observationRegistry) {
 		this.observationRegistry = observationRegistry;
 	}
@@ -45,6 +52,15 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 
 	@Override
 	public void beforeQuery(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList) {
+		startQueryObservation(executionInfo, queryInfoList);
+	}
+
+	@Override
+	public void afterQuery(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList) {
+		stopQueryObservation(executionInfo);
+	}
+
+	private void startQueryObservation(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList) {
 		QueryContext queryContext = new QueryContext();
 		queryContext.setDataSourceName(executionInfo.getDataSourceName());
 
@@ -73,27 +89,22 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		}
 	}
 
-	@Override
-	public void afterQuery(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList) {
+	private void stopQueryObservation(ExecutionInfo executionInfo) {
 		boolean hasRowCount = executionInfo.getMethod().getName().equals("executeUpdate") && executionInfo.getThrowable() == null;
-
 		Observation.Scope scopeToUse = executionInfo.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class);
 		if (scopeToUse == null) {
 			return;
 		}
-
 		try (Observation.Scope scope = scopeToUse) {
 			Observation observation = scope.getCurrentObservation();
 			if (logger.isDebugEnabled()) {
 				logger.debug("Continued the child observation in after query [" + observation + "]");
 			}
-
 			if (hasRowCount) {
 				int rowCount = (int) executionInfo.getResult();
 				observation.highCardinalityKeyValue(QueryHighCardinalityKeyNames.ROW_COUNT.getKeyName(), String.valueOf(rowCount));
 			}
-
-			final Throwable throwable = executionInfo.getThrowable();
+			Throwable throwable = executionInfo.getThrowable();
 			if (throwable != null) {
 				observation.error(throwable);
 			}
@@ -128,6 +139,19 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 				handleConnectionRollback(executionContext);
 			}
 		}
+		else if (target instanceof Statement) {
+			if ("close".equals(methodName)) {
+				handleStatementClose(executionContext);
+			}
+		}
+		else if (target instanceof ResultSet) {
+			if ("close".equals(methodName)) {
+				handleResultSetClose(executionContext);
+			}
+			else if ("next".equals(methodName)) {
+				handleResultSetNext(executionContext);
+			}
+		}
 	}
 
 	private void handleGetConnectionBefore(MethodExecutionContext executionContext) {
@@ -152,7 +176,18 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 
 		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class);
 
-		// TODO: thrown error check
+		Throwable throwable = executionContext.getThrown();
+		if (throwable != null && scopeToUse != null) {
+			try (Observation.Scope scope = scopeToUse) {
+				Observation observation = scope.getCurrentObservation();
+				observation.error(throwable);
+				observation.stop();
+				// for normal case, observation is stopped when connection is closed.
+				// see "handleConnectionClose()".
+				return;
+			}
+		}
+
 		ConnectionInfo connectionInfo = executionContext.getConnectionInfo();
 
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
@@ -164,16 +199,6 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		String connectionId = connectionInfo.getConnectionId();
 		this.connectionAttributesManager.put(connectionId, connectionAttributes);
 
-		// TODO: clean up
-		final Throwable throwable = executionContext.getThrown();
-		if (throwable != null && scopeToUse != null) {
-			try (Observation.Scope scope = scopeToUse) {
-				Observation observation = scope.getCurrentObservation();
-				observation.error(throwable);
-				observation.stop();
-				// normal case, observation is stopped when connection is closed.
-			}
-		}
 	}
 
 	private void handleConnectionClose(MethodExecutionContext executionContext) {
@@ -183,13 +208,20 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 			return;
 		}
 
+		// In case, Statement/ResultSet were not closed, close associated observation here
+		Set<ResultSetAttributes> resultSetAttributes = connectionAttributes.resultSetAttributesManager.removeAll();
+		for (ResultSetAttributes resultSetAttribute : resultSetAttributes) {
+			stopResultSetObservation(resultSetAttribute.scope, executionContext.getThrown());
+		}
+
+		// Stop connection observation
 		Observation.Scope scopeToUse = connectionAttributes.scope;
 		if (scopeToUse == null) {
 			return;
 		}
 		try (Observation.Scope scope = scopeToUse) {
 			Observation observation = scope.getCurrentObservation();
-			final Throwable throwable = executionContext.getThrown();
+			Throwable throwable = executionContext.getThrown();
 			if (throwable != null) {
 				observation.error(throwable);
 			}
@@ -216,6 +248,50 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		connectionAttributes.connectionContext.setRollbackAt(Instant.now());
 	}
 
+	private void handleResultSetNext(MethodExecutionContext executionContext) {
+		String connectionId = executionContext.getConnectionInfo().getConnectionId();
+		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
+		if (connectionAttributes == null) {
+			return;
+		}
+
+		Boolean hasNext = (Boolean) executionContext.getResult();
+		ResultSet resultSet = (ResultSet) executionContext.getTarget();
+		if (hasNext) {
+			ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager.getByResultSet(resultSet);
+			if (resultSetAttributes == null) {
+				// new ResultSet observation
+				ResultSetContext resultSetContext = new ResultSetContext();
+				Observation observation = Observation.createNotStarted(JdbcObservation.RESULT_SET.getName(), resultSetContext, this.observationRegistry)
+						.contextualName(JdbcObservation.RESULT_SET.getContextualName())
+						.keyValuesProvider(this.resultSetKeyValuesProvider)
+						.start();
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Created a new result-set observation [" + observation + "]");
+				}
+
+				resultSetAttributes = new ResultSetAttributes();
+				resultSetAttributes.scope = observation.openScope();
+				resultSetAttributes.context = resultSetContext;
+
+				Statement statement = null;
+				try {
+					// retrieve statement and associate it with ResultSet. It is used to close
+					// associated ResultSets when Statement is closed without closing
+					// ResultSets. See "handleStatementClosed()".
+					statement = resultSet.getStatement();
+				}
+				catch (SQLException exception) {
+					// ignore
+				}
+
+				connectionAttributes.resultSetAttributesManager.add(resultSet, statement, resultSetAttributes);
+			}
+			resultSetAttributes.context.incrementCount();
+		}
+	}
+
 	/**
 	 * This attempts to get the ip and port from the JDBC URL. Ex. localhost and 5555 from
 	 * {@code
@@ -235,6 +311,52 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		return url;
 	}
 
+	private void handleStatementClose(MethodExecutionContext executionContext) {
+		String connectionId = executionContext.getConnectionInfo().getConnectionId();
+		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
+		if (connectionAttributes == null) {
+			return;
+		}
+
+		// The proper step is close ResultSet, then close Statement. However, JDBC API allows
+		// to close Statement without ResultSet. In such case, ResultSet should be closed.
+		// If it happens, here makes sure all associated ResultSet observations get stopped.
+		Statement statement = (Statement) executionContext.getTarget();
+		Set<ResultSetAttributes> resultSetAttributes = connectionAttributes.resultSetAttributesManager.removeByStatement(statement);
+		for (ResultSetAttributes resultSetAttribute : resultSetAttributes) {
+			stopResultSetObservation(resultSetAttribute.scope, executionContext.getThrown());
+		}
+	}
+
+	private void handleResultSetClose(MethodExecutionContext executionContext) {
+		String connectionId = executionContext.getConnectionInfo().getConnectionId();
+		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
+		if (connectionAttributes == null) {
+			return;
+		}
+
+		ResultSet resultSet = (ResultSet) executionContext.getTarget();
+		ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager.removeByResultSet(resultSet);
+		if (resultSetAttributes == null) {
+			return;
+		}
+
+		stopResultSetObservation(resultSetAttributes.scope, executionContext.getThrown());
+	}
+
+	private void stopResultSetObservation(@Nullable Observation.Scope scopeToUse, @Nullable Throwable throwable) {
+		if (scopeToUse == null) {
+			return;
+		}
+		try (Observation.Scope scope = scopeToUse) {
+			Observation observation = scope.getCurrentObservation();
+			if (throwable != null) {
+				observation.error(throwable);
+			}
+			observation.stop();
+		}
+	}
+
 	public void setConnectionAttributesManager(ConnectionAttributesManager connectionAttributesManager) {
 		this.connectionAttributesManager = connectionAttributesManager;
 	}
@@ -247,4 +369,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		this.queryKeyValuesProvider = queryKeyValuesProvider;
 	}
 
+	public void setResultSetKeyValuesProvider(ResultSetKeyValuesProvider resultSetKeyValuesProvider) {
+		this.resultSetKeyValuesProvider = resultSetKeyValuesProvider;
+	}
 }
