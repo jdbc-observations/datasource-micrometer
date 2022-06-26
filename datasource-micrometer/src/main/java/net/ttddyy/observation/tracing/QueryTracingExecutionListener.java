@@ -48,8 +48,6 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		this.observationRegistry = observationRegistry;
 	}
 
-	// TODO: retrieve connection info at "getConnection()" and use it for query spans (url, etc)
-
 	@Override
 	public void beforeQuery(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList) {
 		startQueryObservation(executionInfo, queryInfoList);
@@ -62,12 +60,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 
 	private void startQueryObservation(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList) {
 		QueryContext queryContext = new QueryContext();
-		queryContext.setDataSourceName(executionInfo.getDataSourceName());
-
-		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(executionInfo.getConnectionId());
-		if (connectionAttributes != null) {
-			queryContext.setUrl(connectionAttributes.connectionUrl);
-		}
+		populateSharedInfo(queryContext, executionInfo.getConnectionId());
 
 		Observation observation = Observation.createNotStarted(JdbcObservation.QUERY.getName(), queryContext, this.observationRegistry)
 				.contextualName(JdbcObservation.QUERY.getContextualName())
@@ -86,6 +79,14 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 		for (QueryInfo queryInfo : queryInfoList) {
 			observation.highCardinalityKeyValue(String.format(QueryHighCardinalityKeyNames.QUERY.getKeyName(), i), queryInfo.getQuery());
 			i++;
+		}
+	}
+
+	private void populateSharedInfo(DataSourceBaseContext context, String connectionId) {
+		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
+		if (connectionAttributes != null) {
+			context.setUrl(connectionAttributes.connectionUrl);
+			context.setDataSourceName(connectionAttributes.connectionInfo.getDataSourceName());
 		}
 	}
 
@@ -262,6 +263,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 			if (resultSetAttributes == null) {
 				// new ResultSet observation
 				ResultSetContext resultSetContext = new ResultSetContext();
+				populateSharedInfo(resultSetContext, executionContext.getConnectionInfo().getConnectionId());
 				Observation observation = Observation.createNotStarted(JdbcObservation.RESULT_SET.getName(), resultSetContext, this.observationRegistry)
 						.contextualName(JdbcObservation.RESULT_SET.getContextualName())
 						.keyValuesProvider(this.resultSetKeyValuesProvider)
@@ -305,7 +307,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 			url = URI.create(urlAsString.replace(" ", "")); // Remove all white space
 			// according to RFC 2396;
 		}
-		catch (Exception e) {
+		catch (Exception ex) {
 			// remote address is optional
 		}
 		return url;
