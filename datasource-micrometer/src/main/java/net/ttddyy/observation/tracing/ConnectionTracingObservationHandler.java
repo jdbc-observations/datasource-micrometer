@@ -6,13 +6,12 @@ import java.util.concurrent.TimeUnit;
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
-import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 
 /**
  * @author Tadaya Tsuyukubo
  */
 
-public class ConnectionTracingObservationHandler extends DefaultTracingObservationHandler {
+public class ConnectionTracingObservationHandler extends DataSourceBaseObservationHandler {
 
 	public ConnectionTracingObservationHandler(Tracer tracer) {
 		super(tracer);
@@ -28,10 +27,6 @@ public class ConnectionTracingObservationHandler extends DefaultTracingObservati
 		super.tagSpan(context, span);
 
 		ConnectionContext connectionContext = (ConnectionContext) context;
-		if (connectionContext.getHost() != null) {
-			span.remoteIpAndPort(connectionContext.getHost(), connectionContext.getPort());
-		}
-		span.remoteServiceName(connectionContext.getDataSourceName());
 
 		// commit
 		Instant commitAt = connectionContext.getCommitAt();
