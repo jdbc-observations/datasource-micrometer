@@ -1,9 +1,7 @@
 package net.ttddyy.observation.tracing;
 
-import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,7 +33,11 @@ public interface ConnectionAttributesManager {
 
 		ConnectionInfo connectionInfo;
 
-		URI connectionUrl;
+		@Nullable
+		String host;
+
+		@Nullable
+		int port;
 
 		Scope scope;
 

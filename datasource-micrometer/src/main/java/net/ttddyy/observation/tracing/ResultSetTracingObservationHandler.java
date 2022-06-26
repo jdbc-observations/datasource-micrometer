@@ -1,7 +1,5 @@
 package net.ttddyy.observation.tracing;
 
-import java.net.URI;
-
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
@@ -27,9 +25,8 @@ public class ResultSetTracingObservationHandler extends DefaultTracingObservatio
 		super.tagSpan(context, span);
 
 		ResultSetContext resultSetContext = (ResultSetContext) context;
-		URI url = resultSetContext.getUrl();
-		if (url != null) {
-			span.remoteIpAndPort(url.getHost(), url.getPort());
+		if (resultSetContext.getHost() != null) {
+			span.remoteIpAndPort(resultSetContext.getHost(), resultSetContext.getPort());
 		}
 		span.remoteServiceName(resultSetContext.getDataSourceName());
 	}

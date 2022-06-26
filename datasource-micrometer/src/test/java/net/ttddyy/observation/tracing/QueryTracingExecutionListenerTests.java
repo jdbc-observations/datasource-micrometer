@@ -84,7 +84,8 @@ class QueryTracingExecutionListenerTests {
 
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
 		connectionAttributes.connectionInfo = connectionInfo;
-		connectionAttributes.connectionUrl = URI.create("mysql://localhost:5555/mydatabase");
+		connectionAttributes.host = "localhost";
+		connectionAttributes.port = 5555;
 		ConnectionAttributesManager connectionAttributesManager = mock(ConnectionAttributesManager.class);
 		given(connectionAttributesManager.get("id-1")).willReturn(connectionAttributes);
 		listener.setConnectionAttributesManager(connectionAttributesManager);

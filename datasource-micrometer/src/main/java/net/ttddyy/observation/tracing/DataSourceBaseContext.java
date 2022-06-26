@@ -1,7 +1,5 @@
 package net.ttddyy.observation.tracing;
 
-import java.net.URI;
-
 import io.micrometer.common.lang.Nullable;
 import io.micrometer.observation.Observation;
 
@@ -12,10 +10,12 @@ public class DataSourceBaseContext extends Observation.Context {
 
 	private String dataSourceName;
 
-	private URI url;
+	private String host;
 
+	private int port;
 
-	public @Nullable String getDataSourceName() {
+	@Nullable
+	public String getDataSourceName() {
 		return this.dataSourceName;
 	}
 
@@ -23,12 +23,20 @@ public class DataSourceBaseContext extends Observation.Context {
 		this.dataSourceName = dataSourceName;
 	}
 
-	public @Nullable URI getUrl() {
-		return this.url;
+	@Nullable
+	public String getHost() {
+		return this.host;
 	}
 
-	public void setUrl(@Nullable URI url) {
-		this.url = url;
+	public void setHost(@Nullable String host) {
+		this.host = host;
 	}
 
+	public int getPort() {
+		return this.port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
 }

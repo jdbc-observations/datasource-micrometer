@@ -28,7 +28,8 @@ class ConnectionTracingObservationHandlerTests {
 
 		ConnectionContext context = new ConnectionContext();
 		context.setDataSourceName("myDS");
-		context.setUrl(URI.create("mysql://localhost:5555/mydatabase"));
+		context.setHost("localhost");
+		context.setPort(5555);
 		context.setCommitAt(commitAt);
 		context.setRollbackAt(rollbackAt);
 

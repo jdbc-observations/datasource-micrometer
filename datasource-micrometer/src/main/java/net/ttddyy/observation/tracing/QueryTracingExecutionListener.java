@@ -85,7 +85,8 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 	private void populateSharedInfo(DataSourceBaseContext context, String connectionId) {
 		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
 		if (connectionAttributes != null) {
-			context.setUrl(connectionAttributes.connectionUrl);
+			context.setHost(connectionAttributes.host);
+			context.setPort(connectionAttributes.port);
 			context.setDataSourceName(connectionAttributes.connectionInfo.getDataSourceName());
 		}
 	}
@@ -173,7 +174,10 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 
 		ConnectionContext connectionContext = executionContext.getCustomValue(ConnectionContext.class.getName(), ConnectionContext.class);
 		connectionContext.setDataSourceName(dataSourceName);
-		connectionContext.setUrl(connectionUrl);
+		if (connectionUrl != null) {
+			connectionContext.setHost(connectionUrl.getHost());
+			connectionContext.setPort(connectionUrl.getPort());
+		}
 
 		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class);
 
@@ -193,9 +197,12 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
 		connectionAttributes.connectionInfo = connectionInfo;
-		connectionAttributes.connectionUrl = connectionUrl;
 		connectionAttributes.scope = scopeToUse;
 		connectionAttributes.connectionContext = connectionContext;
+		if (connectionUrl != null) {
+			connectionAttributes.host = connectionUrl.getHost();
+			connectionAttributes.port = connectionUrl.getPort();
+		}
 
 		String connectionId = connectionInfo.getConnectionId();
 		this.connectionAttributesManager.put(connectionId, connectionAttributes);
@@ -300,7 +307,8 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 	 * jdbc:mysql://localhost:5555/mydatabase}.
 	 * Taken from Spring Cloud Sleuth.
 	 */
-	private @Nullable URI getConnectionUrl(Connection connection) {
+	@Nullable
+	private URI getConnectionUrl(Connection connection) {
 		URI url = null;
 		try {
 			String urlAsString = connection.getMetaData().getURL().substring(5); // strip "jdbc:"

@@ -1,7 +1,5 @@
 package net.ttddyy.observation.tracing;
 
-import java.net.URI;
-
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
@@ -26,12 +24,11 @@ public class QueryTracingObservationHandler extends DefaultTracingObservationHan
 	public void tagSpan(Context context, Span span) {
 		super.tagSpan(context, span);
 
-		QueryContext connectionContext = (QueryContext) context;
-		URI url = connectionContext.getUrl();
-		if (url != null) {
-			span.remoteIpAndPort(url.getHost(), url.getPort());
+		QueryContext queryContext = (QueryContext) context;
+		if (queryContext.getHost() != null) {
+			span.remoteIpAndPort(queryContext.getHost(), queryContext.getPort());
 		}
-		span.remoteServiceName(connectionContext.getDataSourceName());
+		span.remoteServiceName(queryContext.getDataSourceName());
 	}
 
 }

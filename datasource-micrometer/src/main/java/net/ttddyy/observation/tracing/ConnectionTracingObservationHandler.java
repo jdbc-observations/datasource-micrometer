@@ -1,6 +1,5 @@
 package net.ttddyy.observation.tracing;
 
-import java.net.URI;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
@@ -29,9 +28,8 @@ public class ConnectionTracingObservationHandler extends DefaultTracingObservati
 		super.tagSpan(context, span);
 
 		ConnectionContext connectionContext = (ConnectionContext) context;
-		URI url = connectionContext.getUrl();
-		if (url != null) {
-			span.remoteIpAndPort(url.getHost(), url.getPort());
+		if (connectionContext.getHost() != null) {
+			span.remoteIpAndPort(connectionContext.getHost(), connectionContext.getPort());
 		}
 		span.remoteServiceName(connectionContext.getDataSourceName());
 
