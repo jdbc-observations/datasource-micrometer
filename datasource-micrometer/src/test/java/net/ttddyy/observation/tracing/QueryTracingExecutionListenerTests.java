@@ -1,9 +1,9 @@
 package net.ttddyy.observation.tracing;
 
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -221,4 +221,108 @@ class QueryTracingExecutionListenerTests {
 		assertThat(connectionContext.getRollbackAt()).isNotNull();
 	}
 
+	@Test
+	void resultSetObservation() throws Exception {
+		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
+		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+
+		ResultSet resultSet = mock(ResultSet.class);
+		Statement statement = mock(Statement.class);
+		given(resultSet.getStatement()).willReturn(statement);
+
+		ConnectionInfo connectionInfo = new ConnectionInfo();
+		connectionInfo.setConnectionId("id-1");
+		connectionInfo.setDataSourceName("myDS");
+
+		createResultSetObservation(listener, connectionInfo, resultSet);
+
+		Method closeMethod = ResultSet.class.getMethod("close");
+
+		MethodExecutionContext closeExecutionContext = new MethodExecutionContext();
+		closeExecutionContext.setConnectionInfo(connectionInfo);
+		closeExecutionContext.setMethod(closeMethod);
+		closeExecutionContext.setTarget(resultSet);
+
+		// ResultSet#close should stop the observation
+		listener.afterMethod(closeExecutionContext);
+		assertThat(tracer.currentSpan()).isNull();
+	}
+
+	private void createResultSetObservation(QueryTracingExecutionListener listener, ConnectionInfo connectionInfo, ResultSet resultSet) throws Exception {
+		Method nextMethod = ResultSet.class.getMethod("next");
+
+		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
+		ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
+		connectionAttributes.connectionInfo = connectionInfo;
+		connectionAttributesManager.put("id-1", connectionAttributes);
+
+		listener.setConnectionAttributesManager(connectionAttributesManager);
+
+		MethodExecutionContext nextExecutionContext = new MethodExecutionContext();
+		nextExecutionContext.setConnectionInfo(connectionInfo);
+		nextExecutionContext.setMethod(nextMethod);
+		nextExecutionContext.setTarget(resultSet);
+		nextExecutionContext.setResult(Boolean.TRUE);
+
+		listener.afterMethod(nextExecutionContext);
+		assertThat(tracer.currentSpan()).isNotNull();
+	}
+
+	@Test
+	void resultSetObservationClosedByStatement() throws Exception {
+		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
+		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+
+		ConnectionInfo connectionInfo = new ConnectionInfo();
+		connectionInfo.setConnectionId("id-1");
+		connectionInfo.setDataSourceName("myDS");
+
+		ResultSet resultSet = mock(ResultSet.class);
+		Statement statement = mock(Statement.class);
+		given(resultSet.getStatement()).willReturn(statement);
+
+		createResultSetObservation(listener, connectionInfo, resultSet);
+
+		// ResultSet#close may be skipped. In such case, Statement#close should
+		// implicitly close the ResultSet.
+		Method closeMethod = Statement.class.getMethod("close");
+
+		MethodExecutionContext closeExecutionContext = new MethodExecutionContext();
+		closeExecutionContext.setConnectionInfo(connectionInfo);
+		closeExecutionContext.setMethod(closeMethod);
+		closeExecutionContext.setTarget(resultSet);
+
+		// Statement#close should stop the ResultSet observation
+		listener.afterMethod(closeExecutionContext);
+		assertThat(tracer.currentSpan()).isNull();
+	}
+
+	@Test
+	void resultSetObservationClosedByConnection() throws Exception {
+		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
+		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+
+		ConnectionInfo connectionInfo = new ConnectionInfo();
+		connectionInfo.setConnectionId("id-1");
+		connectionInfo.setDataSourceName("myDS");
+
+		ResultSet resultSet = mock(ResultSet.class);
+		Statement statement = mock(Statement.class);
+		given(resultSet.getStatement()).willReturn(statement);
+
+		createResultSetObservation(listener, connectionInfo, resultSet);
+
+		// [ResultSet|Statement]#close may be skipped. In such case, Connection#close should
+		// implicitly close the ResultSet.
+		Method closeMethod = Connection.class.getMethod("close");
+
+		MethodExecutionContext closeExecutionContext = new MethodExecutionContext();
+		closeExecutionContext.setConnectionInfo(connectionInfo);
+		closeExecutionContext.setMethod(closeMethod);
+		closeExecutionContext.setTarget(resultSet);
+
+		// Connection#close should stop the ResultSet observation
+		listener.afterMethod(closeExecutionContext);
+		assertThat(tracer.currentSpan()).isNull();
+	}
 }
