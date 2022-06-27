@@ -14,7 +14,7 @@ public enum JdbcObservation implements DocumentedObservation {
 	CONNECTION {
 		@Override
 		public String getName() {
-			return "connection";
+			return "jdbc.connection";
 		}
 
 		@Override
@@ -37,7 +37,7 @@ public enum JdbcObservation implements DocumentedObservation {
 	QUERY {
 		@Override
 		public String getName() {
-			return "query";
+			return "jdbc.query";
 		}
 
 		@Override
@@ -64,7 +64,7 @@ public enum JdbcObservation implements DocumentedObservation {
 	RESULT_SET {
 		@Override
 		public String getName() {
-			return "result-set";
+			return "jdbc.result-set";
 		}
 
 		@Override
