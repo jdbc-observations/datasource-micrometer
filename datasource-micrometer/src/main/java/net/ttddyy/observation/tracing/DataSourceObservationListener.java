@@ -62,8 +62,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		QueryContext queryContext = new QueryContext();
 		populateSharedInfo(queryContext, executionInfo.getConnectionId());
 
-		Observation observation = Observation.createNotStarted(JdbcObservation.QUERY.getName(), queryContext, this.observationRegistry)
-				.contextualName(JdbcObservation.QUERY.getContextualName())
+		Observation observation = JdbcObservation.QUERY.observation(this.observationRegistry, queryContext)
 				.keyValuesProvider(this.queryKeyValuesProvider)
 				.start();
 
@@ -160,8 +159,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		ConnectionContext connectionContext = new ConnectionContext();
 		executionContext.addCustomValue(ConnectionContext.class.getName(), connectionContext);
 
-		Observation observation = Observation.createNotStarted(JdbcObservation.CONNECTION.getName(), connectionContext, this.observationRegistry)
-				.contextualName(JdbcObservation.CONNECTION.getContextualName())
+		Observation observation = JdbcObservation.CONNECTION.observation(this.observationRegistry, connectionContext)
 				.keyValuesProvider(this.connectionKeyValuesProvider)
 				.start();
 		executionContext.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
@@ -271,8 +269,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 				// new ResultSet observation
 				ResultSetContext resultSetContext = new ResultSetContext();
 				populateSharedInfo(resultSetContext, executionContext.getConnectionInfo().getConnectionId());
-				Observation observation = Observation.createNotStarted(JdbcObservation.RESULT_SET.getName(), resultSetContext, this.observationRegistry)
-						.contextualName(JdbcObservation.RESULT_SET.getContextualName())
+				Observation observation = JdbcObservation.RESULT_SET.observation(this.observationRegistry, resultSetContext)
 						.keyValuesProvider(this.resultSetKeyValuesProvider)
 						.start();
 
