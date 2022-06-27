@@ -29,11 +29,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 /**
- * Tests for {@link QueryTracingExecutionListener}.
+ * Tests for {@link DataSourceObservationListener}.
  *
  * @author Tadaya Tsuyukubo
  */
-class QueryTracingExecutionListenerTests {
+class DataSourceObservationListenerTests {
 
 	private SimpleTracer tracer;
 
@@ -48,7 +48,7 @@ class QueryTracingExecutionListenerTests {
 	@Test
 	void query() throws Exception {
 		this.registry.observationConfig().observationHandler(new DefaultTracingObservationHandler(this.tracer));
-		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 
 		Method execute = Statement.class.getMethod("execute", String.class);
 
@@ -77,7 +77,7 @@ class QueryTracingExecutionListenerTests {
 	@Test
 	void queryConnectionContext() throws Exception {
 		this.registry.observationConfig().observationHandler(new QueryTracingObservationHandler(this.tracer));
-		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 
 		ConnectionInfo connectionInfo = new ConnectionInfo();
 		connectionInfo.setDataSourceName("myDS");
@@ -112,7 +112,7 @@ class QueryTracingExecutionListenerTests {
 	@Test
 	void queryRowCount() throws Exception {
 		this.registry.observationConfig().observationHandler(new DefaultTracingObservationHandler(this.tracer));
-		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 
 		Method executeUpdate = Statement.class.getMethod("executeUpdate", String.class);
 
@@ -135,7 +135,7 @@ class QueryTracingExecutionListenerTests {
 	void connection() throws Exception {
 		this.registry.observationConfig().observationHandler(new ConnectionTracingObservationHandler(this.tracer));
 
-		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 
 		Method getConnection = DataSource.class.getMethod("getConnection");
 		Method closeMethod = Connection.class.getMethod("close");
@@ -195,7 +195,7 @@ class QueryTracingExecutionListenerTests {
 		connectionAttributes.connectionContext = connectionContext;
 		connectionAttributesManager.put("id-1", connectionAttributes);
 
-		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 		listener.setConnectionAttributesManager(connectionAttributesManager);
 
 		ConnectionInfo connectionInfo = new ConnectionInfo();
@@ -224,7 +224,7 @@ class QueryTracingExecutionListenerTests {
 	@Test
 	void resultSetObservation() throws Exception {
 		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
-		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 
 		ResultSet resultSet = mock(ResultSet.class);
 		Statement statement = mock(Statement.class);
@@ -248,7 +248,7 @@ class QueryTracingExecutionListenerTests {
 		assertThat(tracer.currentSpan()).isNull();
 	}
 
-	private void createResultSetObservation(QueryTracingExecutionListener listener, ConnectionInfo connectionInfo, ResultSet resultSet) throws Exception {
+	private void createResultSetObservation(DataSourceObservationListener listener, ConnectionInfo connectionInfo, ResultSet resultSet) throws Exception {
 		Method nextMethod = ResultSet.class.getMethod("next");
 
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
@@ -271,7 +271,7 @@ class QueryTracingExecutionListenerTests {
 	@Test
 	void resultSetObservationClosedByStatement() throws Exception {
 		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
-		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 
 		ConnectionInfo connectionInfo = new ConnectionInfo();
 		connectionInfo.setConnectionId("id-1");
@@ -300,7 +300,7 @@ class QueryTracingExecutionListenerTests {
 	@Test
 	void resultSetObservationClosedByConnection() throws Exception {
 		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
-		QueryTracingExecutionListener listener = new QueryTracingExecutionListener(this.registry);
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 
 		ConnectionInfo connectionInfo = new ConnectionInfo();
 		connectionInfo.setConnectionId("id-1");

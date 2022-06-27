@@ -30,9 +30,9 @@ import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNam
 /**
  * @author Tadaya Tsuyukubo
  */
-public class QueryTracingExecutionListener implements QueryExecutionListener, MethodExecutionListener {
+public class DataSourceObservationListener implements QueryExecutionListener, MethodExecutionListener {
 
-	private static final InternalLogger logger = InternalLoggerFactory.getInstance(QueryTracingExecutionListener.class);
+	private static final InternalLogger logger = InternalLoggerFactory.getInstance(DataSourceObservationListener.class);
 
 	private final ObservationRegistry observationRegistry;
 
@@ -44,7 +44,7 @@ public class QueryTracingExecutionListener implements QueryExecutionListener, Me
 
 	private ResultSetKeyValuesProvider resultSetKeyValuesProvider = new ResultSetKeyValuesProvider() {};
 
-	public QueryTracingExecutionListener(ObservationRegistry observationRegistry) {
+	public DataSourceObservationListener(ObservationRegistry observationRegistry) {
 		this.observationRegistry = observationRegistry;
 	}
 
