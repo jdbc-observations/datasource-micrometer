@@ -46,6 +46,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.util.Assert;
@@ -97,20 +98,25 @@ public class DataSourceObservationAutoConfiguration {
 	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnEnabledTracing
 	static class DataSourceTracing {
+		private static final int ORDER = MicrometerTracingAutoConfiguration.DEFAULT_TRACING_OBSERVATION_HANDLER_ORDER - 1000;
+
 		@Bean
 		@ConditionalOnTraceType(TraceType.CONNECTION)
+		@Order(ORDER)
 		public ConnectionTracingObservationHandler connectionTracingObservationHandler(Tracer tracer) {
 			return new ConnectionTracingObservationHandler(tracer);
 		}
 
 		@Bean
 		@ConditionalOnTraceType(TraceType.QUERY)
+		@Order(ORDER)
 		public QueryTracingObservationHandler queryTracingObservationHandler(Tracer tracer) {
 			return new QueryTracingObservationHandler(tracer);
 		}
 
 		@Bean
 		@ConditionalOnTraceType(TraceType.FETCH)
+		@Order(ORDER)
 		public ResultSetTracingObservationHandler resultSetTracingObservationHandler(Tracer tracer) {
 			return new ResultSetTracingObservationHandler(tracer);
 		}
