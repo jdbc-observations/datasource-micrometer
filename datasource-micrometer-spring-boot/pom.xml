@@ -17,7 +17,6 @@
         <java.version>17</java.version>
     </properties>
 
-    <!--    TODO: add annotation processor for metadata -->
     <!--    TODO: add spring-formatter -->
     <dependencies>
         <dependency>
@@ -28,6 +27,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-actuator-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
