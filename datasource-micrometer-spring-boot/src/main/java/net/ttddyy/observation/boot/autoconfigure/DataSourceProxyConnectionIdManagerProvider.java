@@ -14,28 +14,17 @@
  * limitations under the License.
  */
 
-package net.ttddyy.observation.tracing;
+package net.ttddyy.observation.boot.autoconfigure;
+
+import java.util.function.Supplier;
+
+import net.ttddyy.dsproxy.ConnectionIdManager;
 
 /**
- * Trace types.
+ * Supplier of a {@link ConnectionIdManager}.
  *
- * @author Marcin Grzejszczak
+ * @author Arthur Gavlyukovskiy
  */
-public enum TraceType {
-
-	/**
-	 * Related to JDBC connections.
-	 */
-	CONNECTION,
-
-	/**
-	 * Related to query executions.
-	 */
-	QUERY,
-
-	/**
-	 * Related to ResultSets.
-	 */
-	FETCH
+public interface DataSourceProxyConnectionIdManagerProvider extends Supplier<ConnectionIdManager> {
 
 }
