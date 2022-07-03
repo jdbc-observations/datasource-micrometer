@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.sql.DataSource;
 
@@ -34,7 +35,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	private static final InternalLogger logger = InternalLoggerFactory.getInstance(DataSourceObservationListener.class);
 
-	private final ObservationRegistry observationRegistry;
+	private Supplier<ObservationRegistry> observationRegistrySupplier;
 
 	private ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
 
@@ -45,7 +46,17 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	private ResultSetKeyValuesProvider resultSetKeyValuesProvider = new ResultSetKeyValuesProvider() {};
 
 	public DataSourceObservationListener(ObservationRegistry observationRegistry) {
-		this.observationRegistry = observationRegistry;
+		this(() -> observationRegistry);
+	}
+
+	// This constructor takes a supplier to lazily resolve the observation registry.
+	// This is purely a workaround to break a circular reference for spring boot usage.
+	// The circular reference happens when the `MeterRegistryPostProcessor` creates
+	// `MeterBinder` when `MeterRegistry` is created. If this circular reference is
+	// solved in Spring Boot, there is no need to use supplier for the observation
+	// registry.
+	public DataSourceObservationListener(Supplier<ObservationRegistry> observationRegistry) {
+		this.observationRegistrySupplier = observationRegistry;
 	}
 
 	@Override
@@ -62,15 +73,19 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		QueryContext queryContext = new QueryContext();
 		populateSharedInfo(queryContext, executionInfo.getConnectionId());
 
-		Observation observation = JdbcObservation.QUERY.observation(this.observationRegistry, queryContext)
-				.keyValuesProvider(this.queryKeyValuesProvider)
-				.start();
+		Observation observation = createAndStartObservation(JdbcObservation.QUERY, queryContext, this.queryKeyValuesProvider);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new child observation before query [" + observation + "]");
 		}
 		tagQueries(queryInfoList, observation);
 		executionInfo.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
+	}
+
+	private Observation createAndStartObservation(JdbcObservation observationType, DataSourceBaseContext context, Observation.KeyValuesProvider<?> keyValuesProvider) {
+		return observationType.observation(this.observationRegistrySupplier.get(), context)
+				.keyValuesProvider(keyValuesProvider)
+				.start();
 	}
 
 	private void tagQueries(List<QueryInfo> queryInfoList, Observation observation) {
@@ -159,9 +174,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		ConnectionContext connectionContext = new ConnectionContext();
 		executionContext.addCustomValue(ConnectionContext.class.getName(), connectionContext);
 
-		Observation observation = JdbcObservation.CONNECTION.observation(this.observationRegistry, connectionContext)
-				.keyValuesProvider(this.connectionKeyValuesProvider)
-				.start();
+		Observation observation = createAndStartObservation(JdbcObservation.CONNECTION, connectionContext, this.connectionKeyValuesProvider);
 		executionContext.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
 	}
 
@@ -269,9 +282,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 				// new ResultSet observation
 				ResultSetContext resultSetContext = new ResultSetContext();
 				populateSharedInfo(resultSetContext, executionContext.getConnectionInfo().getConnectionId());
-				Observation observation = JdbcObservation.RESULT_SET.observation(this.observationRegistry, resultSetContext)
-						.keyValuesProvider(this.resultSetKeyValuesProvider)
-						.start();
+				Observation observation = createAndStartObservation(JdbcObservation.RESULT_SET, resultSetContext, this.resultSetKeyValuesProvider);
+
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Created a new result-set observation [" + observation + "]");
