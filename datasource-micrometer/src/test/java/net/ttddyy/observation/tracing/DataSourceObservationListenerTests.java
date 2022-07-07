@@ -38,8 +38,7 @@ import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttr
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static io.micrometer.tracing.test.simple.SpanAssert.assertThat;
-import static io.micrometer.tracing.test.simple.TracerAssert.assertThat;
+import static io.micrometer.tracing.test.simple.TracingAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;

@@ -16,7 +16,6 @@
 
 package net.ttddyy.observation.tracing;
 
-import java.net.URI;
 import java.time.Instant;
 import java.util.Map.Entry;
 
@@ -24,7 +23,7 @@ import io.micrometer.tracing.test.simple.SimpleSpan;
 import io.micrometer.tracing.test.simple.SimpleTracer;
 import org.junit.jupiter.api.Test;
 
-import static io.micrometer.tracing.test.simple.SpanAssert.assertThat;
+import static io.micrometer.tracing.test.simple.TracingAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
