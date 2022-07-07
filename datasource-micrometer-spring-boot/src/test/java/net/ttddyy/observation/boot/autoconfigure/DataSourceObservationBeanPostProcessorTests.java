@@ -75,8 +75,8 @@ class DataSourceObservationBeanPostProcessorTests {
 
 		this.processor = new DataSourceObservationBeanPostProcessor(this.jdbcPropertiesProvider,
 				this.dataSourceNameResolverProvider, this.listenersProvider, this.methodExecutionListenersProvider,
-				this.parameterTransformerProvider, this.queryTransformerProvider, this.resultSetProxyLogicFactoryProvider,
-				this.dataSourceProxyConnectionIdManagerProviderProvider);
+				this.parameterTransformerProvider, this.queryTransformerProvider,
+				this.resultSetProxyLogicFactoryProvider, this.dataSourceProxyConnectionIdManagerProviderProvider);
 	}
 
 	@Test

@@ -68,11 +68,13 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.util.Assert;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} for Micrometer Observation instrumentation for {@link DataSource}.
+ * {@link EnableAutoConfiguration Auto-configuration} for Micrometer Observation
+ * instrumentation for {@link DataSource}.
  *
  * @author Tadaya Tsuyukubo
  */
-@AutoConfiguration(after = { ObservationAutoConfiguration.class, MicrometerTracingAutoConfiguration.class, DataSourceAutoConfiguration.class })
+@AutoConfiguration(after = { ObservationAutoConfiguration.class, MicrometerTracingAutoConfiguration.class,
+		DataSourceAutoConfiguration.class })
 @EnableConfigurationProperties(JdbcProperties.class)
 @ConditionalOnClass({ DataSource.class, ObservationRegistry.class })
 @ConditionalOnProperty(prefix = "jdbc.datasource-proxy", name = "enabled", havingValue = "true", matchIfMissing = true)
@@ -106,15 +108,18 @@ public class DataSourceObservationAutoConfiguration {
 			ObjectProvider<ParameterTransformer> parameterTransformer,
 			ObjectProvider<QueryTransformer> queryTransformer,
 			ObjectProvider<ResultSetProxyLogicFactory> resultSetProxyLogicFactory,
-			ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProvider
-	) {
-		return new DataSourceObservationBeanPostProcessor(jdbcProperties, dataSourceNameResolvers, listeners, methodExecutionListeners, parameterTransformer, queryTransformer, resultSetProxyLogicFactory, dataSourceProxyConnectionIdManagerProvider);
+			ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProvider) {
+		return new DataSourceObservationBeanPostProcessor(jdbcProperties, dataSourceNameResolvers, listeners,
+				methodExecutionListeners, parameterTransformer, queryTransformer, resultSetProxyLogicFactory,
+				dataSourceProxyConnectionIdManagerProvider);
 	}
 
 	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnEnabledTracing
 	static class DataSourceTracing {
-		private static final int ORDER = MicrometerTracingAutoConfiguration.DEFAULT_TRACING_OBSERVATION_HANDLER_ORDER - 1000;
+
+		private static final int ORDER = MicrometerTracingAutoConfiguration.DEFAULT_TRACING_OBSERVATION_HANDLER_ORDER
+				- 1000;
 
 		@Bean
 		@ConditionalOnTraceType(TraceType.CONNECTION)
@@ -136,15 +141,17 @@ public class DataSourceObservationAutoConfiguration {
 		public ResultSetTracingObservationHandler resultSetTracingObservationHandler(Tracer tracer) {
 			return new ResultSetTracingObservationHandler(tracer);
 		}
-	}
 
+	}
 
 	@Target({ ElementType.TYPE, ElementType.METHOD })
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
 	@Conditional(OnTraceTypeCondition.class)
 	@interface ConditionalOnTraceType {
+
 		TraceType value();
+
 	}
 
 	static class OnTraceTypeCondition extends SpringBootCondition {
@@ -165,7 +172,8 @@ public class DataSourceObservationAutoConfiguration {
 			details.append("=");
 			if (environment.containsProperty(INCLUDES_PROP_KEY)) {
 				try {
-					traceTypes = Binder.get(environment).bindOrCreate(INCLUDES_PROP_KEY, Bindable.setOf(TraceType.class));
+					traceTypes = Binder.get(environment).bindOrCreate(INCLUDES_PROP_KEY,
+							Bindable.setOf(TraceType.class));
 					details.append(environment.getProperty(INCLUDES_PROP_KEY));
 				}
 				catch (BindException ex) {
@@ -186,5 +194,7 @@ public class DataSourceObservationAutoConfiguration {
 			}
 			return ConditionOutcome.noMatch(message.didNotFind("TraceType").items(requiredTraceType));
 		}
+
 	}
+
 }

@@ -38,7 +38,6 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-
 /**
  * Tests for {@link DataSourceObservationAutoConfiguration}.
  *
@@ -51,8 +50,7 @@ class DataSourceObservationAutoConfigurationTests {
 		new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
 				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class))
-				.run((context) -> {
+				.withBean(Tracer.class, () -> mock(Tracer.class)).run((context) -> {
 					assertThat(context).hasSingleBean(DataSourceObservationAutoConfiguration.class);
 				});
 	}
@@ -61,8 +59,7 @@ class DataSourceObservationAutoConfigurationTests {
 	void disabled() {
 		new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
-				.withPropertyValues("jdbc.datasource-proxy.enabled=false")
-				.run((context) -> {
+				.withPropertyValues("jdbc.datasource-proxy.enabled=false").run((context) -> {
 					assertThat(context).doesNotHaveBean(DataSourceObservationAutoConfiguration.class);
 				});
 	}
@@ -73,8 +70,7 @@ class DataSourceObservationAutoConfigurationTests {
 				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
 				.withPropertyValues("management.tracing.enabled=true")
 				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class))
-				.run((context) -> {
+				.withBean(Tracer.class, () -> mock(Tracer.class)).run((context) -> {
 					assertThat(context).getBean(ConnectionTracingObservationHandler.class);
 					assertThat(context).getBean(QueryTracingObservationHandler.class);
 					assertThat(context).getBean(ResultSetTracingObservationHandler.class);
@@ -86,10 +82,8 @@ class DataSourceObservationAutoConfigurationTests {
 		new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
 				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class))
-				.run((context) -> {
-					assertThat(context)
-							.hasSingleBean(ConnectionTracingObservationHandler.class)
+				.withBean(Tracer.class, () -> mock(Tracer.class)).run((context) -> {
+					assertThat(context).hasSingleBean(ConnectionTracingObservationHandler.class)
 							.hasSingleBean(QueryTracingObservationHandler.class)
 							.hasSingleBean(ResultSetTracingObservationHandler.class);
 				});
@@ -100,14 +94,13 @@ class DataSourceObservationAutoConfigurationTests {
 	void includeTypes(String property, Set<Class<? extends DataSourceBaseObservationHandler>> handlers) {
 		new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
-				.withPropertyValues("management.tracing.enabled=true")
-				.withPropertyValues(property)
+				.withPropertyValues("management.tracing.enabled=true").withPropertyValues(property)
 				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class))
-				.run((context) -> {
-					assertThat(context).getBeans(ObservationHandler.class).extracting(Map::values).satisfies((beans) -> {
-						assertThat(beans).extracting(Object::getClass).allMatch(handlers::contains);
-					});
+				.withBean(Tracer.class, () -> mock(Tracer.class)).run((context) -> {
+					assertThat(context).getBeans(ObservationHandler.class).extracting(Map::values)
+							.satisfies((beans) -> {
+								assertThat(beans).extracting(Object::getClass).allMatch(handlers::contains);
+							});
 				});
 	}
 
@@ -115,12 +108,11 @@ class DataSourceObservationAutoConfigurationTests {
 		Class<?> connection = ConnectionTracingObservationHandler.class;
 		Class<?> query = QueryTracingObservationHandler.class;
 		Class<?> resultSet = ResultSetTracingObservationHandler.class;
-		return Stream.of(
-				Arguments.of("jdbc.includes=CONNECTION", Set.of(connection)),
+		return Stream.of(Arguments.of("jdbc.includes=CONNECTION", Set.of(connection)),
 				Arguments.of("jdbc.includes=QUERY", Set.of(query)),
 				Arguments.of("jdbc.includes=FETCH", Set.of(resultSet)),
 				Arguments.of("jdbc.includes=CONNECTION,FETCH", Set.of(connection, resultSet)),
-				Arguments.of("jdbc.includes=CONNECTION,QUERY, FETCH", Set.of(connection, query, resultSet))
-		);
+				Arguments.of("jdbc.includes=CONNECTION,QUERY, FETCH", Set.of(connection, query, resultSet)));
 	}
+
 }

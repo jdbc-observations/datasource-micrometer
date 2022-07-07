@@ -43,7 +43,6 @@ import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttr
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ResultSetAttributes;
 import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNames;
 
-
 /**
  * @author Tadaya Tsuyukubo
  */
@@ -55,11 +54,14 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	private ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
 
-	private ConnectionKeyValuesProvider connectionKeyValuesProvider = new ConnectionKeyValuesProvider() {};
+	private ConnectionKeyValuesProvider connectionKeyValuesProvider = new ConnectionKeyValuesProvider() {
+	};
 
-	private QueryKeyValuesProvider queryKeyValuesProvider = new QueryKeyValuesProvider() {};
+	private QueryKeyValuesProvider queryKeyValuesProvider = new QueryKeyValuesProvider() {
+	};
 
-	private ResultSetKeyValuesProvider resultSetKeyValuesProvider = new ResultSetKeyValuesProvider() {};
+	private ResultSetKeyValuesProvider resultSetKeyValuesProvider = new ResultSetKeyValuesProvider() {
+	};
 
 	public DataSourceObservationListener(ObservationRegistry observationRegistry) {
 		this(() -> observationRegistry);
@@ -89,7 +91,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		QueryContext queryContext = new QueryContext();
 		populateSharedInfo(queryContext, executionInfo.getConnectionId());
 
-		Observation observation = createAndStartObservation(JdbcObservation.QUERY, queryContext, this.queryKeyValuesProvider);
+		Observation observation = createAndStartObservation(JdbcObservation.QUERY, queryContext,
+				this.queryKeyValuesProvider);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new child observation before query [" + observation + "]");
@@ -98,16 +101,17 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		executionInfo.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
 	}
 
-	private Observation createAndStartObservation(JdbcObservation observationType, DataSourceBaseContext context, Observation.KeyValuesProvider<?> keyValuesProvider) {
+	private Observation createAndStartObservation(JdbcObservation observationType, DataSourceBaseContext context,
+			Observation.KeyValuesProvider<?> keyValuesProvider) {
 		return observationType.observation(this.observationRegistrySupplier.get(), context)
-				.keyValuesProvider(keyValuesProvider)
-				.start();
+				.keyValuesProvider(keyValuesProvider).start();
 	}
 
 	private void tagQueries(List<QueryInfo> queryInfoList, Observation observation) {
 		int i = 0;
 		for (QueryInfo queryInfo : queryInfoList) {
-			observation.highCardinalityKeyValue(String.format(QueryHighCardinalityKeyNames.QUERY.getKeyName(), i), queryInfo.getQuery());
+			observation.highCardinalityKeyValue(String.format(QueryHighCardinalityKeyNames.QUERY.getKeyName(), i),
+					queryInfo.getQuery());
 			i++;
 		}
 	}
@@ -122,8 +126,10 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	}
 
 	private void stopQueryObservation(ExecutionInfo executionInfo) {
-		boolean hasRowCount = executionInfo.getMethod().getName().equals("executeUpdate") && executionInfo.getThrowable() == null;
-		Observation.Scope scopeToUse = executionInfo.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class);
+		boolean hasRowCount = executionInfo.getMethod().getName().equals("executeUpdate")
+				&& executionInfo.getThrowable() == null;
+		Observation.Scope scopeToUse = executionInfo.getCustomValue(Observation.Scope.class.getName(),
+				Observation.Scope.class);
 		if (scopeToUse == null) {
 			return;
 		}
@@ -134,7 +140,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			}
 			if (hasRowCount) {
 				int rowCount = (int) executionInfo.getResult();
-				observation.highCardinalityKeyValue(QueryHighCardinalityKeyNames.ROW_COUNT.getKeyName(), String.valueOf(rowCount));
+				observation.highCardinalityKeyValue(QueryHighCardinalityKeyNames.ROW_COUNT.getKeyName(),
+						String.valueOf(rowCount));
 			}
 			Throwable throwable = executionInfo.getThrowable();
 			if (throwable != null) {
@@ -190,7 +197,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		ConnectionContext connectionContext = new ConnectionContext();
 		executionContext.addCustomValue(ConnectionContext.class.getName(), connectionContext);
 
-		Observation observation = createAndStartObservation(JdbcObservation.CONNECTION, connectionContext, this.connectionKeyValuesProvider);
+		Observation observation = createAndStartObservation(JdbcObservation.CONNECTION, connectionContext,
+				this.connectionKeyValuesProvider);
 		executionContext.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
 	}
 
@@ -199,14 +207,16 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		Connection connection = (Connection) executionContext.getResult();
 		URI connectionUrl = getConnectionUrl(connection);
 
-		ConnectionContext connectionContext = executionContext.getCustomValue(ConnectionContext.class.getName(), ConnectionContext.class);
+		ConnectionContext connectionContext = executionContext.getCustomValue(ConnectionContext.class.getName(),
+				ConnectionContext.class);
 		connectionContext.setDataSourceName(dataSourceName);
 		if (connectionUrl != null) {
 			connectionContext.setHost(connectionUrl.getHost());
 			connectionContext.setPort(connectionUrl.getPort());
 		}
 
-		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class);
+		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(),
+				Observation.Scope.class);
 
 		Throwable throwable = executionContext.getThrown();
 		if (throwable != null && scopeToUse != null) {
@@ -293,13 +303,14 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		Boolean hasNext = (Boolean) executionContext.getResult();
 		ResultSet resultSet = (ResultSet) executionContext.getTarget();
 		if (hasNext) {
-			ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager.getByResultSet(resultSet);
+			ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager
+					.getByResultSet(resultSet);
 			if (resultSetAttributes == null) {
 				// new ResultSet observation
 				ResultSetContext resultSetContext = new ResultSetContext();
 				populateSharedInfo(resultSetContext, executionContext.getConnectionInfo().getConnectionId());
-				Observation observation = createAndStartObservation(JdbcObservation.RESULT_SET, resultSetContext, this.resultSetKeyValuesProvider);
-
+				Observation observation = createAndStartObservation(JdbcObservation.RESULT_SET, resultSetContext,
+						this.resultSetKeyValuesProvider);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Created a new result-set observation [" + observation + "]");
@@ -311,9 +322,9 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 				Statement statement = null;
 				try {
-					// retrieve statement and associate it with ResultSet. It is used to close
-					// associated ResultSets when Statement is closed without closing
-					// ResultSets. See "handleStatementClosed()".
+					// retrieve statement and associate it with ResultSet. It is used to
+					// close associated ResultSets when Statement is closed without
+					// closing ResultSets. See "handleStatementClosed()".
 					statement = resultSet.getStatement();
 				}
 				catch (SQLException exception) {
@@ -329,16 +340,16 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	/**
 	 * This attempts to get the ip and port from the JDBC URL. Ex. localhost and 5555 from
 	 * {@code
-	 * jdbc:mysql://localhost:5555/mydatabase}.
-	 * Taken from Spring Cloud Sleuth.
+	 * jdbc:mysql://localhost:5555/mydatabase}. Taken from Spring Cloud Sleuth.
 	 */
 	@Nullable
 	private URI getConnectionUrl(Connection connection) {
 		URI url = null;
 		try {
-			String urlAsString = connection.getMetaData().getURL().substring(5); // strip "jdbc:"
-			url = URI.create(urlAsString.replace(" ", "")); // Remove all white space
-			// according to RFC 2396;
+			// strip "jdbc:"
+			String urlAsString = connection.getMetaData().getURL().substring(5);
+			// Remove all white space according to RFC 2396;
+			url = URI.create(urlAsString.replace(" ", ""));
 		}
 		catch (Exception ex) {
 			// remote address is optional
@@ -353,11 +364,13 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			return;
 		}
 
-		// The proper step is close ResultSet, then close Statement. However, JDBC API allows
-		// to close Statement without ResultSet. In such case, ResultSet should be closed.
-		// If it happens, here makes sure all associated ResultSet observations get stopped.
+		// The proper step is close ResultSet, then close Statement. However, JDBC API
+		// allows to close Statement without ResultSet. In such case, ResultSet should be
+		// closed. If it happens, here makes sure all associated ResultSet observations
+		// get stopped.
 		Statement statement = (Statement) executionContext.getTarget();
-		Set<ResultSetAttributes> resultSetAttributes = connectionAttributes.resultSetAttributesManager.removeByStatement(statement);
+		Set<ResultSetAttributes> resultSetAttributes = connectionAttributes.resultSetAttributesManager
+				.removeByStatement(statement);
 		for (ResultSetAttributes resultSetAttribute : resultSetAttributes) {
 			stopResultSetObservation(resultSetAttribute.scope, executionContext.getThrown());
 		}
@@ -371,7 +384,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		}
 
 		ResultSet resultSet = (ResultSet) executionContext.getTarget();
-		ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager.removeByResultSet(resultSet);
+		ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager
+				.removeByResultSet(resultSet);
 		if (resultSetAttributes == null) {
 			return;
 		}
@@ -407,4 +421,5 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	public void setResultSetKeyValuesProvider(ResultSetKeyValuesProvider resultSetKeyValuesProvider) {
 		this.resultSetKeyValuesProvider = resultSetKeyValuesProvider;
 	}
+
 }

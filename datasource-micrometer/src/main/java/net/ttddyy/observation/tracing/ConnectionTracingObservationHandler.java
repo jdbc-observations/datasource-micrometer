@@ -47,14 +47,17 @@ public class ConnectionTracingObservationHandler extends DataSourceBaseObservati
 		// commit
 		Instant commitAt = connectionContext.getCommitAt();
 		if (commitAt != null) {
-			span.event("commit", TimeUnit.SECONDS.toNanos(commitAt.getEpochSecond()) + commitAt.getNano(), TimeUnit.NANOSECONDS);
+			span.event("commit", TimeUnit.SECONDS.toNanos(commitAt.getEpochSecond()) + commitAt.getNano(),
+					TimeUnit.NANOSECONDS);
 		}
 
 		// rollback
 		Instant rollbackAt = connectionContext.getRollbackAt();
 		if (rollbackAt != null) {
-			span.event("rollback", TimeUnit.SECONDS.toNanos(rollbackAt.getEpochSecond()) + rollbackAt.getNano(), TimeUnit.NANOSECONDS);
+			span.event("rollback", TimeUnit.SECONDS.toNanos(rollbackAt.getEpochSecond()) + rollbackAt.getNano(),
+					TimeUnit.NANOSECONDS);
 		}
 
 	}
+
 }

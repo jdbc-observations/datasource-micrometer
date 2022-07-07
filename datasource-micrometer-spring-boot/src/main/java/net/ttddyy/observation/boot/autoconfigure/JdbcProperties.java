@@ -138,6 +138,7 @@ public class JdbcProperties {
 		public void setJsonFormat(boolean jsonFormat) {
 			this.jsonFormat = jsonFormat;
 		}
+
 	}
 
 	/**
@@ -247,8 +248,7 @@ public class JdbcProperties {
 
 	/**
 	 * Query logging listener is the most used listener that logs executing query with
-	 * actual parameters to. You can pick one of the following proxy logging
-	 * mechanisms.
+	 * actual parameters to. You can pick one of the following proxy logging mechanisms.
 	 */
 	public enum Logging {
 
@@ -280,6 +280,7 @@ public class JdbcProperties {
 	}
 
 	public enum TraceType {
+
 		/**
 		 * Related to JDBC connections.
 		 */
@@ -294,6 +295,7 @@ public class JdbcProperties {
 		 * Related to ResultSets.
 		 */
 		FETCH
+
 	}
 
 }

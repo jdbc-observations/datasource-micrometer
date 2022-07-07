@@ -55,16 +55,14 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 
 	private DataSourceProxyBuilderConfigurer dataSourceProxyBuilderConfigurer;
 
-	public DataSourceObservationBeanPostProcessor(
-			ObjectProvider<JdbcProperties> jdbcPropertiesProvider,
+	public DataSourceObservationBeanPostProcessor(ObjectProvider<JdbcProperties> jdbcPropertiesProvider,
 			ObjectProvider<DataSourceNameResolver> dataSourceNameResolverProvider,
 			ObjectProvider<List<QueryExecutionListener>> listenersProvider,
 			ObjectProvider<List<MethodExecutionListener>> methodExecutionListenersProvider,
 			ObjectProvider<ParameterTransformer> parameterTransformerProvider,
 			ObjectProvider<QueryTransformer> queryTransformerProvider,
 			ObjectProvider<ResultSetProxyLogicFactory> resultSetProxyLogicFactoryProvider,
-			ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProviderProvider
-	) {
+			ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProviderProvider) {
 		this.jdbcPropertiesProvider = jdbcPropertiesProvider;
 		this.dataSourceNameResolverProvider = dataSourceNameResolverProvider;
 		this.listenersProvider = listenersProvider;
@@ -93,7 +91,8 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 			this.dataSourceProxyBuilderConfigurer = new DataSourceProxyBuilderConfigurer(getJdbcProperties(),
 					this.listenersProvider.getIfAvailable(), this.methodExecutionListenersProvider.getIfAvailable(),
 					this.parameterTransformerProvider.getIfAvailable(), this.queryTransformerProvider.getIfAvailable(),
-					this.resultSetProxyLogicFactoryProvider.getIfAvailable(), this.dataSourceProxyConnectionIdManagerProviderProvider.getIfAvailable());
+					this.resultSetProxyLogicFactoryProvider.getIfAvailable(),
+					this.dataSourceProxyConnectionIdManagerProviderProvider.getIfAvailable());
 		}
 		return this.dataSourceProxyBuilderConfigurer;
 	}

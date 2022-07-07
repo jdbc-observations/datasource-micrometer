@@ -26,6 +26,7 @@ import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNam
  * @author Tadaya Tsuyukubo
  */
 public interface ResultSetKeyValuesProvider extends Observation.KeyValuesProvider<ResultSetContext> {
+
 	@Override
 	default boolean supportsContext(Context context) {
 		return context instanceof ResultSetContext;
@@ -33,6 +34,8 @@ public interface ResultSetKeyValuesProvider extends Observation.KeyValuesProvide
 
 	@Override
 	default KeyValues getHighCardinalityKeyValues(ResultSetContext context) {
-		return KeyValues.of(KeyValue.of(QueryHighCardinalityKeyNames.ROW_COUNT.name(), String.valueOf(context.getCount())));
+		return KeyValues
+				.of(KeyValue.of(QueryHighCardinalityKeyNames.ROW_COUNT.name(), String.valueOf(context.getCount())));
 	}
+
 }

@@ -35,6 +35,7 @@ import net.ttddyy.dsproxy.ConnectionInfo;
  * @author Tadaya Tsuyukubo
  */
 public interface ConnectionAttributesManager {
+
 	@Nullable
 	ConnectionAttributes put(String connectionId, ConnectionAttributes attributes);
 
@@ -45,6 +46,7 @@ public interface ConnectionAttributesManager {
 	ConnectionAttributes remove(String connectionId);
 
 	class ConnectionAttributes {
+
 		ConnectionContext connectionContext;
 
 		ConnectionInfo connectionInfo;
@@ -58,9 +60,11 @@ public interface ConnectionAttributesManager {
 		Scope scope;
 
 		ResultSetAttributesManager resultSetAttributesManager = new ResultSetAttributesManager();
+
 	}
 
 	class ResultSetAttributesManager {
+
 		Map<ResultSet, ResultSetAttributes> byResultSet = new ConcurrentHashMap<>();
 
 		Map<ResultSet, Statement> statements = new ConcurrentHashMap<>();
@@ -95,8 +99,7 @@ public interface ConnectionAttributesManager {
 				}
 			}
 
-			return resultSets.stream().map(this.byResultSet::remove)
-					.filter(Objects::nonNull)
+			return resultSets.stream().map(this.byResultSet::remove).filter(Objects::nonNull)
 					.collect(Collectors.toSet());
 		}
 
@@ -106,14 +109,17 @@ public interface ConnectionAttributesManager {
 			this.statements.clear();
 			return attributes;
 		}
+
 	}
 
 	class ResultSetAttributes {
+
 		Statement statement;
 
 		Scope scope;
 
 		ResultSetContext context;
+
 	}
 
 }

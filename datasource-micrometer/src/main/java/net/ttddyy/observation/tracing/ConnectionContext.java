@@ -24,6 +24,7 @@ import io.micrometer.common.lang.Nullable;
  * @author Tadaya Tsuyukubo
  */
 public final class ConnectionContext extends DataSourceBaseContext {
+
 	private Instant commitAt;
 
 	private Instant rollbackAt;
@@ -45,4 +46,5 @@ public final class ConnectionContext extends DataSourceBaseContext {
 	public void setRollbackAt(Instant rollbackAt) {
 		this.rollbackAt = rollbackAt;
 	}
+
 }

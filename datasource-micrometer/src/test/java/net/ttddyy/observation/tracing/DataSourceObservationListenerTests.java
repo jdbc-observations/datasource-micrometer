@@ -81,12 +81,8 @@ class DataSourceObservationListenerTests {
 		listener.afterQuery(executionInfo, queryInfos);
 		assertThat(tracer.currentSpan()).isNull();
 
-		assertThat(tracer)
-				.onlySpan()
-				.hasNameEqualTo("query")
-				.hasTag("jdbc.query[0]", "SELECT 1")
-				.doesNotHaveTagWithKey("jdbc.row-count")
-		;
+		assertThat(tracer).onlySpan().hasNameEqualTo("query").hasTag("jdbc.query[0]", "SELECT 1")
+				.doesNotHaveTagWithKey("jdbc.row-count");
 	}
 
 	@Test
@@ -116,12 +112,8 @@ class DataSourceObservationListenerTests {
 		listener.beforeQuery(executionInfo, queryInfos);
 		listener.afterQuery(executionInfo, queryInfos);
 
-		assertThat(tracer)
-				.onlySpan()
-				.hasRemoteServiceNameEqualTo("myDS")
-				.hasIpEqualTo("localhost")
-				.hasPortEqualTo(5555)
-		;
+		assertThat(tracer).onlySpan().hasRemoteServiceNameEqualTo("myDS").hasIpEqualTo("localhost")
+				.hasPortEqualTo(5555);
 	}
 
 	@Test
@@ -141,9 +133,7 @@ class DataSourceObservationListenerTests {
 		listener.beforeQuery(executionInfo, queryInfos);
 		listener.afterQuery(executionInfo, queryInfos);
 
-		assertThat(tracer)
-				.onlySpan()
-				.hasTag("jdbc.row-count", "99");
+		assertThat(tracer).onlySpan().hasTag("jdbc.row-count", "99");
 	}
 
 	@Test
@@ -190,13 +180,8 @@ class DataSourceObservationListenerTests {
 		listener.afterMethod(secondExecutionContext);
 		assertThat(tracer.currentSpan()).isNull();
 
-		assertThat(this.tracer)
-				.onlySpan()
-				.hasNameEqualTo("connection")
-				.hasRemoteServiceNameEqualTo("myDS")
-				.hasIpEqualTo("localhost")
-				.hasPortEqualTo(5555)
-		;
+		assertThat(this.tracer).onlySpan().hasNameEqualTo("connection").hasRemoteServiceNameEqualTo("myDS")
+				.hasIpEqualTo("localhost").hasPortEqualTo(5555);
 	}
 
 	@Test
@@ -263,7 +248,8 @@ class DataSourceObservationListenerTests {
 		assertThat(tracer.currentSpan()).isNull();
 	}
 
-	private void createResultSetObservation(DataSourceObservationListener listener, ConnectionInfo connectionInfo, ResultSet resultSet) throws Exception {
+	private void createResultSetObservation(DataSourceObservationListener listener, ConnectionInfo connectionInfo,
+			ResultSet resultSet) throws Exception {
 		Method nextMethod = ResultSet.class.getMethod("next");
 
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
@@ -327,7 +313,8 @@ class DataSourceObservationListenerTests {
 
 		createResultSetObservation(listener, connectionInfo, resultSet);
 
-		// [ResultSet|Statement]#close may be skipped. In such case, Connection#close should
+		// [ResultSet|Statement]#close may be skipped. In such case, Connection#close
+		// should
 		// implicitly close the ResultSet.
 		Method closeMethod = Connection.class.getMethod("close");
 
@@ -340,4 +327,5 @@ class DataSourceObservationListenerTests {
 		listener.afterMethod(closeExecutionContext);
 		assertThat(tracer.currentSpan()).isNull();
 	}
+
 }

@@ -49,7 +49,6 @@ public enum JdbcObservation implements DocumentedObservation {
 		}
 	},
 
-
 	QUERY {
 		@Override
 		public String getName() {
@@ -61,7 +60,8 @@ public enum JdbcObservation implements DocumentedObservation {
 			return "query";
 		}
 
-		// TODO: add connection-id, url, thread to low cardinality keys to match with r2dbc.
+		// TODO: add connection-id, url, thread to low cardinality keys to match with
+		// r2dbc.
 
 		@Override
 		public KeyName[] getHighCardinalityKeyNames() {
@@ -100,6 +100,7 @@ public enum JdbcObservation implements DocumentedObservation {
 	};
 
 	enum QueryHighCardinalityKeyNames implements KeyName {
+
 		/**
 		 * Name of the JDBC query.
 		 */
@@ -119,6 +120,7 @@ public enum JdbcObservation implements DocumentedObservation {
 				return "jdbc.row-count";
 			}
 		}
+
 	}
 
 	enum ConnectionKeyNames implements KeyName {

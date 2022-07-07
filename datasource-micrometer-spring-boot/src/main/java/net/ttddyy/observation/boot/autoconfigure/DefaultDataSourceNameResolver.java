@@ -29,7 +29,8 @@ import org.springframework.util.ClassUtils;
  */
 public class DefaultDataSourceNameResolver implements DataSourceNameResolver {
 
-	private static final boolean isHikariPresent = ClassUtils.isPresent("com.zaxxer.hikari.HikariDataSource", DataSourceObservationBeanPostProcessor.class.getClassLoader());
+	private static final boolean isHikariPresent = ClassUtils.isPresent("com.zaxxer.hikari.HikariDataSource",
+			DataSourceObservationBeanPostProcessor.class.getClassLoader());
 
 	@Override
 	public String resolve(String beanName, DataSource dataSource) {

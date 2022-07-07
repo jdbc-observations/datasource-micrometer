@@ -51,14 +51,9 @@ class ConnectionTracingObservationHandlerTests {
 		SimpleSpan span = new SimpleSpan();
 		handler.tagSpan(context, span);
 
-		assertThat(span)
-				.hasRemoteServiceNameEqualTo("myDS")
-				.hasIpEqualTo("localhost")
-				.hasPortEqualTo(5555)
-				.hasEventWithNameEqualTo("commit")
-				.hasEventWithNameEqualTo("rollback");
-		assertThat(span.getEvents()).hasSize(2)
-				.extracting(Entry::getValue)
-				.containsExactly("commit", "rollback");
+		assertThat(span).hasRemoteServiceNameEqualTo("myDS").hasIpEqualTo("localhost").hasPortEqualTo(5555)
+				.hasEventWithNameEqualTo("commit").hasEventWithNameEqualTo("rollback");
+		assertThat(span.getEvents()).hasSize(2).extracting(Entry::getValue).containsExactly("commit", "rollback");
 	}
+
 }

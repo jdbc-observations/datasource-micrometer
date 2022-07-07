@@ -39,7 +39,6 @@ public class DefaultConnectionAttributesManager implements ConnectionAttributesM
 		return this.connectionAttributesMap.get(connectionId);
 	}
 
-
 	@Override
 	@Nullable
 	public ConnectionAttributes remove(String connectionId) {
