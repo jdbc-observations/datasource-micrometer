@@ -32,6 +32,7 @@
         <junit.version>5.8.2</junit.version>
         <mockito.version>4.6.1</mockito.version>
         <assertj.version>3.23.1</assertj.version>
+        <spring-javaformat.version>0.0.34</spring-javaformat.version>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
     </properties>
@@ -40,6 +41,16 @@
         <module>datasource-micrometer</module>
         <module>datasource-micrometer-spring-boot</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.spring.javaformat</groupId>
+                <artifactId>spring-javaformat-maven-plugin</artifactId>
+                <version>${spring-javaformat.version}</version>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
     </dependencies>
