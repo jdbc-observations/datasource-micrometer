@@ -56,13 +56,13 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	private ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
 
-	private ConnectionKeyValuesProvider connectionKeyValuesProvider = new ConnectionKeyValuesProvider() {
+	private ConnectionObservationConvention connectionObservationConvention = new ConnectionObservationConvention() {
 	};
 
-	private QueryKeyValuesProvider queryKeyValuesProvider = new QueryKeyValuesProvider() {
+	private QueryObservationConvention queryObservationConvention = new QueryObservationConvention() {
 	};
 
-	private ResultSetKeyValuesProvider resultSetKeyValuesProvider = new ResultSetKeyValuesProvider() {
+	private ResultSetObservationConvention resultSetObservationConvention = new ResultSetObservationConvention() {
 	};
 
 	public DataSourceObservationListener(ObservationRegistry observationRegistry) {
@@ -94,7 +94,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		populateSharedInfo(queryContext, executionInfo.getConnectionId());
 
 		Observation observation = createAndStartObservation(JdbcObservation.QUERY, queryContext,
-				this.queryKeyValuesProvider);
+				this.queryObservationConvention);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new child observation before query [" + observation + "]");
@@ -200,7 +200,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		executionContext.addCustomValue(ConnectionContext.class.getName(), connectionContext);
 
 		Observation observation = createAndStartObservation(JdbcObservation.CONNECTION, connectionContext,
-				this.connectionKeyValuesProvider);
+				this.connectionObservationConvention);
 		executionContext.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
 	}
 
@@ -312,7 +312,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 				ResultSetContext resultSetContext = new ResultSetContext();
 				populateSharedInfo(resultSetContext, executionContext.getConnectionInfo().getConnectionId());
 				Observation observation = createAndStartObservation(JdbcObservation.RESULT_SET, resultSetContext,
-						this.resultSetKeyValuesProvider);
+						this.resultSetObservationConvention);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Created a new result-set observation [" + observation + "]");
@@ -412,16 +412,16 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		this.connectionAttributesManager = connectionAttributesManager;
 	}
 
-	public void setConnectionKeyValuesProvider(ConnectionKeyValuesProvider connectionKeyValuesProvider) {
-		this.connectionKeyValuesProvider = connectionKeyValuesProvider;
+	public void setConnectionObservationConvention(ConnectionObservationConvention connectionObservationConvention) {
+		this.connectionObservationConvention = connectionObservationConvention;
 	}
 
-	public void setQueryKeyValuesProvider(QueryKeyValuesProvider queryKeyValuesProvider) {
-		this.queryKeyValuesProvider = queryKeyValuesProvider;
+	public void setQueryObservationConvention(QueryObservationConvention queryObservationConvention) {
+		this.queryObservationConvention = queryObservationConvention;
 	}
 
-	public void setResultSetKeyValuesProvider(ResultSetKeyValuesProvider resultSetKeyValuesProvider) {
-		this.resultSetKeyValuesProvider = resultSetKeyValuesProvider;
+	public void setResultSetObservationConvention(ResultSetObservationConvention resultSetObservationConvention) {
+		this.resultSetObservationConvention = resultSetObservationConvention;
 	}
 
 }

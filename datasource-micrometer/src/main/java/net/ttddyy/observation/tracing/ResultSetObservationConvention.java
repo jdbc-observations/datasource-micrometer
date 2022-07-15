@@ -18,14 +18,14 @@ package net.ttddyy.observation.tracing;
 
 import io.micrometer.common.KeyValue;
 import io.micrometer.common.KeyValues;
-import io.micrometer.observation.Observation;
 import io.micrometer.observation.Observation.Context;
+import io.micrometer.observation.Observation.ObservationConvention;
 import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNames;
 
 /**
  * @author Tadaya Tsuyukubo
  */
-public interface ResultSetKeyValuesProvider extends Observation.KeyValuesProvider<ResultSetContext> {
+public interface ResultSetObservationConvention extends ObservationConvention<ResultSetContext> {
 
 	@Override
 	default boolean supportsContext(Context context) {
@@ -36,6 +36,11 @@ public interface ResultSetKeyValuesProvider extends Observation.KeyValuesProvide
 	default KeyValues getHighCardinalityKeyValues(ResultSetContext context) {
 		return KeyValues
 				.of(KeyValue.of(QueryHighCardinalityKeyNames.ROW_COUNT.name(), String.valueOf(context.getCount())));
+	}
+
+	@Override
+	default String getName() {
+		return "jdbc.result-set";
 	}
 
 }

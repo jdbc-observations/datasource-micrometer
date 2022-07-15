@@ -16,17 +16,22 @@
 
 package net.ttddyy.observation.tracing;
 
-import io.micrometer.observation.Observation;
 import io.micrometer.observation.Observation.Context;
+import io.micrometer.observation.Observation.ObservationConvention;
 
 /**
  * @author Tadaya Tsuyukubo
  */
-public interface QueryKeyValuesProvider extends Observation.KeyValuesProvider<QueryContext> {
+public interface QueryObservationConvention extends ObservationConvention<QueryContext> {
 
 	@Override
 	default boolean supportsContext(Context context) {
 		return context instanceof QueryContext;
+	}
+
+	@Override
+	default String getName() {
+		return "jdbc.query";
 	}
 
 }
