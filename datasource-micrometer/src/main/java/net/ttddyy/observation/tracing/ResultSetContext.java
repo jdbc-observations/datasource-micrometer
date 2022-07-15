@@ -16,7 +16,13 @@
 
 package net.ttddyy.observation.tracing;
 
+import java.sql.ResultSet;
+
+import io.micrometer.observation.Observation;
+
 /**
+ * {@link Observation.Context Context} for {@link ResultSet} operations.
+ *
  * @author Tadaya Tsuyukubo
  */
 public final class ResultSetContext extends DataSourceBaseContext {

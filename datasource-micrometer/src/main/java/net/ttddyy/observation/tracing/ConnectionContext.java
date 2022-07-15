@@ -16,11 +16,15 @@
 
 package net.ttddyy.observation.tracing;
 
+import java.sql.Connection;
 import java.time.Instant;
 
 import io.micrometer.common.lang.Nullable;
+import io.micrometer.observation.Observation;
 
 /**
+ * {@link Observation.Context Context} for {@link Connection} related operations.
+ *
  * @author Tadaya Tsuyukubo
  */
 public final class ConnectionContext extends DataSourceBaseContext {

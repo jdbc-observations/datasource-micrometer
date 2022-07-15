@@ -44,13 +44,15 @@ import net.ttddyy.observation.tracing.ConnectionAttributesManager.ResultSetAttri
 import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNames;
 
 /**
+ * Datasource-proxy listener implementation for JDBC observation.
+ *
  * @author Tadaya Tsuyukubo
  */
 public class DataSourceObservationListener implements QueryExecutionListener, MethodExecutionListener {
 
 	private static final InternalLogger logger = InternalLoggerFactory.getInstance(DataSourceObservationListener.class);
 
-	private Supplier<ObservationRegistry> observationRegistrySupplier;
+	private final Supplier<ObservationRegistry> observationRegistrySupplier;
 
 	private ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
 

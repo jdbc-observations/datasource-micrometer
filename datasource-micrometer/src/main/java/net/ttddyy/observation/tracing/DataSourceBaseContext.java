@@ -20,6 +20,8 @@ import io.micrometer.common.lang.Nullable;
 import io.micrometer.observation.Observation;
 
 /**
+ * Base {@link Observation.Context Context} for datasource observation context classes.
+ *
  * @author Tadaya Tsuyukubo
  */
 public class DataSourceBaseContext extends Observation.Context {

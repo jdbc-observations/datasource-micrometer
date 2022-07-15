@@ -16,7 +16,11 @@
 
 package net.ttddyy.observation.tracing;
 
+import io.micrometer.observation.Observation;
+
 /**
+ * {@link Observation.Context Context} for query execution operations.
+ *
  * @author Tadaya Tsuyukubo
  */
 public final class QueryContext extends DataSourceBaseContext {
