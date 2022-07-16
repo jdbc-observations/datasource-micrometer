@@ -65,6 +65,13 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	private ResultSetObservationConvention resultSetObservationConvention = new ResultSetObservationConvention() {
 	};
 
+	private QueryParametersSpanTagProvider queryParametersSpanTagProvider = new DefaultQueryParametersSpanTagProvider();
+
+	/**
+	 * Whether to tag query parameter values.
+	 */
+	private boolean includeParameterValues;
+
 	public DataSourceObservationListener(ObservationRegistry observationRegistry) {
 		this(() -> observationRegistry);
 	}
@@ -99,7 +106,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new child observation before query [" + observation + "]");
 		}
-		tagQueries(queryInfoList, observation);
+		tagQueries(executionInfo, queryInfoList, observation);
 		executionInfo.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
 	}
 
@@ -109,11 +116,16 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 				.keyValuesProvider(keyValuesProvider).start();
 	}
 
-	private void tagQueries(List<QueryInfo> queryInfoList, Observation observation) {
+	private void tagQueries(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList, Observation observation) {
 		int i = 0;
 		for (QueryInfo queryInfo : queryInfoList) {
 			observation.highCardinalityKeyValue(String.format(QueryHighCardinalityKeyNames.QUERY.getKeyName(), i),
 					queryInfo.getQuery());
+			if (this.includeParameterValues) {
+				String params = this.queryParametersSpanTagProvider.getParameters(executionInfo, queryInfoList);
+				observation.highCardinalityKeyValue(
+						String.format(QueryHighCardinalityKeyNames.QUERY_PARAMETERS.getKeyName(), i), params);
+			}
 			i++;
 		}
 	}
@@ -422,6 +434,14 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	public void setResultSetObservationConvention(ResultSetObservationConvention resultSetObservationConvention) {
 		this.resultSetObservationConvention = resultSetObservationConvention;
+	}
+
+	public void setQueryParametersSpanTagProvider(QueryParametersSpanTagProvider queryParametersSpanTagProvider) {
+		this.queryParametersSpanTagProvider = queryParametersSpanTagProvider;
+	}
+
+	public void setIncludeParameterValues(boolean includeParameterValues) {
+		this.includeParameterValues = includeParameterValues;
 	}
 
 }

@@ -85,12 +85,14 @@ public class DataSourceObservationAutoConfiguration {
 
 	@Bean
 	public DataSourceObservationListener dataSourceObservationListener(ObjectProvider<ObservationRegistry> registry,
+			JdbcProperties jdbcProperties,
 			ObjectProvider<ConnectionObservationConvention> connectionObservationConventions,
 			ObjectProvider<QueryObservationConvention> queryObservationConventions,
 			ObjectProvider<ResultSetObservationConvention> resultSetObservationConventions) {
 		// to avoid circular reference due to MeterBinder creation at MeterRegistry,
 		// use supplier to lazily reference observation registry.
 		DataSourceObservationListener listener = new DataSourceObservationListener(registry::getObject);
+		listener.setIncludeParameterValues(jdbcProperties.getDatasourceProxy().isIncludeParameterValues());
 		connectionObservationConventions.ifAvailable(listener::setConnectionObservationConvention);
 		queryObservationConventions.ifAvailable(listener::setQueryObservationConvention);
 		resultSetObservationConventions.ifAvailable(listener::setResultSetObservationConvention);

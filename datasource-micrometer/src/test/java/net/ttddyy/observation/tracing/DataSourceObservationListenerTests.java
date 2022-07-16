@@ -17,8 +17,10 @@
 package net.ttddyy.observation.tracing;
 
 import java.lang.reflect.Method;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -33,7 +35,9 @@ import io.micrometer.tracing.test.simple.SimpleTracer;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
+import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
+import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,7 +86,81 @@ class DataSourceObservationListenerTests {
 		assertThat(tracer.currentSpan()).isNull();
 
 		assertThat(tracer).onlySpan().hasNameEqualTo("query").hasTag("jdbc.query[0]", "SELECT 1")
-				.doesNotHaveTagWithKey("jdbc.row-count");
+				.doesNotHaveTagWithKey("jdbc.row-count").doesNotHaveTagWithKey("jdbc.params[0]");
+	}
+
+	@Test
+	void queryParametersWithPrepared() throws Exception {
+		this.registry.observationConfig().observationHandler(new DefaultTracingObservationHandler(this.tracer));
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
+		listener.setIncludeParameterValues(true);
+
+		Method execute = Statement.class.getMethod("execute", String.class);
+
+		Method setInt = PreparedStatement.class.getMethod("setInt", int.class, int.class);
+		ParameterSetOperation paramFirst = new ParameterSetOperation(setInt, new Object[] { 1, 100 });
+		ParameterSetOperation paramSecond = new ParameterSetOperation(setInt, new Object[] { 1, 200 });
+		List<ParameterSetOperation> paramsFirst = Arrays.asList(paramFirst);
+		List<ParameterSetOperation> paramsSecond = Arrays.asList(paramSecond);
+
+		QueryInfo queryInfo = new QueryInfo();
+		queryInfo.setQuery("SELECT 1 FROM emp WHERE id = ?");
+		queryInfo.getParametersList().add(paramsFirst);
+		queryInfo.getParametersList().add(paramsSecond);
+
+		ExecutionInfo executionInfo = new ExecutionInfo();
+		executionInfo.setConnectionId("id-1");
+		executionInfo.setDataSourceName("myDS");
+		executionInfo.setMethod(execute);
+		executionInfo.setStatementType(StatementType.PREPARED);
+		List<QueryInfo> queryInfos = Arrays.asList(queryInfo);
+
+		listener.beforeQuery(executionInfo, queryInfos);
+		listener.afterQuery(executionInfo, queryInfos);
+
+		assertThat(tracer).onlySpan().hasNameEqualTo("query").hasTag("jdbc.params[0]", "(100),(200)");
+	}
+
+	@Test
+	void queryParametersWithCallable() throws Exception {
+		this.registry.observationConfig().observationHandler(new DefaultTracingObservationHandler(this.tracer));
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
+		listener.setIncludeParameterValues(true);
+
+		Method execute = Statement.class.getMethod("execute", String.class);
+
+		Method setInt = CallableStatement.class.getMethod("setInt", String.class, int.class);
+		Method setString = CallableStatement.class.getMethod("setString", String.class, String.class);
+
+		// first parameters
+		ParameterSetOperation setIntParamFirst = new ParameterSetOperation(setInt, new Object[] { "id", 100 });
+		ParameterSetOperation setStringParamFirst = new ParameterSetOperation(setString,
+				new Object[] { "name", "foo" });
+		List<ParameterSetOperation> paramsFirst = Arrays.asList(setIntParamFirst, setStringParamFirst);
+
+		// second parameters
+		ParameterSetOperation setIntParamSecond = new ParameterSetOperation(setInt, new Object[] { "id", 200 });
+		ParameterSetOperation setStringParamSecond = new ParameterSetOperation(setString,
+				new Object[] { "name", "bar" });
+		List<ParameterSetOperation> paramsSecond = Arrays.asList(setIntParamSecond, setStringParamSecond);
+
+		QueryInfo queryInfo = new QueryInfo();
+		queryInfo.setQuery("{call my_func(:id, :name)");
+		queryInfo.getParametersList().add(paramsFirst);
+		queryInfo.getParametersList().add(paramsSecond);
+
+		ExecutionInfo executionInfo = new ExecutionInfo();
+		executionInfo.setConnectionId("id-1");
+		executionInfo.setDataSourceName("myDS");
+		executionInfo.setMethod(execute);
+		executionInfo.setStatementType(StatementType.CALLABLE);
+		List<QueryInfo> queryInfos = Arrays.asList(queryInfo);
+
+		listener.beforeQuery(executionInfo, queryInfos);
+		listener.afterQuery(executionInfo, queryInfos);
+
+		assertThat(tracer).onlySpan().hasNameEqualTo("query").hasTag("jdbc.params[0]",
+				"(id=100,name=foo),(id=200,name=bar)");
 	}
 
 	@Test

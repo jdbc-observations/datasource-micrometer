@@ -111,6 +111,13 @@ public enum JdbcObservation implements DocumentedObservation {
 			}
 		},
 
+		QUERY_PARAMETERS {
+			@Override
+			public String getKeyName() {
+				return "jdbc.params[%s]";
+			}
+		},
+
 		/**
 		 * Number of SQL rows.
 		 */

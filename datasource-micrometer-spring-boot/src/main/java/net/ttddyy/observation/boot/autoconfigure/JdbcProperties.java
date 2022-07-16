@@ -93,6 +93,11 @@ public class JdbcProperties {
 		private boolean multiline = true;
 
 		/**
+		 * Whether to tag actual query parameter values.
+		 */
+		private boolean includeParameterValues;
+
+		/**
 		 * Use json output for logging query.
 		 *
 		 * @see ProxyDataSourceBuilder#asJson()
@@ -137,6 +142,14 @@ public class JdbcProperties {
 
 		public void setJsonFormat(boolean jsonFormat) {
 			this.jsonFormat = jsonFormat;
+		}
+
+		public boolean isIncludeParameterValues() {
+			return this.includeParameterValues;
+		}
+
+		public void setIncludeParameterValues(boolean includeParameterValues) {
+			this.includeParameterValues = includeParameterValues;
 		}
 
 	}
