@@ -36,9 +36,12 @@ import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import net.ttddyy.observation.boot.autoconfigure.JdbcProperties.TraceType;
+import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
+import net.ttddyy.observation.tracing.QueryObservationConvention;
 import net.ttddyy.observation.tracing.QueryTracingObservationHandler;
+import net.ttddyy.observation.tracing.ResultSetObservationConvention;
 import net.ttddyy.observation.tracing.ResultSetTracingObservationHandler;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -81,10 +84,17 @@ import org.springframework.util.Assert;
 public class DataSourceObservationAutoConfiguration {
 
 	@Bean
-	public DataSourceObservationListener dataSourceObservationListener(ObjectProvider<ObservationRegistry> registry) {
+	public DataSourceObservationListener dataSourceObservationListener(ObjectProvider<ObservationRegistry> registry,
+			ObjectProvider<ConnectionObservationConvention> connectionObservationConventions,
+			ObjectProvider<QueryObservationConvention> queryObservationConventions,
+			ObjectProvider<ResultSetObservationConvention> resultSetObservationConventions) {
 		// to avoid circular reference due to MeterBinder creation at MeterRegistry,
 		// use supplier to lazily reference observation registry.
-		return new DataSourceObservationListener(registry::getObject);
+		DataSourceObservationListener listener = new DataSourceObservationListener(registry::getObject);
+		connectionObservationConventions.ifAvailable(listener::setConnectionObservationConvention);
+		queryObservationConventions.ifAvailable(listener::setQueryObservationConvention);
+		resultSetObservationConventions.ifAvailable(listener::setResultSetObservationConvention);
+		return listener;
 	}
 
 	@Bean

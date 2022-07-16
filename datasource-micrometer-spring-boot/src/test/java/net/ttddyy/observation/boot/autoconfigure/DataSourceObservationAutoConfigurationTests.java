@@ -23,9 +23,13 @@ import java.util.stream.Stream;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
+import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceBaseObservationHandler;
+import net.ttddyy.observation.tracing.DataSourceObservationListener;
+import net.ttddyy.observation.tracing.QueryObservationConvention;
 import net.ttddyy.observation.tracing.QueryTracingObservationHandler;
+import net.ttddyy.observation.tracing.ResultSetObservationConvention;
 import net.ttddyy.observation.tracing.ResultSetTracingObservationHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -61,6 +65,25 @@ class DataSourceObservationAutoConfigurationTests {
 				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
 				.withPropertyValues("jdbc.datasource-proxy.enabled=false").run((context) -> {
 					assertThat(context).doesNotHaveBean(DataSourceObservationAutoConfiguration.class);
+				});
+	}
+
+	@Test
+	void customObservationConventions() {
+		new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+				.withBean(ObservationRegistry.class, ObservationRegistry::create)
+				.withBean(Tracer.class, () -> mock(Tracer.class)).withBean(CustomConnectionObservationConvention.class)
+				.withBean(CustomQueryObservationConvention.class).withBean(CustomResultSetObservationConvention.class)
+				.run((context) -> {
+					assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
+						assertThat(listener).extracting("connectionObservationConvention")
+								.isInstanceOf(CustomConnectionObservationConvention.class);
+						assertThat(listener).extracting("queryObservationConvention")
+								.isInstanceOf(CustomQueryObservationConvention.class);
+						assertThat(listener).extracting("resultSetObservationConvention")
+								.isInstanceOf(CustomResultSetObservationConvention.class);
+					});
 				});
 	}
 
@@ -113,6 +136,18 @@ class DataSourceObservationAutoConfigurationTests {
 				Arguments.of("jdbc.includes=FETCH", Set.of(resultSet)),
 				Arguments.of("jdbc.includes=CONNECTION,FETCH", Set.of(connection, resultSet)),
 				Arguments.of("jdbc.includes=CONNECTION,QUERY, FETCH", Set.of(connection, query, resultSet)));
+	}
+
+	static class CustomConnectionObservationConvention implements ConnectionObservationConvention {
+
+	}
+
+	static class CustomQueryObservationConvention implements QueryObservationConvention {
+
+	}
+
+	static class CustomResultSetObservationConvention implements ResultSetObservationConvention {
+
 	}
 
 }
