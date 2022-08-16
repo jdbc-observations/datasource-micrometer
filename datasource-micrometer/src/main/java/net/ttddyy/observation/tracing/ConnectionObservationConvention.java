@@ -22,11 +22,11 @@ import io.micrometer.observation.Observation.ObservationConvention;
 /**
  * @author Tadaya Tsuyukubo
  */
-public interface ConnectionObservationConvention extends ObservationConvention<QueryContext> {
+public interface ConnectionObservationConvention extends ObservationConvention<ConnectionContext> {
 
 	@Override
 	default boolean supportsContext(Context context) {
-		return context instanceof QueryContext;
+		return context instanceof ConnectionContext;
 	}
 
 	@Override
