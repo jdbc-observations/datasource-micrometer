@@ -29,8 +29,8 @@
     <name>datasource-micrometer-spring-boot</name>
 
     <properties>
+        <maven.compiler.release>17</maven.compiler.release>
         <spring-boot.version>3.0.0-SNAPSHOT</spring-boot.version>
-        <java.version>17</java.version>
     </properties>
 
     <!--    TODO: add spring-formatter -->
