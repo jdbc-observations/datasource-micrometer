@@ -106,14 +106,14 @@ public enum JdbcObservation implements DocumentedObservation {
 		 */
 		QUERY {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "jdbc.query[%s]";
 			}
 		},
 
 		QUERY_PARAMETERS {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "jdbc.params[%s]";
 			}
 		},
@@ -123,7 +123,7 @@ public enum JdbcObservation implements DocumentedObservation {
 		 */
 		ROW_COUNT {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "jdbc.row-count";
 			}
 		}
@@ -137,7 +137,7 @@ public enum JdbcObservation implements DocumentedObservation {
 		 */
 		DATASOURCE_DRIVER {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "jdbc.datasource.driver";
 			}
 		},
@@ -147,7 +147,7 @@ public enum JdbcObservation implements DocumentedObservation {
 		 */
 		DATASOURCE_POOL {
 			@Override
-			public String getKeyName() {
+			public String asString() {
 				return "jdbc.datasource.pool";
 			}
 		},

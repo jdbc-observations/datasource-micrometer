@@ -32,6 +32,7 @@ import io.micrometer.common.lang.Nullable;
 import io.micrometer.common.util.internal.logging.InternalLogger;
 import io.micrometer.common.util.internal.logging.InternalLoggerFactory;
 import io.micrometer.observation.Observation;
+import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationRegistry;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
@@ -111,20 +112,20 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	}
 
 	private Observation createAndStartObservation(JdbcObservation observationType, DataSourceBaseContext context,
-			Observation.KeyValuesProvider<?> keyValuesProvider) {
+			Observation.ObservationConvention<? extends Context> observationConvention) {
 		return observationType.observation(this.observationRegistrySupplier.get(), context)
-				.keyValuesProvider(keyValuesProvider).start();
+				.observationConvention(observationConvention).start();
 	}
 
 	private void tagQueries(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList, Observation observation) {
 		int i = 0;
 		for (QueryInfo queryInfo : queryInfoList) {
-			observation.highCardinalityKeyValue(String.format(QueryHighCardinalityKeyNames.QUERY.getKeyName(), i),
+			observation.highCardinalityKeyValue(String.format(QueryHighCardinalityKeyNames.QUERY.asString(), i),
 					queryInfo.getQuery());
 			if (this.includeParameterValues) {
 				String params = this.queryParametersSpanTagProvider.getParameters(executionInfo, queryInfoList);
 				observation.highCardinalityKeyValue(
-						String.format(QueryHighCardinalityKeyNames.QUERY_PARAMETERS.getKeyName(), i), params);
+						String.format(QueryHighCardinalityKeyNames.QUERY_PARAMETERS.asString(), i), params);
 			}
 			i++;
 		}
@@ -154,7 +155,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			}
 			if (hasRowCount) {
 				int rowCount = (int) executionInfo.getResult();
-				observation.highCardinalityKeyValue(QueryHighCardinalityKeyNames.ROW_COUNT.getKeyName(),
+				observation.highCardinalityKeyValue(QueryHighCardinalityKeyNames.ROW_COUNT.asString(),
 						String.valueOf(rowCount));
 			}
 			Throwable throwable = executionInfo.getThrowable();
