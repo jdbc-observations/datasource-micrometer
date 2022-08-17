@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 import io.micrometer.tracing.test.simple.SimpleTracer;
@@ -264,13 +265,19 @@ class DataSourceObservationListenerTests {
 
 	@Test
 	void commitAndRollback() throws Exception {
+		this.registry.observationConfig().observationHandler(new ConnectionTracingObservationHandler(this.tracer));
+
 		Method commitMethod = Connection.class.getMethod("commit");
 		Method rollbackMethod = Connection.class.getMethod("rollback");
 
 		ConnectionContext connectionContext = new ConnectionContext();
+		Observation observation = Observation.start("test", connectionContext, this.registry);
+
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
-		ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
+		connectionAttributes.scope = observation.openScope();
 		connectionAttributes.connectionContext = connectionContext;
+
+		ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
 		connectionAttributesManager.put("id-1", connectionAttributes);
 
 		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
@@ -286,7 +293,7 @@ class DataSourceObservationListenerTests {
 
 		listener.afterMethod(commitExecutionContext);
 
-		assertThat(connectionContext.getCommitAt()).isNotNull();
+		assertThat(this.tracer.currentSpan()).hasEventWithNameEqualTo("commit");
 
 		// check rollback
 		MethodExecutionContext rollbackExecutionContext = new MethodExecutionContext();
@@ -296,7 +303,7 @@ class DataSourceObservationListenerTests {
 
 		listener.afterMethod(rollbackExecutionContext);
 
-		assertThat(connectionContext.getRollbackAt()).isNotNull();
+		assertThat(this.tracer.currentSpan()).hasEventWithNameEqualTo("rollback");
 	}
 
 	@Test

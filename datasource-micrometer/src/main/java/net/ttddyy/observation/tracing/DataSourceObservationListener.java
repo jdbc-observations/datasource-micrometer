@@ -21,7 +21,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -33,6 +32,7 @@ import io.micrometer.common.util.internal.logging.InternalLogger;
 import io.micrometer.common.util.internal.logging.InternalLoggerFactory;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.Observation.Context;
+import io.micrometer.observation.Observation.Event;
 import io.micrometer.observation.ObservationRegistry;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
@@ -296,7 +296,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		if (connectionAttributes == null) {
 			return;
 		}
-		connectionAttributes.connectionContext.setCommitAt(Instant.now());
+		Observation.Scope scopeToUse = connectionAttributes.scope;
+		if (scopeToUse == null) {
+			return;
+		}
+		scopeToUse.getCurrentObservation().event(new Event("commit"));
 	}
 
 	private void handleConnectionRollback(MethodExecutionContext executionContext) {
@@ -305,7 +309,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		if (connectionAttributes == null) {
 			return;
 		}
-		connectionAttributes.connectionContext.setRollbackAt(Instant.now());
+		Observation.Scope scopeToUse = connectionAttributes.scope;
+		if (scopeToUse == null) {
+			return;
+		}
+		scopeToUse.getCurrentObservation().event(new Event("rollback"));
 	}
 
 	private void handleResultSetNext(MethodExecutionContext executionContext) {
