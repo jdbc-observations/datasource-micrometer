@@ -25,6 +25,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>datasource-micrometer-parent</name>
     <description>Micrometer observation for JDBC</description>
+    <url>https://github.com/jdbc-observations/datasource-micrometer</url>
 
     <properties>
         <java.version>17</java.version>
@@ -58,6 +59,43 @@
             </plugin>
         </plugins>
     </build>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:jdbc-observations/datasource-micrometer.git
+        </connection>
+        <developerConnection>
+            scm:git:git@github.com:jdbc-observations/datasource-micrometer.git
+        </developerConnection>
+        <url>git@github.com:jdbc-observations/datasource-micrometer.git</url>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <developers>
+        <developer>
+            <id>tadaya</id>
+            <name>Tadaya Tsuyukubo</name>
+            <email>tadaya@ttddyy.net</email>
+            <url>http://www.ttddyy.net</url>
+        </developer>
+    </developers>
 
     <dependencies>
     </dependencies>
@@ -112,5 +150,36 @@
             </releases>
         </repository>
     </repositories>
+
+    <profiles>
+        <!-- This profile is activated by "publish-ossrh.yml" github action -->
+        <profile>
+            <id>github-ossrh</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- Prevent gpg from using pinentry programs -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
