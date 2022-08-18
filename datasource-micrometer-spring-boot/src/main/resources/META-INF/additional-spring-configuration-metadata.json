@@ -1,2 +1,16 @@
 {
+  "groups": [
+    {
+      "name": "jdbc",
+      "description": "Namespace for controlling CMF auto-configurations."
+    }
+  ],
+  "properties": [
+    {
+      "name": "jdbc.datasource-proxy.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable JDBC instrumentation.",
+      "defaultValue": true
+    }
+  ]
 }
