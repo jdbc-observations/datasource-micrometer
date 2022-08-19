@@ -33,6 +33,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
+ * A {@link BeanPostProcessor} to instrument {@link DataSource} beans.
+ *
  * @author Tadaya Tsuyukubo
  */
 public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor {

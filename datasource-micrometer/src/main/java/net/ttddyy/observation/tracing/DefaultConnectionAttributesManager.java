@@ -22,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import io.micrometer.common.lang.Nullable;
 
 /**
+ * Default implementation of {@link ConnectionAttributesManager}.
+ *
  * @author Tadaya Tsuyukubo
  */
 public class DefaultConnectionAttributesManager implements ConnectionAttributesManager {

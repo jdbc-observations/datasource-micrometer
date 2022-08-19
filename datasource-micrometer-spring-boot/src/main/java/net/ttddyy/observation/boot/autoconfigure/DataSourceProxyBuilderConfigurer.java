@@ -38,7 +38,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.lang.Nullable;
 
 /**
- * Configurer for {@link ProxyDataSourceBuilder} based on the application context.
+ * Configurer {@link ProxyDataSourceBuilder} based on the {@link JdbcProperties} and other
+ * optional beans.
  *
  * @author Arthur Gavlyukovskiy
  * @author Tadaya Tsuyukubo

@@ -22,6 +22,8 @@ import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 
 /**
+ * A base class of tracing observation handler for JDBC operations.
+ *
  * @author Tadaya Tsuyukubo
  */
 public abstract class DataSourceBaseObservationHandler extends DefaultTracingObservationHandler {

@@ -20,6 +20,8 @@ import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.Observation.ObservationConvention;
 
 /**
+ * A {@link ObservationConvention} for query.
+ *
  * @author Tadaya Tsuyukubo
  */
 public interface QueryObservationConvention extends ObservationConvention<QueryContext> {

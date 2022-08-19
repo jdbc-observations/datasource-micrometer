@@ -18,11 +18,13 @@ package net.ttddyy.observation.tracing;
 
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.handler.TracingObservationHandler;
 
 /**
+ * A {@link TracingObservationHandler} for result-set operations.
+ *
  * @author Tadaya Tsuyukubo
  */
-
 public class ResultSetTracingObservationHandler extends DataSourceBaseObservationHandler {
 
 	public ResultSetTracingObservationHandler(Tracer tracer) {

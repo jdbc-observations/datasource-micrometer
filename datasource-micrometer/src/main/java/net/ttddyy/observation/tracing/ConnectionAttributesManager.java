@@ -32,6 +32,8 @@ import io.micrometer.observation.Observation.Scope;
 import net.ttddyy.dsproxy.ConnectionInfo;
 
 /**
+ * Manage attributes that belong to each connection.
+ *
  * @author Tadaya Tsuyukubo
  */
 public interface ConnectionAttributesManager {

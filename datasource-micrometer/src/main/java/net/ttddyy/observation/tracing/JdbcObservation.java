@@ -20,6 +20,8 @@ import io.micrometer.common.docs.KeyName;
 import io.micrometer.observation.docs.DocumentedObservation;
 
 /**
+ * {@link DocumentedObservation} for JDBC operations.
+ *
  * @author Tadaya Tsuyukubo
  */
 public enum JdbcObservation implements DocumentedObservation {

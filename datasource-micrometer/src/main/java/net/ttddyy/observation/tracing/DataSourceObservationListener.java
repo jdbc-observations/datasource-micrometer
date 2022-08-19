@@ -258,7 +258,6 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 		String connectionId = connectionInfo.getConnectionId();
 		this.connectionAttributesManager.put(connectionId, connectionAttributes);
-
 	}
 
 	private void handleConnectionClose(MethodExecutionContext executionContext) {

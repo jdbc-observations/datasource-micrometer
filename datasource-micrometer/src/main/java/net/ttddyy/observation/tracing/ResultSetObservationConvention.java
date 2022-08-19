@@ -23,6 +23,8 @@ import io.micrometer.observation.Observation.ObservationConvention;
 import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNames;
 
 /**
+ * A {@link ObservationConvention} for result-set operations.
+ *
  * @author Tadaya Tsuyukubo
  */
 public interface ResultSetObservationConvention extends ObservationConvention<ResultSetContext> {
