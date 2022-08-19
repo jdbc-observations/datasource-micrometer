@@ -362,7 +362,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	/**
 	 * This attempts to get the ip and port from the JDBC URL. Ex. localhost and 5555 from
 	 * {@code
-	 * jdbc:mysql://localhost:5555/mydatabase}. Taken from Spring Cloud Sleuth.
+	 * jdbc:mysql://localhost:5555/mydatabase}. Taken from Datasource Micrometer.
 	 */
 	@Nullable
 	private URI getConnectionUrl(Connection connection) {

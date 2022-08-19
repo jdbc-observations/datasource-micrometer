@@ -34,11 +34,25 @@
         <mockito.version>4.6.1</mockito.version>
         <assertj.version>3.23.1</assertj.version>
         <spring-javaformat.version>0.0.34</spring-javaformat.version>
+
+        <!-- Docs -->
+        <asciidoctor.maven.plugin.version>2.2.2</asciidoctor.maven.plugin.version>
+        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+        <asciidoctorj.version>2.5.1</asciidoctorj.version>
+        <jruby-complete.version>9.2.19.0</jruby-complete.version>
+        <ant-contrib.version>1.0b3</ant-contrib.version>
+        <antelopetasks.version>3.2.10</antelopetasks.version>
+        <ant-nodeps.version>1.8.1</ant-nodeps.version>
+        <script-commons-logging.version>1.2</script-commons-logging.version>
+        <script-spring-core.version>5.3.22</script-spring-core.version>
+        <script-jackson-databind.version>2.13.3</script-jackson-databind.version>
     </properties>
 
     <modules>
         <module>datasource-micrometer</module>
         <module>datasource-micrometer-spring-boot</module>
+        <module>docs</module>
     </modules>
 
     <build>
@@ -58,6 +72,64 @@
                 <version>3.10.1</version>
             </plugin>
         </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${maven-antrun-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.asciidoctor</groupId>
+                    <artifactId>asciidoctor-maven-plugin</artifactId>
+                    <version>${asciidoctor.maven.plugin.version}</version>
+                    <configuration>
+                        <attributes>
+                            <docinfo>shared</docinfo>
+                            <allow-uri-read>true</allow-uri-read>
+                            <nofooter/>
+                            <toc>left</toc>
+                            <toc-levels>4</toc-levels>
+                            <sectlinks>true</sectlinks>
+                            <sources-root>${project.basedir}/src@</sources-root>
+                            <asciidoc-sources-root>${project.basedir}/src/main/asciidoc@</asciidoc-sources-root>
+                            <generated-resources-root>${project.basedir}/target/generated-resources@
+                            </generated-resources-root>
+                            <!-- Use this attribute the reference code from another module -->
+                            <!-- Note the @ at the end, lowering the precedence of the attribute -->
+                            <project-root>${maven.multiModuleProjectDirectory}@</project-root>
+                            <!-- It's mandatory for you to pass the docs.main property -->
+                            <github-repo>datasource-micrometer</github-repo>
+                            <github-project>https://github.com/jdbc-observations/datasource-micrometer@</github-project>
+                            <github-raw>
+                                https://raw.githubusercontent.com/jdbc-observations/datasource-micrometer/${github-tag}@
+                            </github-raw>
+                            <github-code>https://github.com/jdbc-observations/datasource-micrometer/tree/${github-tag}@
+                            </github-code>
+                            <github-issues>https://github.com/jdbc-observations/datasource-micrometer/issues/@</github-issues>
+                            <github-wiki>https://github.com/jdbc-observations/datasource-micrometer/wiki@</github-wiki>
+                            <github-master-code>https://github.com/jdbc-observations/datasource-micrometer/tree/master@
+                            </github-master-code>
+                            <index-link>${index-link}@</index-link>
+
+                            <spring-cloud-version>${project.version}@</spring-cloud-version>
+                            <project-version>${project.version}@</project-version>
+                            <github-tag>${github-tag}@</github-tag>
+                            <version-type>${version-type}@</version-type>
+                            <docs-url>https://docs.spring.io/${docs.main}/docs/${project.version}@</docs-url>
+                            <raw-docs-url>${github-raw}@</raw-docs-url>
+                            <project-version>${project.version}@</project-version>
+                        </attributes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
     <licenses>
