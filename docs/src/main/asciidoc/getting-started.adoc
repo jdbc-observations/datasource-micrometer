@@ -1,0 +1,111 @@
+[[getting-started]]
+= Getting Started
+
+include::_attributes.adoc[]
+
+If you are getting started with {project-full-name}, start by reading this section.
+It answers the basic "`what?`", "`how?`" and "`why?`" questions.
+It includes an introduction to {project-full-name}, along with installation instructions.
+
+
+[[getting-started-introducing-datasource-micrometer]]
+== Introducing Datasource Micrometer
+
+The Datasource Micrometer provides a {micrometer-tracing}[Micrometer Tracing] instrumentation for JDBC operations.
+
+Currently, this project provides core instrumentation and its Spring Boot Auto Configuration.
+The instrumentation implementation uses https://github.com/ttddyy/datasource-proxy[datasource-proxy] to provide a proxy for JDBC operations.
+
+If you are a {micrometer-tracing}[Micrometer Tracing] user but not using Spring Boot, you can directly use the `datasource-micrometer` module, which doesn't have a dependency on Spring Framework. +
+If you are a Spring Boot 3 user, then you can add the `datasource-micrometer-spring-boot` module to the classpath.
+Then, it automatically instruments the `DataSource` and provides a tracing capability on the JDBC operations.
+
+[[getting-started-intro-background]]
+=== Background
+
+The Micrometer v1.10.0 introduced a new module, {micrometer-tracing}[Micrometer Tracing], which abstracts the popular tracers and provides the vendor free APIs for observations.
+The Spring Boot 3 and its portfolio projects natively support {micrometer-tracing}[Micrometer Tracing].
+
+In Spring Boot 2.x, the {spring-cloud-sleuth}[Spring Cloud Sleuth] provided the instrumentation to the many components including JDBC operations.
+It was a central library that provides tracing instrumentation to the Spring Boot applications.
+However, with the new observability, the responsibility for instrumentation has shifted to the individual component.
+For example, Spring Framework will provide native instrumentation support for its components.
+As a result, there will be no {spring-cloud-sleuth}[Spring Cloud Sleuth] for Spring Boot 3.
+
+This Datasource Micrometer project provides instrumentation on the JDBC operations with the {micrometer-tracing}[Micrometer Tracing] to cover what was provided by the {spring-cloud-sleuth}[Spring Cloud Sleuth].
+The initial version aims users to smoothly transition from Spring Boot 2.x with Spring Cloud Sleuth to the Spring Boot 3 in JDBC instrumentation.
+In addition, since the {micrometer-tracing}[Micrometer Tracing] is independent of Spring Framework, the instrumentation is available to the non-spring applications as well.
+
+[[getting-started-intro-modules]]
+=== Modules
+
+*datasource-micrometer*
+
+This module provides the instrumentation on the JDBC operations.
+The implementation is provided as a {datasource-proxy}[datasource-proxy] listener.
+Non-spring applications can directly use this module.
+
+*datasource-micrometer-spring-boot*
+
+This module provides an auto-configuration for the Spring Boot 3 applications.
+
+[[getting-started-installation]]
+== Installation
+
+[[getting-started-installation-maven-and-gradle]]
+=== Maven and Gradle
+*datasource-micrometer*
+
+====
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+    <dependency>
+        <groupId>net.ttddyy.observation</groupId>
+        <artifactId>datasource-micrometer</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+dependencies {
+    implementation "net.ttddyy.observation:datasource-micrometer:${project.version}"
+}
+----
+====
+
+*datasource-micrometer-spring-boot*
+
+====
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+    <dependency>
+        <groupId>net.ttddyy.observation</groupId>
+        <artifactId>datasource-micrometer-spring-boot</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+dependencies {
+    implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:${project.version}"
+}
+----
+====
+
+[[getting-started-installation-setup]]
+=== Setup
+
+*datasource-micrometer*
+
+To setup the observation for JDBC operations, xref:howto.adoc#how-to-instrument-datasource[create a proxy of your DataSource], then xref:howto.adoc#how-to-add-tracingobservationhandler[register the corresponding tracing observation handlers].
+
+*datasource-micrometer-spring-boot*
+
+The auto-configuration class automatically sets up the observation on your `DataSource` bean.
+

@@ -1,0 +1,24 @@
+:doctype: book
+:idprefix:
+:idseparator: -
+:toc: left
+:toclevels: 4
+:tabsize: 4
+:numbered:
+:sectanchors:
+:sectnums:
+:icons: font
+:hide-uri-scheme:
+:docinfo: shared,private
+
+:sc-ext: java
+
+// project-specific attributes
+:project-full-name: Datasource Micrometer
+:docs-path: {project-root}/docs
+:spring-boot-path: {project-root}/datasource-micrometer-spring-boot
+:core-path: {project-root}/datasource-micrometer
+
+:datasource-proxy: https://github.com/ttddyy/datasource-proxy
+:micrometer-tracing: https://micrometer.io/docs/tracing
+:spring-cloud-sleuth: https://spring.io/projects/spring-cloud-sleuth

@@ -20,3 +20,9 @@ The produced jars have following runtime JDK versions supported:
 ## Development
 
 To build the entire project, JDK-17 is required.
+
+### Building document
+
+```shell
+./mvnw install -Pdocs -pl docs
+```

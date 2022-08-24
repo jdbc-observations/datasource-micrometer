@@ -1,0 +1,111 @@
+[[howto]]
+= "`How-to`" Guides
+
+include::_attributes.adoc[]
+
+This section provides answers to some common "`how do I do that...?`" questions.
+Its coverage is not exhaustive, but it does cover quite a lot.
+
+We are also more than happy to extend this section.
+If you want to add a "`how-to`", send us a {github-pulls}[pull request].
+
+[[how-to-datasource-micrometer]]
+== datasource-micrometer
+
+[[how-to-instrument-datasource]]
+=== How to instrument `DataSource`
+
+The `DataSourceObservationListener` provides the observation logic.
+It is implemented as a {datasource-proxy}[datasource-proxy] listener.
+Follow the {datasource-proxy}[datasource-proxy] usage to create a proxied `DataSource` with the listener.
+Then <<how-to-add-tracingobservationhandler,adds tracing observation handlers>> to the `ObservationRegistry`.
+
+[source,java,indent=0]
+----
+ObservationRegistry observationRegistry = ...
+DataSourceObservationListener listener = new DataSourceObservationListener(observationRegistry);
+DataSource instrumented = ProxyDataSourceBuilder.create(dataSource).listener(listener).methodListener(listener).build;
+----
+
+[[how-to-add-tracingobservationhandler]]
+=== How to Add Tracing Observation Handlers for JDBC operations
+
+There are 3 tracing observation handlers that react to the observations from `DataSourceObservationListener`.
+
+* `ConnectionTracingObservationHandler`
+* `QueryTracingObservationHandler`
+* `ResultSetTracingObservationHandler`
+
+[source,java,indent=0]
+----
+ObservationRegistry registry = ...
+registry.observationConfig().observationHandler(new ConnectionTracingObservationHandler(tracer));
+registry.observationConfig().observationHandler(new QueryTracingObservationHandler(tracer);
+registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(tracer));
+----
+
+[[how-to-instrument-resultset]]
+=== How to Instrument `ResultSet`
+
+By default, {datasource-proxy}[datasource-proxy] does not create a proxy for `ResultSet`.
+This, in turn, does not instrument the `ResultSet`.
+You need to explicitly enable the `ResultSet` proxy creation.
+Then, `ResultSet` get instrumented automatically.
+
+[source,java,indent=0]
+----
+ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource).listener(listener).methodListener(listener);
+builder.proxyResultSet();  // enable ResultSet proxy creation
+DataSource instrumented = builder.build();
+----
+
+[[how-to-include-bind-parameter-values]]
+=== How to Include Bind Parameter Values
+
+Bind parameter values - values from `setInt`, `setString`, etc operations on prepared and callable statement - are not tagged to spans by default.
+The `DataSourceObservationListener` class has a toggle to enable this.
+When it is enabled, values are tagged to the query spans as `jdbc.params[]`
+
+[source,java,indent=0]
+----
+DataSourceObservationListener listener = ...;
+listener.setIncludeParameterValues(true);
+----
+
+[[how-to-datasource-micrometer-spring-boot]]
+== datasource-micrometer-spring-boot
+
+[[how-to-disable-jdbc-instrumentation]]
+=== How to Disable JDBC Instrumentation
+
+Set the `jdbc.datasource-proxy.enabled` property to `false`.
+
+[[how-to-choose-what-to-observe]]
+=== How to Choose What To Observe
+
+Specify `jdbc.includes` property.
+By default, the property is set to include(observe) all(`CONNECTION`, `QUERY`, `FETCH`) types.
+
+[[how-to-include-bind-parameter-values-in-boot]]
+=== How to Include the Bind Parameter Values in Spans
+
+Set the `jdbc.datasource-proxy.include-parameter-values` property to `true`.
+
+[[how-to-enable-and-configure-query-logging]]
+=== How to Enable and Configure Query Logging
+
+To enable the query logging, set the `jdbc.datasource-proxy.query.enable-logging` property to `true`.
+
+[source,properties,indent=0]
+----
+	jdbc.datasource-proxy.query.enable-logging=true,
+
+	# logging configuration
+	jdbc.datasource-proxy.logging=slf4j,
+	jdbc.datasource-proxy.query.log-level=DEBUG,
+	jdbc.datasource-proxy.query.logger-name=my.query-logger,
+	jdbc.datasource-proxy.multiline=false,
+
+	# spring boot log level property
+	logging.level.my.query-logger=DEBUG,
+----
