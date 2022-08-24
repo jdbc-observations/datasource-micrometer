@@ -1,10 +1,12 @@
 :numbered!:
 
 [[appendix]]
-[[common-application-properties]]
-== Common Spring Boot application properties
+= Appendix
 
 include::_attributes.adoc[]
+
+[[appendix-common-application-properties]]
+== Common Spring Boot application properties
 
 Various properties can be specified inside your `application.properties` file, inside your `application.yml` file, or as command line switches.
 This appendix provides a list of common {project-full-name} properties and references to the underlying classes that consume them.
@@ -13,3 +15,9 @@ NOTE: Property contributions can come from additional jar files on your classpat
 Also, you can define your own properties.
 
 include::../../../target/_configprops.adoc[]
+
+[[appendix-observability-metrics-and-spans]]
+== Observability Metrics and Spans
+
+include::../../../target/_metrics.adoc[]
+include::../../../target/_spans.adoc[]

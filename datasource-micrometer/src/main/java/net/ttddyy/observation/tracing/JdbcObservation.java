@@ -51,6 +51,9 @@ public enum JdbcObservation implements DocumentedObservation {
 		}
 	},
 
+	/**
+	 * Span created when executing a query.
+	 */
 	QUERY {
 		@Override
 		public String getName() {

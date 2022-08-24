@@ -34,6 +34,11 @@
 
         <configprops.path>${project.basedir}/target/_configprops.adoc</configprops.path>
         <configprops.inclusionPattern>jdbc.*</configprops.inclusionPattern>
+
+        <micrometer-docs-generator.version>1.0.0-M5</micrometer-docs-generator.version>
+        <micrometer-docs-generator.inputPath>${maven.multiModuleProjectDirectory}/datasource-micrometer/</micrometer-docs-generator.inputPath>
+        <micrometer-docs-generator.inclusionPattern>.*</micrometer-docs-generator.inclusionPattern>
+        <micrometer-docs-generator.outputPath>${project.build.directory}</micrometer-docs-generator.outputPath>
     </properties>
 
     <dependencies>
@@ -84,6 +89,7 @@
                             </execution>
                         </executions>
                     </plugin>
+
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
@@ -104,7 +110,58 @@
                                     </arguments>
                                 </configuration>
                             </execution>
+
+                            <execution>
+                                <id>generate-metrics-metadata</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>
+                                        io.micrometer.docs.metrics.DocsFromSources
+                                    </mainClass>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>generate-tracing-metadata</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>io.micrometer.docs.spans.DocsFromSources
+                                    </mainClass>
+                                </configuration>
+                            </execution>
+
                         </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>io.micrometer</groupId>
+                                <artifactId>micrometer-docs-generator-spans</artifactId>
+                                <version>${micrometer-docs-generator.version}</version>
+                                <type>jar</type>
+                            </dependency>
+                            <dependency>
+                                <groupId>io.micrometer</groupId>
+                                <artifactId>micrometer-docs-generator-metrics</artifactId>
+                                <version>${micrometer-docs-generator.version}</version>
+                                <type>jar</type>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <includePluginDependencies>true</includePluginDependencies>
+                            <arguments>
+                                <argument>${micrometer-docs-generator.inputPath}
+                                </argument>
+                                <argument>${micrometer-docs-generator.inclusionPattern}
+                                </argument>
+                                <argument>${micrometer-docs-generator.outputPath}
+                                </argument>
+                            </arguments>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.asciidoctor</groupId>
@@ -201,6 +258,28 @@
                     </plugin>
                 </plugins>
             </build>
+
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>spring-snapshots</id>
+                    <name>Spring Snapshots</name>
+                    <url>https://repo.spring.io/snapshot</url> <!-- For Snapshots -->
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>spring-milestones</id>
+                    <name>Spring Milestones</name>
+                    <url>https://repo.spring.io/milestone</url>  <!-- For Milestones -->
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
         </profile>
     </profiles>
 
