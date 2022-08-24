@@ -129,6 +129,7 @@
                             <github-code>https://github.com/jdbc-observations/datasource-micrometer/tree/${git.branch}@
                             </github-code>
                             <github-issues>https://github.com/jdbc-observations/datasource-micrometer/issues/@</github-issues>
+                            <github-pulls>https://github.com/jdbc-observations/datasource-micrometer/pulls/@</github-pulls>
                             <github-wiki>https://github.com/jdbc-observations/datasource-micrometer/wiki@</github-wiki>
                             <github-master-code>https://github.com/jdbc-observations/datasource-micrometer/tree/main@
                             </github-master-code>

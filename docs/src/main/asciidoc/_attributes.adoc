@@ -18,3 +18,7 @@
 :docs-path: {project-root}/docs
 :spring-boot-path: {project-root}/datasource-micrometer-spring-boot
 :core-path: {project-root}/datasource-micrometer
+
+:datasource-proxy: https://github.com/ttddyy/datasource-proxy
+:micrometer-tracing: https://micrometer.io/docs/tracing
+:spring-cloud-sleuth: https://spring.io/projects/spring-cloud-sleuth
