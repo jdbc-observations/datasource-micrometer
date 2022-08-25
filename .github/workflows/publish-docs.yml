@@ -35,8 +35,10 @@ jobs:
         run: ./mvnw javadoc:aggregate
 
         #
-        # construct a directory to be copied to "gh-pages" branch
-        #    target/deploy-documents/               -- map to "docs" dir in "gh-pages"
+        # Construct a directory to be deployed to the "github-pages" deployment environment.
+        # see https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#creating-a-custom-github-actions-workflow-to-publish-your-site
+        #
+        #    target/deploy-documents/docs/
         #                 `-- <PROJECT_VERSION>   -- e.g. "0.9.0.BUILD-SNAPSHOT"
         #                       `-- docs/html/
         #                       `-- api/
@@ -52,29 +54,29 @@ jobs:
 
       - name: Prepare "project-version" documents
         run: |
-          mkdir -p target/deploy-documents/${{ env.project_version }}/docs/html
-          mkdir -p target/deploy-documents/${{ env.project_version }}/api
-          cp -Rf docs/target/generated-docs/reference/html/* target/deploy-documents/${{ env.project_version }}/docs/html/
-          cp -Rf target/site/apidocs/* target/deploy-documents/${{ env.project_version }}/api/
-          cp CHANGELOG target/deploy-documents/${{ env.project_version }}/CHANGELOG.txt
+          mkdir -p target/deploy-documents/docs/${{ env.project_version }}/docs/html
+          mkdir -p target/deploy-documents/docs/${{ env.project_version }}/api
+          cp -Rf docs/target/generated-docs/reference/html/* target/deploy-documents/docs/${{ env.project_version }}/docs/html/
+          cp -Rf target/site/apidocs/* target/deploy-documents/docs/${{ env.project_version }}/api/
+          cp CHANGELOG target/deploy-documents/docs/${{ env.project_version }}/CHANGELOG.txt
 
       - name: Prepare "current-snapshot" documents
         if: "github.ref == 'refs/heads/main' && contains(env.project_version, 'snapshot')"
         run: |
-          mkdir -p target/deploy-documents/current-snapshot/docs/html
-          mkdir -p target/deploy-documents/current-snapshot/api
-          cp -Rf docs/target/generated-docs/reference/html/* target/deploy-documents/current-snapshot/docs/html/
-          cp -Rf target/site/apidocs/* target/deploy-documents/current-snapshot/api/
-          cp CHANGELOG target/deploy-documents/current-snapshot/CHANGELOG.txt
+          mkdir -p target/deploy-documents/docs/current-snapshot/docs/html
+          mkdir -p target/deploy-documents/docs/current-snapshot/api
+          cp -Rf docs/target/generated-docs/reference/html/* target/deploy-documents/docs/current-snapshot/docs/html/
+          cp -Rf target/site/apidocs/* target/deploy-documents/docs/current-snapshot/api/
+          cp CHANGELOG target/deploy-documents/docs/current-snapshot/CHANGELOG.txt
 
       - name: Prepare "current" documents
         if: "contains(env.project_version, 'release')"
         run: |
-          mkdir -p target/deploy-documents/current/docs/html
-          mkdir -p target/deploy-documents/current/api
-          cp -Rf docs/target/generated-docs/reference/html/* target/deploy-documents/current/docs/html/
-          cp -Rf target/site/apidocs/* target/deploy-documents/current/api/
-          cp CHANGELOG target/deploy-documents/current/CHANGELOG.txt
+          mkdir -p target/deploy-documents/docs/current/docs/html
+          mkdir -p target/deploy-documents/docs/current/api
+          cp -Rf docs/target/generated-docs/reference/html/* target/deploy-documents/docs/current/docs/html/
+          cp -Rf target/site/apidocs/* target/deploy-documents/docs/current/api/
+          cp CHANGELOG target/deploy-documents/docs/current/CHANGELOG.txt
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
