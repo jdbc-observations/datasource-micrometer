@@ -80,9 +80,8 @@ public class Main {
 						descriptions.put(name, new ConfigValue(name, description, defaultValue));
 					});
 				}
-				System.out.println(
-						"Found [" + count + "] configuration metadata jsons. [" + matchingPropertyCount
-								+ "/" + propertyCount + "] were matching the pattern [" + inclusionPattern + "]");
+				System.out.println("Found [" + count + "] configuration metadata jsons. [" + matchingPropertyCount + "/"
+						+ propertyCount + "] were matching the pattern [" + inclusionPattern + "]");
 				System.out.println("Successfully built the description table");
 				if (names.isEmpty()) {
 					System.out.println("Will not update the table, since no configuration properties were found!");
@@ -129,7 +128,8 @@ public class Main {
 		}
 
 		public String toString() {
-			return "|" + name + " | " + (StringUtils.hasText(defaultValue) ? ("`" + defaultValue + "`") : "") + " | " + description;
+			return "|" + name + " | " + (StringUtils.hasText(defaultValue) ? ("`" + defaultValue + "`") : "") + " | "
+					+ description;
 		}
 
 	}

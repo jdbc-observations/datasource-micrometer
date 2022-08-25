@@ -17,6 +17,7 @@
 package net.ttddyy.observation.tracing;
 
 import io.micrometer.common.docs.KeyName;
+import io.micrometer.observation.Observation.Event;
 import io.micrometer.observation.docs.DocumentedObservation;
 
 /**
@@ -49,6 +50,12 @@ public enum JdbcObservation implements DocumentedObservation {
 		public String getPrefix() {
 			return "jdbc";
 		}
+
+		@Override
+		public Event[] getEvents() {
+			return JdbcEvents.values();
+		}
+
 	},
 
 	/**
@@ -154,6 +161,30 @@ public enum JdbcObservation implements DocumentedObservation {
 			@Override
 			public String asString() {
 				return "jdbc.datasource.pool";
+			}
+		},
+
+	}
+
+	enum JdbcEvents implements Event {
+
+		/**
+		 * When a connection is committed.
+		 */
+		CONNECTION_COMMIT {
+			@Override
+			public String getName() {
+				return "commit";
+			}
+		},
+
+		/**
+		 * When a connection is rolled back.
+		 */
+		CONNECTION_ROLLBACK {
+			@Override
+			public String getName() {
+				return "rollback";
 			}
 		},
 

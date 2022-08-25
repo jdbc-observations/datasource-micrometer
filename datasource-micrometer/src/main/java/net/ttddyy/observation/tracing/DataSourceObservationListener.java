@@ -32,7 +32,6 @@ import io.micrometer.common.util.internal.logging.InternalLogger;
 import io.micrometer.common.util.internal.logging.InternalLoggerFactory;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.Observation.Context;
-import io.micrometer.observation.Observation.Event;
 import io.micrometer.observation.ObservationRegistry;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
@@ -42,6 +41,7 @@ import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ResultSetAttributes;
+import net.ttddyy.observation.tracing.JdbcObservation.JdbcEvents;
 import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNames;
 
 /**
@@ -299,7 +299,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		if (scopeToUse == null) {
 			return;
 		}
-		scopeToUse.getCurrentObservation().event(new Event("commit"));
+		scopeToUse.getCurrentObservation().event(JdbcEvents.CONNECTION_COMMIT);
 	}
 
 	private void handleConnectionRollback(MethodExecutionContext executionContext) {
@@ -312,7 +312,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		if (scopeToUse == null) {
 			return;
 		}
-		scopeToUse.getCurrentObservation().event(new Event("rollback"));
+		scopeToUse.getCurrentObservation().event(JdbcEvents.CONNECTION_ROLLBACK);
 	}
 
 	private void handleResultSetNext(MethodExecutionContext executionContext) {

@@ -69,6 +69,24 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- Micrometer Tracing BOM
+             |
+             |   NOTE: While using snapshot of micrometer-tracing artifacts, Spring Boot
+             |         snapshot has reference to the older versions of artifacts.
+             |         To avoid bringing in old versions, override the tracing version
+             |         here. So far, it overwrote to correct version.
+             |         Once both BOM use same artifact versions, this dependency can be
+             |         removed.
+             -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing-bom</artifactId>
+                <version>${micrometer-tracing-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- Spring Boot BOM -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
