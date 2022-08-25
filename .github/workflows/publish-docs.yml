@@ -24,8 +24,12 @@ jobs:
             VERSION=$( ./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout )
             echo "project_version=$VERSION" >> $GITHUB_ENV
 
+      # Build modules which are referenced in asciidoc creation
+      - name: Build modules
+        run: ./mvnw install -DskipTests
+
       - name: Process asciidoc
-        run: ./mvnw install -Pdocs -pl docs javadoc:javadoc
+        run: ./mvnw install -Pdocs -pl docs
 
       - name: Process javadoc
         run: ./mvnw javadoc:aggregate
@@ -77,8 +81,11 @@ jobs:
         with:
           path: target/deploy-documents
 
-  # Deployment job
+  # Deployment job  (see https://github.com/actions/deploy-pages)
   deploy:
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
