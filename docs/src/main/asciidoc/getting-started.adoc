@@ -109,3 +109,10 @@ To setup the observation for JDBC operations, xref:howto.adoc#how-to-instrument-
 
 The auto-configuration class automatically sets up the observation on your `DataSource` bean.
 
+[[getting-started-migration-from-spring-cloud-sleuth]]
+== Migration from Spring Cloud Sleuth
+
+Datasource Micrometer deliberatively provides similar property names to ease the migration from {spring-cloud-sleuth}[Spring Cloud Sleuth].
+Most of the JDBC related properties from `spring.sleuth.jdbc` and `spring.sleuth.jdbc.datasource-proxy` map to the `jdbc` and `jdbc.datasource-proxy` properties.
+
+Please reference the list of application properties in https://docs.spring.io/spring-cloud-sleuth/docs/current/reference/html/appendix.html#common-application-properties[Spring Cloud Sleuth] and xref:appendix.adoc#appendix-common-application-properties[Datasource Micrometer].
