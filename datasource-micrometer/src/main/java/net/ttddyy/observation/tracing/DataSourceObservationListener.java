@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -73,8 +74,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	 */
 	private boolean includeParameterValues;
 
+	private List<ObservationCustomizer> observationCustomizers = new ArrayList<>();
+
 	public DataSourceObservationListener(ObservationRegistry observationRegistry) {
 		this(() -> observationRegistry);
+		this.observationCustomizers.add(new HikariObservationCustomizer());
 	}
 
 	// This constructor takes a supplier to lazily resolve the observation registry.
@@ -111,10 +115,15 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		executionInfo.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
 	}
 
+	@SuppressWarnings("unchecked")
 	private Observation createAndStartObservation(JdbcObservation observationType, DataSourceBaseContext context,
 			Observation.ObservationConvention<? extends Context> observationConvention) {
 		Observation observation = observationType.observation(this.observationRegistrySupplier.get(), context)
 				.observationConvention(observationConvention).start();
+
+		DataSource dataSource = ((DataSourceBaseContext) observation.getContext()).getDataSource();
+		this.observationCustomizers.stream().filter(customizer -> customizer.support(dataSource))
+				.forEach(customizer -> customizer.customize(dataSource, observation));
 		return observation;
 	}
 
@@ -448,6 +457,14 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	public void setIncludeParameterValues(boolean includeParameterValues) {
 		this.includeParameterValues = includeParameterValues;
+	}
+
+	public List<ObservationCustomizer> getObservationCustomizers() {
+		return this.observationCustomizers;
+	}
+
+	public void setObservationCustomizers(List<ObservationCustomizer> observationCustomizers) {
+		this.observationCustomizers = observationCustomizers;
 	}
 
 }

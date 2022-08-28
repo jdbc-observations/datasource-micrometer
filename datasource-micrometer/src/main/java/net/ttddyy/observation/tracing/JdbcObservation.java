@@ -43,7 +43,7 @@ public enum JdbcObservation implements DocumentedObservation {
 
 		@Override
 		public KeyName[] getLowCardinalityKeyNames() {
-			return new KeyName[] { ConnectionKeyNames.DATASOURCE_DRIVER };
+			return ConnectionKeyNames.values();
 		}
 
 		@Override
@@ -145,7 +145,7 @@ public enum JdbcObservation implements DocumentedObservation {
 	enum ConnectionKeyNames implements KeyName {
 
 		/**
-		 * Name of the JDBC datasource driver.
+		 * Name of the JDBC datasource driver. (For HikariCP)
 		 */
 		DATASOURCE_DRIVER {
 			@Override
@@ -155,7 +155,7 @@ public enum JdbcObservation implements DocumentedObservation {
 		},
 
 		/**
-		 * Name of the JDBC datasource pool.
+		 * Name of the JDBC datasource pool. (For HikariCP)
 		 */
 		DATASOURCE_POOL {
 			@Override

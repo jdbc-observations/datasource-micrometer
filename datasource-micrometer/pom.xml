@@ -31,6 +31,9 @@
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
+
+        <!--  Hikari 4.x.x is for Java8  -->
+        <hikari.version>4.0.3</hikari.version>
     </properties>
 
     <dependencies>
@@ -42,6 +45,12 @@
             <groupId>net.ttddyy</groupId>
             <artifactId>datasource-proxy</artifactId>
             <version>1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${hikari.version}</version>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
