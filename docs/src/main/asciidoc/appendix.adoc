@@ -1,5 +1,3 @@
-:numbered!:
-
 [[appendix]]
 = Appendix
 

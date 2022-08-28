@@ -13,12 +13,13 @@ It includes an introduction to {project-full-name}, along with installation inst
 
 The Datasource Micrometer provides a {micrometer-tracing}[Micrometer Tracing] instrumentation for JDBC operations.
 
-Currently, this project provides core instrumentation and its Spring Boot Auto Configuration.
-The instrumentation implementation uses https://github.com/ttddyy/datasource-proxy[datasource-proxy] to provide a proxy for JDBC operations.
+Currently, this project provides two modules - core instrumentation and its Spring Boot Auto Configuration.
 
 If you are a {micrometer-tracing}[Micrometer Tracing] user but not using Spring Boot, you can directly use the `datasource-micrometer` module, which doesn't have a dependency on Spring Framework. +
 If you are a Spring Boot 3 user, then you can add the `datasource-micrometer-spring-boot` module to the classpath.
 Then, it automatically instruments the `DataSource` and provides a tracing capability on the JDBC operations.
+
+The instrumentation implementation uses https://github.com/ttddyy/datasource-proxy[datasource-proxy] to provide a proxy for JDBC operations.
 
 [[getting-started-intro-background]]
 === Background
@@ -63,7 +64,7 @@ This module provides an auto-configuration for the Spring Boot 3 applications.
     <dependency>
         <groupId>net.ttddyy.observation</groupId>
         <artifactId>datasource-micrometer</artifactId>
-        <version>${project.version}</version>
+        <version>{project-version}</version>
     </dependency>
 ----
 
@@ -71,7 +72,7 @@ This module provides an auto-configuration for the Spring Boot 3 applications.
 .Gradle
 ----
 dependencies {
-    implementation "net.ttddyy.observation:datasource-micrometer:${project.version}"
+    implementation "net.ttddyy.observation:datasource-micrometer:{project-version}"
 }
 ----
 ====
@@ -85,7 +86,7 @@ dependencies {
     <dependency>
         <groupId>net.ttddyy.observation</groupId>
         <artifactId>datasource-micrometer-spring-boot</artifactId>
-        <version>${project.version}</version>
+        <version>{project-version}</version>
     </dependency>
 ----
 
@@ -93,7 +94,7 @@ dependencies {
 .Gradle
 ----
 dependencies {
-    implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:${project.version}"
+    implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:{project-version}"
 }
 ----
 ====
@@ -104,6 +105,24 @@ dependencies {
 *datasource-micrometer*
 
 To setup the observation for JDBC operations, xref:howto.adoc#how-to-instrument-datasource[create a proxy of your DataSource], then xref:howto.adoc#how-to-add-tracingobservationhandler[register the corresponding tracing observation handlers].
+
+[source,java,indent=0]
+----
+// Register the tracing observation handlers
+ObservationRegistry observationRegistry = ObservationRegistry.create();
+ObservationConfig observationConfig = observationRegistry.observationConfig();
+observationConfig.observationHandler(new ConnectionTracingObservationHandler(tracer));
+observationConfig.observationHandler(new QueryTracingObservationHandler(tracer);
+observationConfig.observationHandler(new ResultSetTracingObservationHandler(tracer));
+//  add other necessary handlers
+
+// Create a DataSource proxy with the observation listener
+DataSource dataSource = ...
+DataSourceObservationListener listener = new DataSourceObservationListener(observationRegistry);
+DataSource instrumented = ProxyDataSourceBuilder.create(dataSource).listener(listener).methodListener(listener).build;
+
+// Use the instrumented DataSource
+----
 
 *datasource-micrometer-spring-boot*
 

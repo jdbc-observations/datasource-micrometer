@@ -1,14 +1,10 @@
-[[spring-cloud-datasource-micrometer-reference-documentation]]
+[[datasource-micrometer-reference-documentation]]
 = Datasource Micrometer Reference Documentation
 Tadaya Tsuyukubo
-
-:docinfo: shared
 include::_attributes.adoc[]
 
-The reference documentation consists of the following sections:
 
-[horizontal]
-<<legal.adoc#legal,Legal>> :: Legal information.
-<<getting-started.adoc#getting-started,Getting Started>> :: Introducing {project-full-name}.
-<<howto.adoc#howto,"`How-to`" Guides>> :: How to configure {project-full-name}.
-<<appendix.adoc#appendix,Appendices>> :: Span definitions and configuration properties.
+include::legal.adoc[leveloffset=1]
+include::getting-started.adoc[leveloffset=1]
+include::howto.adoc[leveloffset=1]
+include::appendix.adoc[leveloffset=1]
