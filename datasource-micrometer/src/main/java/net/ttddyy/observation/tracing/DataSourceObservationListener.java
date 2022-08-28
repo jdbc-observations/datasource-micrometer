@@ -113,8 +113,9 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	private Observation createAndStartObservation(JdbcObservation observationType, DataSourceBaseContext context,
 			Observation.ObservationConvention<? extends Context> observationConvention) {
-		return observationType.observation(this.observationRegistrySupplier.get(), context)
+		Observation observation = observationType.observation(this.observationRegistrySupplier.get(), context)
 				.observationConvention(observationConvention).start();
+		return observation;
 	}
 
 	private void tagQueries(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList, Observation observation) {
@@ -218,17 +219,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	}
 
 	private void handleGetConnectionAfter(MethodExecutionContext executionContext) {
-		String dataSourceName = executionContext.getConnectionInfo().getDataSourceName();
 		Connection connection = (Connection) executionContext.getResult();
 		URI connectionUrl = getConnectionUrl(connection);
-
-		ConnectionContext connectionContext = executionContext.getCustomValue(ConnectionContext.class.getName(),
-				ConnectionContext.class);
-		connectionContext.setDataSourceName(dataSourceName);
-		if (connectionUrl != null) {
-			connectionContext.setHost(connectionUrl.getHost());
-			connectionContext.setPort(connectionUrl.getPort());
-		}
 
 		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(),
 				Observation.Scope.class);
@@ -250,7 +242,6 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
 		connectionAttributes.connectionInfo = connectionInfo;
 		connectionAttributes.scope = scopeToUse;
-		connectionAttributes.connectionContext = connectionContext;
 		if (connectionUrl != null) {
 			connectionAttributes.host = connectionUrl.getHost();
 			connectionAttributes.port = connectionUrl.getPort();
@@ -258,6 +249,10 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 		String connectionId = connectionInfo.getConnectionId();
 		this.connectionAttributesManager.put(connectionId, connectionAttributes);
+
+		ConnectionContext connectionContext = executionContext.getCustomValue(ConnectionContext.class.getName(),
+				ConnectionContext.class);
+		populateSharedInfo(connectionContext, connectionId);
 	}
 
 	private void handleConnectionClose(MethodExecutionContext executionContext) {
