@@ -21,6 +21,7 @@ import javax.sql.DataSource;
 import com.zaxxer.hikari.HikariDataSource;
 import io.micrometer.common.util.StringUtils;
 import io.micrometer.observation.Observation;
+import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.observation.tracing.JdbcObservation.ConnectionKeyNames;
 
 /**
@@ -35,6 +36,10 @@ public class HikariObservationCustomizer implements ObservationCustomizer {
 
 	@Override
 	public void customize(DataSource dataSource, Observation observation) {
+		// apply only to the connection observation
+		if (!(observation.getContext() instanceof ConnectionContext)) {
+			return;
+		}
 		HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
 		String driverClassName = hikariDataSource.getDriverClassName();
 		if (StringUtils.isNotBlank(driverClassName)) {
@@ -48,6 +53,9 @@ public class HikariObservationCustomizer implements ObservationCustomizer {
 
 	@Override
 	public boolean support(DataSource dataSource) {
+		if (dataSource instanceof ProxyDataSource) {
+			dataSource = ((ProxyDataSource) dataSource).getDataSource();
+		}
 		return dataSource instanceof HikariDataSource;
 	}
 
