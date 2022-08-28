@@ -138,6 +138,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			context.setHost(connectionAttributes.host);
 			context.setPort(connectionAttributes.port);
 			context.setDataSourceName(connectionAttributes.connectionInfo.getDataSourceName());
+			context.setDataSource(connectionAttributes.dataSource);
 		}
 	}
 
@@ -219,6 +220,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	}
 
 	private void handleGetConnectionAfter(MethodExecutionContext executionContext) {
+		DataSource dataSource = (DataSource) executionContext.getTarget();
 		Connection connection = (Connection) executionContext.getResult();
 		URI connectionUrl = getConnectionUrl(connection);
 
@@ -242,6 +244,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
 		connectionAttributes.connectionInfo = connectionInfo;
 		connectionAttributes.scope = scopeToUse;
+		connectionAttributes.dataSource = dataSource;
 		if (connectionUrl != null) {
 			connectionAttributes.host = connectionUrl.getHost();
 			connectionAttributes.port = connectionUrl.getPort();

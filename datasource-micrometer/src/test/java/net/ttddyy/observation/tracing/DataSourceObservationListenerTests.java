@@ -275,7 +275,6 @@ class DataSourceObservationListenerTests {
 
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
 		connectionAttributes.scope = observation.openScope();
-		connectionAttributes.connectionContext = connectionContext;
 
 		ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
 		connectionAttributesManager.put("id-1", connectionAttributes);

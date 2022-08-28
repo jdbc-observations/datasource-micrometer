@@ -27,6 +27,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import javax.sql.DataSource;
+
 import io.micrometer.common.lang.Nullable;
 import io.micrometer.observation.Observation.Scope;
 import net.ttddyy.dsproxy.ConnectionInfo;
@@ -49,7 +51,7 @@ public interface ConnectionAttributesManager {
 
 	class ConnectionAttributes {
 
-		ConnectionContext connectionContext;
+		DataSource dataSource;
 
 		ConnectionInfo connectionInfo;
 

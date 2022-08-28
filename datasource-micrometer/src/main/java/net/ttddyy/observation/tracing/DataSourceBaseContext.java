@@ -16,6 +16,8 @@
 
 package net.ttddyy.observation.tracing;
 
+import javax.sql.DataSource;
+
 import io.micrometer.common.lang.Nullable;
 import io.micrometer.observation.Observation;
 
@@ -26,11 +28,21 @@ import io.micrometer.observation.Observation;
  */
 public class DataSourceBaseContext extends Observation.Context {
 
+	private DataSource dataSource;
+
 	private String dataSourceName;
 
 	private String host;
 
 	private int port;
+
+	public DataSource getDataSource() {
+		return this.dataSource;
+	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 
 	@Nullable
 	public String getDataSourceName() {
