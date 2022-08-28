@@ -1,4 +1,4 @@
-# Datasource Micrometer
+# Datasource Micrometer [![Maven Central](https://maven-badges.herokuapp.com/maven-central/jdbc-observations/datasource-micrometer/badge.svg)](https://maven-badges.herokuapp.com/maven-central/jdbc-observations/datasource-micrometer)
 
 The Datasource Micrometer provides a [Micrometer Tracing][micrometer-tracing] instrumentation for JDBC operations.
 
