@@ -123,6 +123,9 @@ public enum JdbcObservation implements DocumentedObservation {
 			}
 		},
 
+		/**
+		 * JDBC query parameter values.
+		 */
 		QUERY_PARAMETERS {
 			@Override
 			public String asString() {
