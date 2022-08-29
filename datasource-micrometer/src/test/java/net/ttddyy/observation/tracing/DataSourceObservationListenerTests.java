@@ -33,6 +33,7 @@ import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 import io.micrometer.tracing.test.simple.SimpleTracer;
+import io.micrometer.tracing.test.simple.TracerAssert;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
@@ -196,7 +197,7 @@ class DataSourceObservationListenerTests {
 	}
 
 	@Test
-	void queryRowCount() throws Exception {
+	void queryRowCountOnExecuteUpdate() throws Exception {
 		this.registry.observationConfig().observationHandler(new DefaultTracingObservationHandler(this.tracer));
 		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 
@@ -303,6 +304,48 @@ class DataSourceObservationListenerTests {
 		listener.afterMethod(rollbackExecutionContext);
 
 		assertThat(this.tracer.currentSpan()).hasEventWithNameEqualTo("rollback");
+	}
+
+	@Test
+	void resultSetRowCount() throws Exception {
+		// Verify result set observation populates jdbc.row-count tag
+
+		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
+
+		ResultSet resultSet = mock(ResultSet.class);
+		Statement statement = mock(Statement.class);
+		given(resultSet.getStatement()).willReturn(statement);
+
+		ConnectionInfo connectionInfo = new ConnectionInfo();
+		connectionInfo.setConnectionId("id-1");
+		connectionInfo.setDataSourceName("myDS");
+
+		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
+		ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
+		connectionAttributes.connectionInfo = connectionInfo;
+		connectionAttributesManager.put("id-1", connectionAttributes);
+		listener.setConnectionAttributesManager(connectionAttributesManager);
+
+		MethodExecutionContext nextExecutionContext = new MethodExecutionContext();
+		nextExecutionContext.setConnectionInfo(connectionInfo);
+		nextExecutionContext.setMethod(ResultSet.class.getMethod("next"));
+		nextExecutionContext.setTarget(resultSet);
+		nextExecutionContext.setResult(Boolean.TRUE);
+
+		// simulate the result has two records
+		listener.afterMethod(nextExecutionContext);
+		listener.afterMethod(nextExecutionContext);
+
+		MethodExecutionContext closeExecutionContext = new MethodExecutionContext();
+		closeExecutionContext.setConnectionInfo(connectionInfo);
+		closeExecutionContext.setMethod(ResultSet.class.getMethod("close"));
+		closeExecutionContext.setTarget(resultSet);
+
+		// ResultSet#close should stop the observation which writes the tag to the span.
+		listener.afterMethod(closeExecutionContext);
+
+		TracerAssert.assertThat(this.tracer).onlySpan().hasTag("jdbc.row-count", "2");
 	}
 
 	@Test

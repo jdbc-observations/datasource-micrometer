@@ -20,7 +20,7 @@ import io.micrometer.common.KeyValue;
 import io.micrometer.common.KeyValues;
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.Observation.ObservationConvention;
-import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNames;
+import net.ttddyy.observation.tracing.JdbcObservation.ResultSetHighCardinalityKeyNames;
 
 /**
  * A {@link ObservationConvention} for result-set operations.
@@ -36,8 +36,8 @@ public interface ResultSetObservationConvention extends ObservationConvention<Re
 
 	@Override
 	default KeyValues getHighCardinalityKeyValues(ResultSetContext context) {
-		return KeyValues
-				.of(KeyValue.of(QueryHighCardinalityKeyNames.ROW_COUNT.asString(), String.valueOf(context.getCount())));
+		return KeyValues.of(
+				KeyValue.of(ResultSetHighCardinalityKeyNames.ROW_COUNT.asString(), String.valueOf(context.getCount())));
 	}
 
 	@Override

@@ -102,7 +102,7 @@ public enum JdbcObservation implements DocumentedObservation {
 
 		@Override
 		public KeyName[] getHighCardinalityKeyNames() {
-			return new KeyName[] { QueryHighCardinalityKeyNames.ROW_COUNT };
+			return ResultSetHighCardinalityKeyNames.values();
 		}
 
 		@Override
@@ -129,6 +129,20 @@ public enum JdbcObservation implements DocumentedObservation {
 				return "jdbc.params[%s]";
 			}
 		},
+
+		/**
+		 * Number of SQL rows by "Statement#executeUpdate()".
+		 */
+		ROW_COUNT {
+			@Override
+			public String asString() {
+				return "jdbc.row-count";
+			}
+		}
+
+	}
+
+	enum ResultSetHighCardinalityKeyNames implements KeyName {
 
 		/**
 		 * Number of SQL rows.
