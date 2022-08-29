@@ -16,6 +16,8 @@
 
 package net.ttddyy.observation.tracing;
 
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -40,7 +42,16 @@ public class HikariObservationCustomizer implements ObservationCustomizer {
 		if (!(observation.getContext() instanceof ConnectionContext)) {
 			return;
 		}
-		HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
+
+		HikariDataSource hikariDataSource;
+		try {
+			hikariDataSource = dataSource.unwrap(HikariDataSource.class);
+		}
+		catch (SQLException ex) {
+			// ignore
+			return;
+		}
+
 		String driverClassName = hikariDataSource.getDriverClassName();
 		if (StringUtils.isNotBlank(driverClassName)) {
 			observation.lowCardinalityKeyValue(ConnectionKeyNames.DATASOURCE_DRIVER.withValue(driverClassName));
@@ -53,10 +64,12 @@ public class HikariObservationCustomizer implements ObservationCustomizer {
 
 	@Override
 	public boolean support(DataSource dataSource) {
-		if (dataSource instanceof ProxyDataSource) {
-			dataSource = ((ProxyDataSource) dataSource).getDataSource();
+		try {
+			return dataSource.isWrapperFor(HikariDataSource.class);
 		}
-		return dataSource instanceof HikariDataSource;
+		catch (SQLException ex) {
+			return false;
+		}
 	}
 
 }
