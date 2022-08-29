@@ -193,6 +193,11 @@ public enum JdbcObservation implements DocumentedObservation {
 			public String getName() {
 				return "commit";
 			}
+
+			@Override
+			public String getContextualName() {
+				return "commit";
+			}
 		},
 
 		/**
@@ -201,6 +206,11 @@ public enum JdbcObservation implements DocumentedObservation {
 		CONNECTION_ROLLBACK {
 			@Override
 			public String getName() {
+				return "rollback";
+			}
+
+			@Override
+			public String getContextualName() {
 				return "rollback";
 			}
 		},
