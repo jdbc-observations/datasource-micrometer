@@ -80,3 +80,9 @@ To build the entire project, JDK-17 is required.
 ```shell
 ./mvnw javadoc:aggregate
 ```
+
+### Apply Source Code Format
+
+```shell
+./mvnw spring-javaformat:apply
+```
