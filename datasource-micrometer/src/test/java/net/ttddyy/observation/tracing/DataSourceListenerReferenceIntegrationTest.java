@@ -67,7 +67,7 @@ class DataSourceListenerReferenceIntegrationTest extends DataSourceListenerInteg
 								.hasTag("jdbc.params[0]", "(20)");
 					}))
 					.hasASpanWithName("result-set", (spanAssert) -> {
-						spanAssert.hasTag("ROW_COUNT", "1");
+						spanAssert.hasTag("jdbc.row-count", "1");
 					});
 			// @formatter:on
 		};

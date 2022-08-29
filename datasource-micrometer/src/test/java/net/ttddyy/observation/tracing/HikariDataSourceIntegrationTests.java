@@ -74,7 +74,7 @@ class HikariDataSourceIntegrationTests extends DataSourceListenerIntegrationTest
 					}))
 					.hasNumberOfSpansWithNameEqualTo("query", 2)
 					.hasASpanWithName("result-set", (spanAssert) -> {
-						spanAssert.hasTag("ROW_COUNT", "2");
+						spanAssert.hasTag("jdbc.row-count", "2");
 					});
 			// @formatter:on
 		};
