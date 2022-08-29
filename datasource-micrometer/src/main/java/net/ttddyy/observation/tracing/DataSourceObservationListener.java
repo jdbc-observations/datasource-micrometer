@@ -78,7 +78,6 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	public DataSourceObservationListener(ObservationRegistry observationRegistry) {
 		this(() -> observationRegistry);
-		this.observationCustomizers.add(new HikariObservationCustomizer());
 	}
 
 	// This constructor takes a supplier to lazily resolve the observation registry.
@@ -103,7 +102,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	private void startQueryObservation(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList) {
 		QueryContext queryContext = new QueryContext();
-		populateSharedInfo(queryContext, executionInfo.getConnectionId());
+		populateFromConnectionAttibutes(queryContext, executionInfo.getConnectionId());
 
 		Observation observation = createAndStartObservation(JdbcObservation.QUERY, queryContext,
 				this.queryObservationConvention);
@@ -115,16 +114,10 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		executionInfo.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
 	}
 
-	@SuppressWarnings("unchecked")
 	private Observation createAndStartObservation(JdbcObservation observationType, DataSourceBaseContext context,
 			Observation.ObservationConvention<? extends Context> observationConvention) {
-		Observation observation = observationType.observation(this.observationRegistrySupplier.get(), context)
+		return observationType.observation(this.observationRegistrySupplier.get(), context)
 				.observationConvention(observationConvention).start();
-
-		DataSource dataSource = ((DataSourceBaseContext) observation.getContext()).getDataSource();
-		this.observationCustomizers.stream().filter(customizer -> customizer.support(dataSource))
-				.forEach(customizer -> customizer.customize(dataSource, observation));
-		return observation;
 	}
 
 	private void tagQueries(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList, Observation observation) {
@@ -141,7 +134,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		}
 	}
 
-	private void populateSharedInfo(DataSourceBaseContext context, String connectionId) {
+	private void populateFromConnectionAttibutes(DataSourceBaseContext context, String connectionId) {
 		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
 		if (connectionAttributes != null) {
 			context.setHost(connectionAttributes.host);
@@ -169,11 +162,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 				observation.highCardinalityKeyValue(QueryHighCardinalityKeyNames.ROW_COUNT.asString(),
 						String.valueOf(rowCount));
 			}
-			Throwable throwable = executionInfo.getThrowable();
-			if (throwable != null) {
-				observation.error(throwable);
-			}
-			observation.stop();
+			stopObservation(observation, executionInfo.getThrowable());
 		}
 	}
 
@@ -235,19 +224,6 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(),
 				Observation.Scope.class);
-
-		Throwable throwable = executionContext.getThrown();
-		if (throwable != null && scopeToUse != null) {
-			try (Observation.Scope scope = scopeToUse) {
-				Observation observation = scope.getCurrentObservation();
-				observation.error(throwable);
-				observation.stop();
-				// for normal case, observation is stopped when connection is closed.
-				// see "handleConnectionClose()".
-				return;
-			}
-		}
-
 		ConnectionInfo connectionInfo = executionContext.getConnectionInfo();
 
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
@@ -264,7 +240,18 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 		ConnectionContext connectionContext = executionContext.getCustomValue(ConnectionContext.class.getName(),
 				ConnectionContext.class);
-		populateSharedInfo(connectionContext, connectionId);
+		populateFromConnectionAttibutes(connectionContext, connectionId);
+
+		Throwable throwable = executionContext.getThrown();
+		if (throwable != null && scopeToUse != null) {
+			// Handle closing the observation due to an error from getConnection().
+			// For normal case, observation is stopped when connection is closed.
+			// see "handleConnectionClose()".
+			try (Observation.Scope scope = scopeToUse) {
+				this.connectionAttributesManager.remove(connectionId);
+				stopObservation(scope.getCurrentObservation(), throwable);
+			}
+		}
 	}
 
 	private void handleConnectionClose(MethodExecutionContext executionContext) {
@@ -286,14 +273,19 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			return;
 		}
 		try (Observation.Scope scope = scopeToUse) {
-			Observation observation = scope.getCurrentObservation();
-			Throwable throwable = executionContext.getThrown();
-			if (throwable != null) {
-				observation.error(throwable);
-			}
-			observation.stop();
+			stopObservation(scope.getCurrentObservation(), executionContext.getThrown());
 		}
+	}
 
+	private void stopObservation(Observation observation, @Nullable Throwable throwable) {
+		if (throwable != null) {
+			observation.error(throwable);
+		}
+		// Customize the observation before close.
+		DataSource dataSource = ((DataSourceBaseContext) observation.getContext()).getDataSource();
+		this.observationCustomizers.stream().filter(customizer -> customizer.support(dataSource))
+				.forEach(customizer -> customizer.customize(dataSource, observation));
+		observation.stop();
 	}
 
 	private void handleConnectionCommit(MethodExecutionContext executionContext) {
@@ -337,7 +329,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			if (resultSetAttributes == null) {
 				// new ResultSet observation
 				ResultSetContext resultSetContext = new ResultSetContext();
-				populateSharedInfo(resultSetContext, executionContext.getConnectionInfo().getConnectionId());
+				populateFromConnectionAttibutes(resultSetContext,
+						executionContext.getConnectionInfo().getConnectionId());
 				Observation observation = createAndStartObservation(JdbcObservation.RESULT_SET, resultSetContext,
 						this.resultSetObservationConvention);
 
@@ -427,11 +420,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			return;
 		}
 		try (Observation.Scope scope = scopeToUse) {
-			Observation observation = scope.getCurrentObservation();
-			if (throwable != null) {
-				observation.error(throwable);
-			}
-			observation.stop();
+			stopObservation(scope.getCurrentObservation(), throwable);
 		}
 	}
 
