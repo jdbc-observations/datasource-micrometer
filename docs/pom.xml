@@ -35,7 +35,7 @@
         <configprops.path>${project.basedir}/target/_configprops.adoc</configprops.path>
         <configprops.inclusionPattern>jdbc.*</configprops.inclusionPattern>
 
-        <micrometer-docs-generator.version>1.0.0-M5</micrometer-docs-generator.version>
+        <micrometer-docs-generator.version>1.0.0-SNAPSHOT</micrometer-docs-generator.version>
         <micrometer-docs-generator.inputPath>${maven.multiModuleProjectDirectory}/datasource-micrometer/</micrometer-docs-generator.inputPath>
         <micrometer-docs-generator.inclusionPattern>.*</micrometer-docs-generator.inclusionPattern>
         <micrometer-docs-generator.outputPath>${project.build.directory}</micrometer-docs-generator.outputPath>
