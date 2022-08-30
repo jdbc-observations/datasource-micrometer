@@ -49,6 +49,7 @@ class DataSourceListenerReferenceIntegrationTest extends DataSourceListenerInteg
 	@Override
 	protected void customizeProxyDataSourceBuilder(ProxyDataSourceBuilder builder) {
 		builder.proxyResultSet(); // enable ResultSet observation
+		builder.name("proxy"); // translates to the service name
 	}
 
 	@Override
@@ -59,6 +60,7 @@ class DataSourceListenerReferenceIntegrationTest extends DataSourceListenerInteg
 
 			// @formatter:off
 			SpansAssert.assertThat(bb.getFinishedSpans())
+					.hasASpanWithRemoteServiceName("proxy")
 					.hasNumberOfSpansEqualTo(3)
 					.hasASpanWithName("connection")
 					.hasASpanWithName("query", (spanAssert -> {
