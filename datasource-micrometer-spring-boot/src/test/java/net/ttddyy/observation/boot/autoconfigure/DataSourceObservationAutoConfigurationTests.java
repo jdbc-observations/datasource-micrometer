@@ -20,9 +20,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.sql.DataSource;
+
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
+import net.ttddyy.dsproxy.listener.ChainListener;
+import net.ttddyy.dsproxy.listener.CompositeMethodListener;
+import net.ttddyy.dsproxy.listener.MethodExecutionListener;
+import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceBaseObservationHandler;
@@ -85,6 +93,39 @@ class DataSourceObservationAutoConfigurationTests {
 								.isInstanceOf(CustomResultSetObservationConvention.class);
 					});
 				});
+	}
+
+	@Test
+	void customDataSourceProxyListeners() {
+		QueryExecutionListener queryListenerA = mock(QueryExecutionListener.class);
+		QueryExecutionListener queryListenerB = mock(QueryExecutionListener.class);
+		MethodExecutionListener methodListenerA = mock(MethodExecutionListener.class);
+		MethodExecutionListener methodListenerB = mock(MethodExecutionListener.class);
+		DataSource dataSource = mock(DataSource.class);
+
+		// @formatter:off
+		new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+				.withBean(ObservationRegistry.class, ObservationRegistry::create)
+				.withBean(Tracer.class, () -> mock(Tracer.class))
+				.withBean(DataSource.class, () -> dataSource)
+				.withBean("queryListenerA", QueryExecutionListener.class, () -> queryListenerA)
+				.withBean("queryListenerB", QueryExecutionListener.class, () -> queryListenerB)
+				.withBean("methodListenerB", MethodExecutionListener.class, () -> methodListenerA)
+				.withBean("methodListenerA", MethodExecutionListener.class, () -> methodListenerB)
+				.run((context) -> {
+					assertThat(context).hasNotFailed();
+					DataSource ds = context.getBean(DataSource.class);
+					assertThat(ds).isInstanceOfSatisfying(ProxyDataSource.class, proxy -> {
+						ProxyConfig proxyConfig = proxy.getProxyConfig();
+						ChainListener queryListeners = proxyConfig.getQueryListener();
+						assertThat(queryListeners.getListeners()).contains(queryListenerA, queryListenerB);
+
+						CompositeMethodListener methodListeners = proxyConfig.getMethodListener();
+						assertThat(methodListeners.getListeners()).contains(methodListenerA, methodListenerB);
+					});
+				});
+		// @formatter:on
 	}
 
 	@Test
