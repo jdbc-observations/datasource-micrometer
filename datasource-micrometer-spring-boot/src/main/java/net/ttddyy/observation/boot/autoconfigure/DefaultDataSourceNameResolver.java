@@ -34,8 +34,7 @@ public class DefaultDataSourceNameResolver implements DataSourceNameResolver {
 
 	@Override
 	public String resolve(String beanName, DataSource dataSource) {
-		if (isHikariPresent && dataSource instanceof HikariDataSource) {
-			HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
+		if (isHikariPresent && dataSource instanceof HikariDataSource hikariDataSource) {
 			if (hikariDataSource.getPoolName() != null && !hikariDataSource.getPoolName().startsWith("HikariPool-")) {
 				return hikariDataSource.getPoolName();
 			}
