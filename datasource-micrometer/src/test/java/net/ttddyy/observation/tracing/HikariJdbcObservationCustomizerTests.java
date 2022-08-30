@@ -31,15 +31,15 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 /**
- * Tests for {@link HikariObservationCustomizer}.
+ * Tests for {@link HikariJdbcObservationCustomizer}.
  *
  * @author Tadaya Tsuyukubo
  */
-class HikariObservationCustomizerTests {
+class HikariJdbcObservationCustomizerTests {
 
 	@Test
 	void support() throws Exception {
-		HikariObservationCustomizer customizer = new HikariObservationCustomizer();
+		HikariJdbcObservationCustomizer customizer = new HikariJdbcObservationCustomizer();
 		DataSource dataSource = mock(DataSource.class);
 		assertThat(customizer.support(dataSource)).isFalse();
 
@@ -49,7 +49,7 @@ class HikariObservationCustomizerTests {
 
 	@Test
 	void customize() throws Exception {
-		HikariObservationCustomizer customizer = new HikariObservationCustomizer();
+		HikariJdbcObservationCustomizer customizer = new HikariJdbcObservationCustomizer();
 		HikariDataSource hikariDataSource = mock(HikariDataSource.class);
 		given(hikariDataSource.getDriverClassName()).willReturn("my-driver");
 		given(hikariDataSource.getPoolName()).willReturn("my-pool");
@@ -76,7 +76,7 @@ class HikariObservationCustomizerTests {
 		QueryContext queryContext = new QueryContext();
 		DataSource dataSource = mock(DataSource.class);
 		Observation observation = Observation.createNotStarted("test", queryContext, registry);
-		HikariObservationCustomizer customizer = new HikariObservationCustomizer();
+		HikariJdbcObservationCustomizer customizer = new HikariJdbcObservationCustomizer();
 		customizer.customize(dataSource, observation);
 
 		ObservationContextAssert.assertThat(queryContext)

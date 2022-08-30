@@ -51,7 +51,7 @@ class HikariDataSourceIntegrationTests extends DataSourceListenerIntegrationTest
 
 	@Override
 	protected void customizeListener(DataSourceObservationListener listener) {
-		listener.getObservationCustomizers().add(new HikariObservationCustomizer());
+		listener.getJdbcObservationCustomizers().add(new HikariJdbcObservationCustomizer());
 	}
 
 	@AfterEach

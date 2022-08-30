@@ -23,18 +23,17 @@ import javax.sql.DataSource;
 import com.zaxxer.hikari.HikariDataSource;
 import io.micrometer.common.util.StringUtils;
 import io.micrometer.observation.Observation;
-import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.observation.tracing.JdbcObservation.ConnectionKeyNames;
 
 /**
- * A {@link ObservationCustomizer} for HikariCP.
+ * A {@link JdbcObservationCustomizer} for HikariCP.
  * <p>
  * Analogous to the {@code TraceHikariListenerStrategySpanCustomizer} in Spring Cloud
  * Sleuth.
  *
  * @author Tadaya Tsuyukubo
  */
-public class HikariObservationCustomizer implements ObservationCustomizer {
+public class HikariJdbcObservationCustomizer implements JdbcObservationCustomizer {
 
 	@Override
 	public void customize(DataSource dataSource, Observation observation) {

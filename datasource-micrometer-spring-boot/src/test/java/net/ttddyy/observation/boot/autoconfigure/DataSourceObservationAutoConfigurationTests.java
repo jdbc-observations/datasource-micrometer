@@ -38,8 +38,8 @@ import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceBaseObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
-import net.ttddyy.observation.tracing.HikariObservationCustomizer;
-import net.ttddyy.observation.tracing.ObservationCustomizer;
+import net.ttddyy.observation.tracing.HikariJdbcObservationCustomizer;
+import net.ttddyy.observation.tracing.JdbcObservationCustomizer;
 import net.ttddyy.observation.tracing.QueryObservationConvention;
 import net.ttddyy.observation.tracing.QueryTracingObservationHandler;
 import net.ttddyy.observation.tracing.ResultSetObservationConvention;
@@ -188,23 +188,23 @@ class DataSourceObservationAutoConfigurationTests {
 		// hikari is available in classpath
 		runner.run((context) -> {
 			assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
-				assertThat(listener.getObservationCustomizers()).hasSize(1).first()
-						.isInstanceOf(HikariObservationCustomizer.class);
+				assertThat(listener.getJdbcObservationCustomizers()).hasSize(1).first()
+						.isInstanceOf(HikariJdbcObservationCustomizer.class);
 			});
 		});
 
 		// hikari is not in classpath
 		runner.withClassLoader(new FilteredClassLoader("com.zaxxer.hikari.HikariDataSource")).run((context) -> {
 			assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
-				assertThat(listener.getObservationCustomizers()).isEmpty();
+				assertThat(listener.getJdbcObservationCustomizers()).isEmpty();
 			});
 		});
 
 		// with another customizer
-		ObservationCustomizer customizer = mock(ObservationCustomizer.class);
-		runner.withBean("myCustomizer", ObservationCustomizer.class, () -> customizer).run((context) -> {
+		JdbcObservationCustomizer customizer = mock(JdbcObservationCustomizer.class);
+		runner.withBean("myCustomizer", JdbcObservationCustomizer.class, () -> customizer).run((context) -> {
 			assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
-				assertThat(listener.getObservationCustomizers()).hasSize(2).contains(customizer);
+				assertThat(listener.getJdbcObservationCustomizers()).hasSize(2).contains(customizer);
 			});
 		});
 	}
@@ -212,21 +212,21 @@ class DataSourceObservationAutoConfigurationTests {
 	@Test
 	void observationCustomizers() {
 		// multiple customizer beans
-		ObservationCustomizer customizerA = mock(ObservationCustomizer.class);
-		ObservationCustomizer customizerB = mock(ObservationCustomizer.class);
-		ObservationCustomizer customizerC = mock(ObservationCustomizer.class);
+		JdbcObservationCustomizer customizerA = mock(JdbcObservationCustomizer.class);
+		JdbcObservationCustomizer customizerB = mock(JdbcObservationCustomizer.class);
+		JdbcObservationCustomizer customizerC = mock(JdbcObservationCustomizer.class);
 
 		new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
 				.withBean(ObservationRegistry.class, ObservationRegistry::create)
 				.withBean(Tracer.class, () -> mock(Tracer.class)).withBean(CustomConnectionObservationConvention.class)
-				.withBean("customizerA", ObservationCustomizer.class, () -> customizerA)
-				.withBean("customizerB", ObservationCustomizer.class, () -> customizerB)
-				.withBean("customizerC", ObservationCustomizer.class, () -> customizerC)
+				.withBean("customizerA", JdbcObservationCustomizer.class, () -> customizerA)
+				.withBean("customizerB", JdbcObservationCustomizer.class, () -> customizerB)
+				.withBean("customizerC", JdbcObservationCustomizer.class, () -> customizerC)
 				.withClassLoader(new FilteredClassLoader("com.zaxxer.hikari.HikariDataSource")).run((context) -> {
 					assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
-						assertThat(listener.getObservationCustomizers()).hasSize(3).contains(customizerA, customizerB,
-								customizerC);
+						assertThat(listener.getJdbcObservationCustomizers()).hasSize(3).contains(customizerA,
+								customizerB, customizerC);
 					});
 				});
 	}

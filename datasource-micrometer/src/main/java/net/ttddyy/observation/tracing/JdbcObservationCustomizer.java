@@ -27,7 +27,7 @@ import io.micrometer.observation.Observation;
  *
  * @author Tadaya Tsuyukubo
  */
-public interface ObservationCustomizer {
+public interface JdbcObservationCustomizer {
 
 	/**
 	 * Customizes the client database span.

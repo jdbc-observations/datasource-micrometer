@@ -74,7 +74,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	 */
 	private boolean includeParameterValues;
 
-	private List<ObservationCustomizer> observationCustomizers = new ArrayList<>();
+	private List<JdbcObservationCustomizer> jdbcObservationCustomizers = new ArrayList<>();
 
 	public DataSourceObservationListener(ObservationRegistry observationRegistry) {
 		this(() -> observationRegistry);
@@ -283,7 +283,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		}
 		// Customize the observation before close.
 		DataSource dataSource = ((DataSourceBaseContext) observation.getContext()).getDataSource();
-		this.observationCustomizers.stream().filter(customizer -> customizer.support(dataSource))
+		this.jdbcObservationCustomizers.stream().filter(customizer -> customizer.support(dataSource))
 				.forEach(customizer -> customizer.customize(dataSource, observation));
 		observation.stop();
 	}
@@ -448,12 +448,12 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		this.includeParameterValues = includeParameterValues;
 	}
 
-	public List<ObservationCustomizer> getObservationCustomizers() {
-		return this.observationCustomizers;
+	public List<JdbcObservationCustomizer> getJdbcObservationCustomizers() {
+		return this.jdbcObservationCustomizers;
 	}
 
-	public void setObservationCustomizers(List<ObservationCustomizer> observationCustomizers) {
-		this.observationCustomizers = observationCustomizers;
+	public void setJdbcObservationCustomizers(List<JdbcObservationCustomizer> jdbcObservationCustomizers) {
+		this.jdbcObservationCustomizers = jdbcObservationCustomizers;
 	}
 
 }
