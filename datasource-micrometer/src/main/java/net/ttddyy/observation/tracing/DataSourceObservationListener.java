@@ -102,7 +102,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	private void startQueryObservation(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList) {
 		QueryContext queryContext = new QueryContext();
-		populateFromConnectionAttibutes(queryContext, executionInfo.getConnectionId());
+		populateFromConnectionAttributes(queryContext, executionInfo.getConnectionId());
 
 		Observation observation = createAndStartObservation(JdbcObservation.QUERY, queryContext,
 				this.queryObservationConvention);
@@ -134,7 +134,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		}
 	}
 
-	private void populateFromConnectionAttibutes(DataSourceBaseContext context, String connectionId) {
+	private void populateFromConnectionAttributes(DataSourceBaseContext context, String connectionId) {
 		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
 		if (connectionAttributes != null) {
 			context.setHost(connectionAttributes.host);
@@ -240,7 +240,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 		ConnectionContext connectionContext = executionContext.getCustomValue(ConnectionContext.class.getName(),
 				ConnectionContext.class);
-		populateFromConnectionAttibutes(connectionContext, connectionId);
+		populateFromConnectionAttributes(connectionContext, connectionId);
 
 		Throwable throwable = executionContext.getThrown();
 		if (throwable != null && scopeToUse != null) {
@@ -329,7 +329,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			if (resultSetAttributes == null) {
 				// new ResultSet observation
 				ResultSetContext resultSetContext = new ResultSetContext();
-				populateFromConnectionAttibutes(resultSetContext,
+				populateFromConnectionAttributes(resultSetContext,
 						executionContext.getConnectionInfo().getConnectionId());
 				Observation observation = createAndStartObservation(JdbcObservation.RESULT_SET, resultSetContext,
 						this.resultSetObservationConvention);
@@ -362,7 +362,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	/**
 	 * This attempts to get the ip and port from the JDBC URL. Ex. localhost and 5555 from
 	 * {@code
-	 * jdbc:mysql://localhost:5555/mydatabase}. Taken from Datasource Micrometer.
+	 * jdbc:mysql://localhost:5555/mydatabase}. Taken from Spring Cloud Sleuth.
 	 */
 	@Nullable
 	private URI getConnectionUrl(Connection connection) {
