@@ -120,10 +120,11 @@ public class DataSourceObservationAutoConfiguration {
 			ObjectProvider<ParameterTransformer> parameterTransformer,
 			ObjectProvider<QueryTransformer> queryTransformer,
 			ObjectProvider<ResultSetProxyLogicFactory> resultSetProxyLogicFactory,
-			ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProvider) {
+			ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProvider,
+			ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers) {
 		return new DataSourceObservationBeanPostProcessor(jdbcProperties, dataSourceNameResolvers, listeners,
 				methodExecutionListeners, parameterTransformer, queryTransformer, resultSetProxyLogicFactory,
-				dataSourceProxyConnectionIdManagerProvider);
+				dataSourceProxyConnectionIdManagerProvider, proxyDataSourceBuilderCustomizers);
 	}
 
 	@Configuration(proxyBeanMethods = false)

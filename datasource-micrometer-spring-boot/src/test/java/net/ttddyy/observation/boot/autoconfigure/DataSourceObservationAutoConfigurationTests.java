@@ -16,6 +16,8 @@
 
 package net.ttddyy.observation.boot.autoconfigure;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -31,6 +33,7 @@ import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
+import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceBaseObservationHandler;
@@ -46,6 +49,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.core.Ordered;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -129,6 +133,49 @@ class DataSourceObservationAutoConfigurationTests {
 	}
 
 	@Test
+	void proxyDataSourceBuilderCustomizers() {
+		List<String> callOrder = new ArrayList<>();
+		OrderedCustomizer customizerA = new OrderedCustomizer(200) {
+			@Override
+			public void customize(ProxyDataSourceBuilder builder, DataSource dataSource, String beanName,
+					String dataSourceName) {
+				callOrder.add("customizerA");
+			}
+		};
+		OrderedCustomizer customizerB = new OrderedCustomizer(300) {
+			@Override
+			public void customize(ProxyDataSourceBuilder builder, DataSource dataSource, String beanName,
+					String dataSourceName) {
+				callOrder.add("customizerB");
+			}
+		};
+		OrderedCustomizer customizerC = new OrderedCustomizer(100) {
+			@Override
+			public void customize(ProxyDataSourceBuilder builder, DataSource dataSource, String beanName,
+					String dataSourceName) {
+				callOrder.add("customizerC");
+			}
+		};
+
+		// @formatter:off
+		new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+				.withBean(ObservationRegistry.class, ObservationRegistry::create)
+				.withBean(Tracer.class, () -> mock(Tracer.class))
+				.withBean(DataSource.class, () -> mock(DataSource.class))
+				.withBean("customizerA", ProxyDataSourceBuilderCustomizer.class, () -> customizerA)
+				.withBean("customizerB", ProxyDataSourceBuilderCustomizer.class, () -> customizerB)
+				.withBean("customizerC", ProxyDataSourceBuilderCustomizer.class, () -> customizerC)
+				.run((context) -> {
+					assertThat(context).hasNotFailed();
+					DataSource ds = context.getBean(DataSource.class);
+					assertThat(ds).isInstanceOf(ProxyDataSource.class);
+					assertThat(callOrder).containsExactly("customizerC", "customizerA", "customizerB");
+				});
+		// @formatter:on
+	}
+
+	@Test
 	void observationHandler() {
 		new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
@@ -188,6 +235,21 @@ class DataSourceObservationAutoConfigurationTests {
 	}
 
 	static class CustomResultSetObservationConvention implements ResultSetObservationConvention {
+
+	}
+
+	static abstract class OrderedCustomizer implements ProxyDataSourceBuilderCustomizer, Ordered {
+
+		int order;
+
+		public OrderedCustomizer(int order) {
+			this.order = order;
+		}
+
+		@Override
+		public int getOrder() {
+			return this.order;
+		}
 
 	}
 

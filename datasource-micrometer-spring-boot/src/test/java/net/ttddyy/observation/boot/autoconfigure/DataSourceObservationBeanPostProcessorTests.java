@@ -18,6 +18,7 @@ package net.ttddyy.observation.boot.autoconfigure;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
@@ -33,8 +34,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests for {@link DataSourceObservationBeanPostProcessor}.
@@ -59,6 +62,8 @@ class DataSourceObservationBeanPostProcessorTests {
 
 	private ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProviderProvider;
 
+	private ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers;
+
 	private DataSourceObservationBeanPostProcessor processor;
 
 	@BeforeEach
@@ -72,11 +77,13 @@ class DataSourceObservationBeanPostProcessorTests {
 		this.queryTransformerProvider = mock(ObjectProvider.class);
 		this.resultSetProxyLogicFactoryProvider = mock(ObjectProvider.class);
 		this.dataSourceProxyConnectionIdManagerProviderProvider = mock(ObjectProvider.class);
+		this.proxyDataSourceBuilderCustomizers = mock(ObjectProvider.class);
 
 		this.processor = new DataSourceObservationBeanPostProcessor(this.jdbcPropertiesProvider,
 				this.dataSourceNameResolverProvider, this.listenersProvider, this.methodExecutionListenersProvider,
 				this.parameterTransformerProvider, this.queryTransformerProvider,
-				this.resultSetProxyLogicFactoryProvider, this.dataSourceProxyConnectionIdManagerProviderProvider);
+				this.resultSetProxyLogicFactoryProvider, this.dataSourceProxyConnectionIdManagerProviderProvider,
+				this.proxyDataSourceBuilderCustomizers);
 	}
 
 	@Test
@@ -107,6 +114,33 @@ class DataSourceObservationBeanPostProcessorTests {
 		Object result = this.processor.postProcessAfterInitialization(dataSource, "foo");
 
 		assertThat(result).isInstanceOf(DataSource.class).isNotInstanceOf(ProxyDataSource.class);
+	}
+
+	@Test
+	void proxyDataSourceBuilderCustomizers() {
+		JdbcProperties jdbcProperties = new JdbcProperties();
+		given(this.jdbcPropertiesProvider.getObject()).willReturn(jdbcProperties);
+
+		DataSourceNameResolver dataSourceNameResolver = mock(DataSourceNameResolver.class);
+		given(dataSourceNameResolver.resolve(any(String.class), any(DataSource.class))).willReturn("not-customized-ds");
+		given(this.dataSourceNameResolverProvider.getObject()).willReturn(dataSourceNameResolver);
+
+		ProxyDataSourceBuilderCustomizer customizer = (builder, dataSource, beanName, dataSourceName) -> {
+			assertThat(beanName).isEqualTo("foo");
+			assertThat(dataSourceName).isEqualTo("not-customized-ds");
+			builder.name("customized-ds");
+		};
+
+		given(this.proxyDataSourceBuilderCustomizers.orderedStream()).willReturn(Stream.of(customizer));
+
+		DataSource dataSource = mock(DataSource.class);
+		Object result = this.processor.postProcessAfterInitialization(dataSource, "foo");
+
+		assertThat(result).isInstanceOfSatisfying(ProxyDataSource.class, (proxy) -> {
+			assertThat(proxy.getProxyConfig().getDataSourceName()).isEqualTo("customized-ds");
+		});
+
+		verify(dataSourceNameResolver).resolve(any(), any());
 	}
 
 }

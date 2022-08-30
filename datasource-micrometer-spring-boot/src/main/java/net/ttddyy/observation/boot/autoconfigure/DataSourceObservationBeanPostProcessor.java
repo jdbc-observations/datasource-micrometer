@@ -57,6 +57,8 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 
 	private DataSourceProxyBuilderConfigurer dataSourceProxyBuilderConfigurer;
 
+	private ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers;
+
 	public DataSourceObservationBeanPostProcessor(ObjectProvider<JdbcProperties> jdbcPropertiesProvider,
 			ObjectProvider<DataSourceNameResolver> dataSourceNameResolverProvider,
 			ObjectProvider<List<QueryExecutionListener>> listenersProvider,
@@ -64,7 +66,8 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 			ObjectProvider<ParameterTransformer> parameterTransformerProvider,
 			ObjectProvider<QueryTransformer> queryTransformerProvider,
 			ObjectProvider<ResultSetProxyLogicFactory> resultSetProxyLogicFactoryProvider,
-			ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProviderProvider) {
+			ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProviderProvider,
+			ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers) {
 		this.jdbcPropertiesProvider = jdbcPropertiesProvider;
 		this.dataSourceNameResolverProvider = dataSourceNameResolverProvider;
 		this.listenersProvider = listenersProvider;
@@ -73,6 +76,7 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 		this.queryTransformerProvider = queryTransformerProvider;
 		this.resultSetProxyLogicFactoryProvider = resultSetProxyLogicFactoryProvider;
 		this.dataSourceProxyConnectionIdManagerProviderProvider = dataSourceProxyConnectionIdManagerProviderProvider;
+		this.proxyDataSourceBuilderCustomizers = proxyDataSourceBuilderCustomizers;
 	}
 
 	@Override
@@ -80,8 +84,11 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 		if (bean instanceof DataSource dataSource && !ScopedProxyUtils.isScopedTarget(beanName)
 				&& !isExcludedBean(beanName)) {
 			String dataSourceName = this.dataSourceNameResolverProvider.getObject().resolve(beanName, dataSource);
-			ProxyDataSourceBuilder builder = getConfigurer().configure(ProxyDataSourceBuilder.create());
-			return builder.name(dataSourceName).dataSource(dataSource).build();
+			ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSourceName, dataSource);
+			getConfigurer().configure(builder);
+			this.proxyDataSourceBuilderCustomizers.orderedStream()
+					.forEach(customizer -> customizer.customize(builder, dataSource, beanName, dataSourceName));
+			return builder.build();
 		}
 		else {
 			return bean;
