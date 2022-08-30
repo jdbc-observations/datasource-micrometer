@@ -45,6 +45,7 @@ class HikariDataSourceIntegrationTests extends DataSourceListenerIntegrationTest
 		// Override datasource with HikariDataSource
 		this.hikariDataSource = new HikariDataSource();
 		this.hikariDataSource.setDataSource(dataSource);
+		this.hikariDataSource.setDriverClassName(org.h2.Driver.class.getName());
 		builder.dataSource(this.hikariDataSource);
 	}
 
@@ -69,6 +70,7 @@ class HikariDataSourceIntegrationTests extends DataSourceListenerIntegrationTest
 			SpansAssert.assertThat(bb.getFinishedSpans())
 					.hasNumberOfSpansEqualTo(4)
 					.hasASpanWithName("connection", (spanAssert -> {
+						spanAssert.hasTag(ConnectionKeyNames.DATASOURCE_DRIVER, "org.h2.Driver");
 						spanAssert.hasTagWithKey(ConnectionKeyNames.DATASOURCE_POOL);
 						spanAssert.hasEventWithNameEqualTo("rollback");
 					}))
