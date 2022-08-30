@@ -109,3 +109,21 @@ To enable the query logging, set the `jdbc.datasource-proxy.query.enable-logging
 	# spring boot log level property
 	logging.level.my.query-logger=DEBUG,
 ----
+
+[[how-to-customize-the-proxydatasource-creation]]
+=== How to Customize the ProxyDataSource Creation
+
+The `ProxyDataSourceBuilderCustomizer` beans are automatically called before creating a proxy datasource.
+This callback API allows you to customize the `ProxyDataSourceBuilder`.
+
+For example, `ProxyDataSourceBuilderCustomizer` can be used to specify the datasource proxy name, which in turn is used as the remote service name of the spans.
+
+[source,java,indent=0]
+----
+	@Bean
+	public ProxyDataSourceBuilderCustomizer myCustomizer(){
+		return (builder, dataSource, beanName, dataSourceName) -> {
+			builder.name("MyAppDataSource");
+		};
+	}
+----
