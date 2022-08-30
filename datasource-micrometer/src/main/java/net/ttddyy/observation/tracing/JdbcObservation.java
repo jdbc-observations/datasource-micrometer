@@ -186,7 +186,7 @@ public enum JdbcObservation implements DocumentedObservation {
 	enum JdbcEvents implements Event {
 
 		/**
-		 * When a connection is committed.
+		 * When the connection is committed.
 		 */
 		CONNECTION_COMMIT {
 			@Override
@@ -201,7 +201,7 @@ public enum JdbcObservation implements DocumentedObservation {
 		},
 
 		/**
-		 * When a connection is rolled back.
+		 * When the connection is rolled back.
 		 */
 		CONNECTION_ROLLBACK {
 			@Override
