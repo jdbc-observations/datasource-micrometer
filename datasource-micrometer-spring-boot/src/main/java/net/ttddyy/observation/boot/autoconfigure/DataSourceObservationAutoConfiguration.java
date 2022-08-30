@@ -39,6 +39,8 @@ import net.ttddyy.observation.boot.autoconfigure.JdbcProperties.TraceType;
 import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
+import net.ttddyy.observation.tracing.HikariObservationCustomizer;
+import net.ttddyy.observation.tracing.ObservationCustomizer;
 import net.ttddyy.observation.tracing.QueryObservationConvention;
 import net.ttddyy.observation.tracing.QueryTracingObservationHandler;
 import net.ttddyy.observation.tracing.ResultSetObservationConvention;
@@ -88,7 +90,8 @@ public class DataSourceObservationAutoConfiguration {
 			JdbcProperties jdbcProperties,
 			ObjectProvider<ConnectionObservationConvention> connectionObservationConventions,
 			ObjectProvider<QueryObservationConvention> queryObservationConventions,
-			ObjectProvider<ResultSetObservationConvention> resultSetObservationConventions) {
+			ObjectProvider<ResultSetObservationConvention> resultSetObservationConventions,
+			ObjectProvider<ObservationCustomizer> observationCustomizers) {
 		// to avoid circular reference due to MeterBinder creation at MeterRegistry,
 		// use supplier to lazily reference observation registry.
 		DataSourceObservationListener listener = new DataSourceObservationListener(registry::getObject);
@@ -96,6 +99,7 @@ public class DataSourceObservationAutoConfiguration {
 		connectionObservationConventions.ifAvailable(listener::setConnectionObservationConvention);
 		queryObservationConventions.ifAvailable(listener::setQueryObservationConvention);
 		resultSetObservationConventions.ifAvailable(listener::setResultSetObservationConvention);
+		observationCustomizers.orderedStream().forEach(listener.getObservationCustomizers()::add);
 		return listener;
 	}
 
@@ -109,6 +113,12 @@ public class DataSourceObservationAutoConfiguration {
 	@ConditionalOnMissingBean
 	public DataSourceNameResolver dataSourceNameResolver() {
 		return new DefaultDataSourceNameResolver();
+	}
+
+	@Bean
+	@ConditionalOnClass(name = "com.zaxxer.hikari.HikariDataSource")
+	public HikariObservationCustomizer hikariObservationCustomizer() {
+		return new HikariObservationCustomizer();
 	}
 
 	@Bean

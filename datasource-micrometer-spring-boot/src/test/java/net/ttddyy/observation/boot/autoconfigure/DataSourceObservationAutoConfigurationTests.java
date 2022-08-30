@@ -38,6 +38,8 @@ import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceBaseObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
+import net.ttddyy.observation.tracing.HikariObservationCustomizer;
+import net.ttddyy.observation.tracing.ObservationCustomizer;
 import net.ttddyy.observation.tracing.QueryObservationConvention;
 import net.ttddyy.observation.tracing.QueryTracingObservationHandler;
 import net.ttddyy.observation.tracing.ResultSetObservationConvention;
@@ -48,6 +50,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.core.Ordered;
 
@@ -173,6 +176,59 @@ class DataSourceObservationAutoConfigurationTests {
 					assertThat(callOrder).containsExactly("customizerC", "customizerA", "customizerB");
 				});
 		// @formatter:on
+	}
+
+	@Test
+	void hikari() {
+		ApplicationContextRunner runner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+				.withBean(ObservationRegistry.class, ObservationRegistry::create)
+				.withBean(Tracer.class, () -> mock(Tracer.class)).withBean(CustomConnectionObservationConvention.class);
+
+		// hikari is available in classpath
+		runner.run((context) -> {
+			assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
+				assertThat(listener.getObservationCustomizers()).hasSize(1).first()
+						.isInstanceOf(HikariObservationCustomizer.class);
+			});
+		});
+
+		// hikari is not in classpath
+		runner.withClassLoader(new FilteredClassLoader("com.zaxxer.hikari.HikariDataSource")).run((context) -> {
+			assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
+				assertThat(listener.getObservationCustomizers()).isEmpty();
+			});
+		});
+
+		// with another customizer
+		ObservationCustomizer customizer = mock(ObservationCustomizer.class);
+		runner.withBean("myCustomizer", ObservationCustomizer.class, () -> customizer).run((context) -> {
+			assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
+				assertThat(listener.getObservationCustomizers()).hasSize(2).contains(customizer);
+			});
+		});
+	}
+
+	@Test
+	void observationCustomizers() {
+		// multiple customizer beans
+		ObservationCustomizer customizerA = mock(ObservationCustomizer.class);
+		ObservationCustomizer customizerB = mock(ObservationCustomizer.class);
+		ObservationCustomizer customizerC = mock(ObservationCustomizer.class);
+
+		new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+				.withBean(ObservationRegistry.class, ObservationRegistry::create)
+				.withBean(Tracer.class, () -> mock(Tracer.class)).withBean(CustomConnectionObservationConvention.class)
+				.withBean("customizerA", ObservationCustomizer.class, () -> customizerA)
+				.withBean("customizerB", ObservationCustomizer.class, () -> customizerB)
+				.withBean("customizerC", ObservationCustomizer.class, () -> customizerC)
+				.withClassLoader(new FilteredClassLoader("com.zaxxer.hikari.HikariDataSource")).run((context) -> {
+					assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
+						assertThat(listener.getObservationCustomizers()).hasSize(3).contains(customizerA, customizerB,
+								customizerC);
+					});
+				});
 	}
 
 	@Test
