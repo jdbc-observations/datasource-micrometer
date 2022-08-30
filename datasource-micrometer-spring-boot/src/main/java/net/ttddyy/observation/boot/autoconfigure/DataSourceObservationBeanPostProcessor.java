@@ -57,7 +57,7 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 
 	private DataSourceProxyBuilderConfigurer dataSourceProxyBuilderConfigurer;
 
-	private ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers;
+	private final ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers;
 
 	public DataSourceObservationBeanPostProcessor(ObjectProvider<JdbcProperties> jdbcPropertiesProvider,
 			ObjectProvider<DataSourceNameResolver> dataSourceNameResolverProvider,
