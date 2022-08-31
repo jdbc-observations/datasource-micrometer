@@ -16,7 +16,6 @@
 
 package net.ttddyy.observation.boot.autoconfigure;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -50,9 +49,9 @@ class DataSourceObservationBeanPostProcessorTests {
 
 	private ObjectProvider<DataSourceNameResolver> dataSourceNameResolverProvider;
 
-	private ObjectProvider<List<QueryExecutionListener>> listenersProvider;
+	private ObjectProvider<QueryExecutionListener> listenersProvider;
 
-	private ObjectProvider<List<MethodExecutionListener>> methodExecutionListenersProvider;
+	private ObjectProvider<MethodExecutionListener> methodExecutionListenersProvider;
 
 	private ObjectProvider<ParameterTransformer> parameterTransformerProvider;
 
@@ -93,6 +92,8 @@ class DataSourceObservationBeanPostProcessorTests {
 
 		DataSourceNameResolver dataSourceNameResolver = new DefaultDataSourceNameResolver();
 		given(this.dataSourceNameResolverProvider.getObject()).willReturn(dataSourceNameResolver);
+
+		given(this.proxyDataSourceBuilderCustomizers.orderedStream()).willReturn(Stream.of());
 
 		DataSource dataSource = mock(DataSource.class);
 		Object result = this.processor.postProcessAfterInitialization(dataSource, "foo");

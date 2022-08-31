@@ -63,10 +63,9 @@ public class DataSourceProxyBuilderConfigurer {
 
 	private final JdbcProperties jdbcProperties;
 
-	public DataSourceProxyBuilderConfigurer(JdbcProperties jdbcProperties,
-			@Nullable List<QueryExecutionListener> listeners,
-			@Nullable List<MethodExecutionListener> methodExecutionListeners,
-			@Nullable ParameterTransformer parameterTransformer, @Nullable QueryTransformer queryTransformer,
+	public DataSourceProxyBuilderConfigurer(JdbcProperties jdbcProperties, List<QueryExecutionListener> listeners,
+			List<MethodExecutionListener> methodExecutionListeners, @Nullable ParameterTransformer parameterTransformer,
+			@Nullable QueryTransformer queryTransformer,
 			@Nullable ResultSetProxyLogicFactory resultSetProxyLogicFactory,
 			@Nullable DataSourceProxyConnectionIdManagerProvider dataSourceProxyConnectionIdManagerProvider) {
 		this.jdbcProperties = jdbcProperties;

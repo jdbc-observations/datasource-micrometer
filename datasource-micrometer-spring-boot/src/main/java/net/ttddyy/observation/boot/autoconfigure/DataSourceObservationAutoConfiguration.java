@@ -125,8 +125,8 @@ public class DataSourceObservationAutoConfiguration {
 	public static DataSourceObservationBeanPostProcessor dataSourceObservationBeanPostProcessor(
 			ObjectProvider<JdbcProperties> jdbcProperties,
 			ObjectProvider<DataSourceNameResolver> dataSourceNameResolvers,
-			ObjectProvider<List<QueryExecutionListener>> listeners,
-			ObjectProvider<List<MethodExecutionListener>> methodExecutionListeners,
+			ObjectProvider<QueryExecutionListener> listeners,
+			ObjectProvider<MethodExecutionListener> methodExecutionListeners,
 			ObjectProvider<ParameterTransformer> parameterTransformer,
 			ObjectProvider<QueryTransformer> queryTransformer,
 			ObjectProvider<ResultSetProxyLogicFactory> resultSetProxyLogicFactory,

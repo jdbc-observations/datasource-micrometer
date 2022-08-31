@@ -16,8 +16,6 @@
 
 package net.ttddyy.observation.boot.autoconfigure;
 
-import java.util.List;
-
 import javax.sql.DataSource;
 
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
@@ -43,9 +41,9 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 
 	private final ObjectProvider<DataSourceNameResolver> dataSourceNameResolverProvider;
 
-	private final ObjectProvider<List<QueryExecutionListener>> listenersProvider;
+	private final ObjectProvider<QueryExecutionListener> listenersProvider;
 
-	private final ObjectProvider<List<MethodExecutionListener>> methodExecutionListenersProvider;
+	private final ObjectProvider<MethodExecutionListener> methodExecutionListenersProvider;
 
 	private final ObjectProvider<ParameterTransformer> parameterTransformerProvider;
 
@@ -61,8 +59,8 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 
 	public DataSourceObservationBeanPostProcessor(ObjectProvider<JdbcProperties> jdbcPropertiesProvider,
 			ObjectProvider<DataSourceNameResolver> dataSourceNameResolverProvider,
-			ObjectProvider<List<QueryExecutionListener>> listenersProvider,
-			ObjectProvider<List<MethodExecutionListener>> methodExecutionListenersProvider,
+			ObjectProvider<QueryExecutionListener> listenersProvider,
+			ObjectProvider<MethodExecutionListener> methodExecutionListenersProvider,
 			ObjectProvider<ParameterTransformer> parameterTransformerProvider,
 			ObjectProvider<QueryTransformer> queryTransformerProvider,
 			ObjectProvider<ResultSetProxyLogicFactory> resultSetProxyLogicFactoryProvider,
@@ -98,7 +96,8 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 	private DataSourceProxyBuilderConfigurer getConfigurer() {
 		if (this.dataSourceProxyBuilderConfigurer == null) {
 			this.dataSourceProxyBuilderConfigurer = new DataSourceProxyBuilderConfigurer(getJdbcProperties(),
-					this.listenersProvider.getIfAvailable(), this.methodExecutionListenersProvider.getIfAvailable(),
+					this.listenersProvider.orderedStream().toList(),
+					this.methodExecutionListenersProvider.orderedStream().toList(),
 					this.parameterTransformerProvider.getIfAvailable(), this.queryTransformerProvider.getIfAvailable(),
 					this.resultSetProxyLogicFactoryProvider.getIfAvailable(),
 					this.dataSourceProxyConnectionIdManagerProviderProvider.getIfAvailable());
