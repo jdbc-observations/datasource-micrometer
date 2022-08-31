@@ -17,7 +17,9 @@
 package net.ttddyy.observation.tracing;
 
 import io.micrometer.common.docs.KeyName;
+import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.Observation.Event;
+import io.micrometer.observation.Observation.ObservationConvention;
 import io.micrometer.observation.docs.DocumentedObservation;
 
 /**
@@ -31,6 +33,11 @@ public enum JdbcObservation implements DocumentedObservation {
 	 * Span created when a JDBC connection takes place.
 	 */
 	CONNECTION {
+		@Override
+		public Class<? extends ObservationConvention<? extends Context>> getDefaultConvention() {
+			return ConnectionObservationConvention.class;
+		}
+
 		@Override
 		public String getName() {
 			return "jdbc.connection";
@@ -63,6 +70,11 @@ public enum JdbcObservation implements DocumentedObservation {
 	 */
 	QUERY {
 		@Override
+		public Class<? extends ObservationConvention<? extends Context>> getDefaultConvention() {
+			return QueryObservationConvention.class;
+		}
+
+		@Override
 		public String getName() {
 			return "jdbc.query";
 		}
@@ -90,6 +102,11 @@ public enum JdbcObservation implements DocumentedObservation {
 	 * Span created when working with JDBC result set.
 	 */
 	RESULT_SET {
+		@Override
+		public Class<? extends ObservationConvention<? extends Context>> getDefaultConvention() {
+			return ResultSetObservationConvention.class;
+		}
+
 		@Override
 		public String getName() {
 			return "jdbc.result-set";
