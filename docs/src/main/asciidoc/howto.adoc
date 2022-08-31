@@ -116,7 +116,7 @@ To enable the query logging, set the `jdbc.datasource-proxy.query.enable-logging
 The `ProxyDataSourceBuilderCustomizer` beans are automatically called before creating a proxy datasource.
 This callback API allows you to customize the `ProxyDataSourceBuilder`.
 
-For example, `ProxyDataSourceBuilderCustomizer` can be used to specify the datasource proxy name, which in turn is used as the remote service name of the spans.
+For example, you can use  `ProxyDataSourceBuilderCustomizer` to specify the datasource proxy name. In turn, it becomes the remote service name of the spans.
 
 [source,java,indent=0]
 ----

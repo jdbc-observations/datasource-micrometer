@@ -1,0 +1,53 @@
+[[using]]
+= Using Datasource Micrometer
+
+include::_attributes.adoc[]
+
+This section goes into more detail about how you should use {project-full-name}.
+
+[[using-types-of-observation]]
+== Types of Observations
+
+The {project-full-name} creates Connection, Query, and ResultSet observations.
+
+The Connection observation represents the database connection operations. It is the base observation, as any database access requires a connection.
+The Query observation provides query execution details, such as execution time, SQL query, bind parameters, etc.
+The ResultSet observation shows how the operations fetched the data from the query result, including the number of retrieved rows.
+
+To configure these observations, see <<howto.adoc#how-to-add-tracingobservationhandler>>.  +
+For Spring Boot, see <<howto.adoc#how-to-choose-what-to-observe>>.
+
+
+[[using-features]]
+== Features
+
+[[using-features-hikaricp-support]]
+=== HikariCP Support
+
+`jdbc.datasource.driver` and `jdbc.datasource.pool` tags are available when the target datasource is a `HikariDataSource`.
+
+[[using-features-remote-ip-and-port]]
+=== Remote IP and Port
+
+For spans, remote IP and port are retrieved from the datasource url.
+
+[[using-features-remote-service-name]]
+=== Remote Service Name
+
+The datasource name is used as the remote service name in spans.
+The name is specified when creating a proxy datasource by {datasource-proxy}[datasource-proxy].
+
+[source,java,indent=0]
+----
+DataSource instrumented =
+    ProxyDataSourceBuilder.create(dataSource)
+        .name("myDS")    // Specify datasource name
+        .listener(listener)
+        .methodListener(listener)
+        .build;
+----
+
+For `datasource-micrometer-spring-boot`, the datasource name is resolved as its bean name (or the connection pool name for Hikari) by default.
+See the `DefaultDataSourceNameResolver` for reference.
+
+To specify a custom datasource name, see <<howto.adoc#how-to-customize-the-proxydatasource-creation>> section.
