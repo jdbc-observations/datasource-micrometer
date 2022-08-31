@@ -261,7 +261,7 @@ class DataSourceObservationListenerTests {
 		assertThat(tracer.currentSpan()).isNull();
 
 		assertThat(this.tracer).onlySpan().hasNameEqualTo("connection").hasRemoteServiceNameEqualTo("myDS")
-				.hasIpEqualTo("localhost").hasPortEqualTo(5555);
+				.hasIpEqualTo("localhost").hasPortEqualTo(5555).hasEventWithNameEqualTo("acquired");
 	}
 
 	@Test

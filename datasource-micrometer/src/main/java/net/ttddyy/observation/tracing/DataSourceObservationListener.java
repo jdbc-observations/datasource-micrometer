@@ -252,6 +252,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 				stopObservation(scope.getCurrentObservation(), throwable);
 			}
 		}
+
+		// When "getConnection" was successful, a connection is acquired.
+		if (scopeToUse != null) {
+			scopeToUse.getCurrentObservation().event(JdbcEvents.CONNECTION_ACQUIRED);
+		}
 	}
 
 	private void handleConnectionClose(MethodExecutionContext executionContext) {

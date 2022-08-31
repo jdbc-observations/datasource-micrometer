@@ -186,6 +186,21 @@ public enum JdbcObservation implements DocumentedObservation {
 	enum JdbcEvents implements Event {
 
 		/**
+		 * When the connection is acquired.
+		 */
+		CONNECTION_ACQUIRED {
+			@Override
+			public String getName() {
+				return "acquired";
+			}
+
+			@Override
+			public String getContextualName() {
+				return "acquired";
+			}
+		},
+
+		/**
 		 * When the connection is committed.
 		 */
 		CONNECTION_COMMIT {

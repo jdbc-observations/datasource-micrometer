@@ -43,7 +43,9 @@ class DataSourceListenerUpdateIntegrationTest extends DataSourceListenerIntegrat
 			SpansAssert.assertThat(bb.getFinishedSpans())
 					.hasNumberOfSpansEqualTo(2)
 					.hasASpanWithName("connection", (spanAssert -> {
-						spanAssert.hasEventWithNameEqualTo("commit");
+						spanAssert
+								.hasEventWithNameEqualTo("acquired")
+								.hasEventWithNameEqualTo("commit");
 					}))
 					.hasASpanWithName("query", (spanAssert -> {
 						spanAssert
