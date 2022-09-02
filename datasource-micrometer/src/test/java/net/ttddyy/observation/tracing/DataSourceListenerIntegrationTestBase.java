@@ -28,6 +28,12 @@ import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.tracing.test.SampleTestRunner;
 import io.micrometer.tracing.test.reporter.BuildingBlocks;
+import io.micrometer.tracing.test.reporter.inmemory.InMemoryBraveSetup;
+import io.micrometer.tracing.test.reporter.inmemory.InMemoryOtelSetup;
+import io.micrometer.tracing.test.reporter.wavefront.WavefrontBraveSetup;
+import io.micrometer.tracing.test.reporter.wavefront.WavefrontOtelSetup;
+import io.micrometer.tracing.test.reporter.zipkin.ZipkinBraveSetup;
+import io.micrometer.tracing.test.reporter.zipkin.ZipkinOtelSetup;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.AfterAll;
@@ -116,6 +122,18 @@ abstract class DataSourceListenerIntegrationTestBase extends SampleTestRunner {
 			handlers.addFirst(new QueryTracingObservationHandler(bb.getTracer()));
 			handlers.addFirst(new ResultSetTracingObservationHandler(bb.getTracer()));
 		};
+	}
+
+	protected boolean isOtel(BuildingBlocks bb) {
+		return bb instanceof InMemoryOtelSetup.Builder.OtelBuildingBlocks
+				|| bb instanceof ZipkinOtelSetup.Builder.OtelBuildingBlocks
+				|| bb instanceof WavefrontOtelSetup.Builder.OtelBuildingBlocks;
+	}
+
+	protected boolean isBrave(BuildingBlocks bb) {
+		return bb instanceof InMemoryBraveSetup.Builder.BraveBuildingBlocks
+				|| bb instanceof ZipkinBraveSetup.Builder.BraveBuildingBlocks
+				|| bb instanceof WavefrontBraveSetup.Builder.BraveBuildingBlocks;
 	}
 
 }
