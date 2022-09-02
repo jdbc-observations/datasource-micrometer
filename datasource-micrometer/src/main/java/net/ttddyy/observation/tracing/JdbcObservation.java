@@ -186,7 +186,8 @@ public enum JdbcObservation implements DocumentedObservation {
 	enum JdbcEvents implements Event {
 
 		/**
-		 * When the connection is acquired.
+		 * When the connection is acquired. This event is recorded right after successful
+		 * "getConnection()" call.
 		 */
 		CONNECTION_ACQUIRED {
 			@Override
