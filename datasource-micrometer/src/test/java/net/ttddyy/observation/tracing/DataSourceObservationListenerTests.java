@@ -26,6 +26,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
@@ -43,6 +44,9 @@ import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static io.micrometer.tracing.test.simple.TracingAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -88,7 +92,7 @@ class DataSourceObservationListenerTests {
 		assertThat(tracer.currentSpan()).isNull();
 
 		assertThat(tracer).onlySpan().hasNameEqualTo("query").hasTag("jdbc.query[0]", "SELECT 1")
-				.doesNotHaveTagWithKey("jdbc.row-count").doesNotHaveTagWithKey("jdbc.params[0]");
+				.doesNotHaveTagWithKey("jdbc.row-affected").doesNotHaveTagWithKey("jdbc.params[0]");
 	}
 
 	@Test
@@ -196,24 +200,37 @@ class DataSourceObservationListenerTests {
 				.hasPortEqualTo(5555);
 	}
 
-	@Test
-	void queryRowCountOnExecuteUpdate() throws Exception {
+	@ParameterizedTest
+	@MethodSource
+	void queryRowAffected(Method method, Object result, String expected) {
 		this.registry.observationConfig().observationHandler(new DefaultTracingObservationHandler(this.tracer));
 		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
-
-		Method executeUpdate = Statement.class.getMethod("executeUpdate", String.class);
 
 		ExecutionInfo executionInfo = new ExecutionInfo();
 		executionInfo.setConnectionId("id-1");
 		executionInfo.setDataSourceName("myDS");
-		executionInfo.setMethod(executeUpdate);
-		executionInfo.setResult(99);
+		executionInfo.setMethod(method);
+		executionInfo.setResult(result);
 		List<QueryInfo> queryInfos = new ArrayList<>();
 
 		listener.beforeQuery(executionInfo, queryInfos);
 		listener.afterQuery(executionInfo, queryInfos);
 
-		assertThat(tracer).onlySpan().hasTag("jdbc.row-count", "99");
+		assertThat(tracer).onlySpan().hasTag("jdbc.row-affected", expected);
+	}
+
+	static Stream<Arguments> queryRowAffected() throws Exception {
+		Method executeUpdate = Statement.class.getMethod("executeUpdate", String.class);
+		Method executeLargeUpdate = Statement.class.getMethod("executeLargeUpdate", String.class);
+		Method executeBatch = Statement.class.getMethod("executeBatch");
+		Method executeLargeBatch = Statement.class.getMethod("executeLargeBatch");
+		// @formatter:off
+		return Stream.of(
+				Arguments.of(executeUpdate, 99, "99"),
+				Arguments.of(executeLargeUpdate, (long) 999, "999"),
+				Arguments.of(executeBatch, new int[] { 1, 2, 3 }, "[1, 2, 3]"),
+				Arguments.of(executeLargeBatch, new long[] { 10, 20, 30 }, "[10, 20, 30]"));
+		// @formatter:on
 	}
 
 	@Test

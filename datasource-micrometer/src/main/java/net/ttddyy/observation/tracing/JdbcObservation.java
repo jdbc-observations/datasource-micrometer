@@ -134,12 +134,14 @@ public enum JdbcObservation implements DocumentedObservation {
 		},
 
 		/**
-		 * Number of SQL rows by "Statement#executeUpdate()".
+		 * Result of "executeUpdate()", "executeLargeUpdate()", "executeBatch()", or
+		 * "executeLargeBatch()" on "Statement". For batch operations, the value is
+		 * represented as array.
 		 */
-		ROW_COUNT {
+		ROW_AFFECTED {
 			@Override
 			public String asString() {
-				return "jdbc.row-count";
+				return "jdbc.row-affected";
 			}
 		}
 

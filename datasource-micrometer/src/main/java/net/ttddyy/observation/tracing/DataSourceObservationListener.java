@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -145,8 +146,10 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	}
 
 	private void stopQueryObservation(ExecutionInfo executionInfo) {
-		boolean hasRowCount = executionInfo.getMethod().getName().equals("executeUpdate")
-				&& executionInfo.getThrowable() == null;
+		String methodName = executionInfo.getMethod().getName();
+		boolean hasAffectedRowCount = executionInfo.getThrowable() == null
+				&& ("executeUpdate".equals(methodName) || "executeLargeUpdate".equals(methodName)
+						|| "executeBatch".equals(methodName) || "executeLargeBatch".equals(methodName));
 		Observation.Scope scopeToUse = executionInfo.getCustomValue(Observation.Scope.class.getName(),
 				Observation.Scope.class);
 		if (scopeToUse == null) {
@@ -157,10 +160,19 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			if (logger.isDebugEnabled()) {
 				logger.debug("Continued the child observation in after query [" + observation + "]");
 			}
-			if (hasRowCount) {
-				int rowCount = (int) executionInfo.getResult();
-				observation.highCardinalityKeyValue(QueryHighCardinalityKeyNames.ROW_COUNT.asString(),
-						String.valueOf(rowCount));
+			if (hasAffectedRowCount) {
+				String value;
+				Object result = executionInfo.getResult();
+				if ("executeUpdate".equals(methodName) || "executeLargeUpdate".equals(methodName)) {
+					value = String.valueOf(executionInfo.getResult());
+				}
+				else if ("executeBatch".equals(methodName)) {
+					value = Arrays.toString((int[]) result);
+				}
+				else {
+					value = Arrays.toString((long[]) result);
+				}
+				observation.highCardinalityKeyValue(QueryHighCardinalityKeyNames.ROW_AFFECTED.asString(), value);
 			}
 			stopObservation(observation, executionInfo.getThrowable());
 		}
