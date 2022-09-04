@@ -28,7 +28,7 @@ Spring Boot 3.x AutoConfiguration for micrometer observability.
 ```xml
 <dependency>
     <groupId>net.ttddyy.observation</groupId>
-    <artifactId>datasource-micrometer</artifactId>
+    <artifactId>datasource-micrometer-spring-boot</artifactId>
     <version>...</version>
 </dependency>
 ```
