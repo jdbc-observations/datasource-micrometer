@@ -24,7 +24,6 @@ import io.micrometer.tracing.exporter.FinishedSpan;
 import io.micrometer.tracing.test.simple.SpanAssert;
 import io.micrometer.tracing.test.simple.SpansAssert;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
@@ -53,17 +52,8 @@ class DataSourceListenerFailureTest extends DataSourceListenerIntegrationTestBas
 			FinishedSpan querySpan = bb.getFinishedSpans().stream().filter(span -> "query".equals(span.getName()))
 					.findFirst().orElseThrow(IllegalStateException::new);
 
-			if (isBrave(bb)) {
-				SpanAssert.assertThat(querySpan).hasTagWithKey("error");
-				String errorTagValue = querySpan.getTags().get("error");
-				assertThat(errorTagValue).contains("SELECT * FROM not-existing-table");
-			}
-			else if (isOtel(bb)) {
-				SpanAssert.assertThat(querySpan).hasEventWithNameEqualTo("exception");
-			}
-			else {
-				fail("Need a test case for non brave/otel impl");
-			}
+			SpanAssert.assertThat(querySpan).assertThatThrowable()
+					.hasMessageContaining("SELECT * FROM not-existing-table");
 		};
 	}
 
