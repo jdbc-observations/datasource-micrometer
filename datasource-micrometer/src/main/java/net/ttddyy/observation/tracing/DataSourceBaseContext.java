@@ -20,17 +20,23 @@ import javax.sql.DataSource;
 
 import io.micrometer.common.lang.Nullable;
 import io.micrometer.observation.Observation;
+import io.micrometer.observation.transport.Kind;
+import io.micrometer.observation.transport.SenderContext;
 
 /**
  * Base {@link Observation.Context Context} for datasource observation context classes.
  *
  * @author Tadaya Tsuyukubo
  */
-public class DataSourceBaseContext extends Observation.Context {
+public class DataSourceBaseContext extends SenderContext<Object> {
+
+	public DataSourceBaseContext() {
+		super((carrier, key, value) -> {
+			// no-op setter
+		}, Kind.CLIENT);
+	}
 
 	private DataSource dataSource;
-
-	private String dataSourceName;
 
 	private String host;
 
@@ -42,15 +48,6 @@ public class DataSourceBaseContext extends Observation.Context {
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
-	}
-
-	@Nullable
-	public String getDataSourceName() {
-		return this.dataSourceName;
-	}
-
-	public void setDataSourceName(@Nullable String dataSourceName) {
-		this.dataSourceName = dataSourceName;
 	}
 
 	@Nullable

@@ -16,31 +16,57 @@
 
 package net.ttddyy.observation.tracing;
 
-import io.micrometer.observation.Observation.Context;
+import java.util.Collections;
+import java.util.List;
+
 import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Span.Builder;
+import io.micrometer.tracing.TraceContext;
 import io.micrometer.tracing.Tracer;
-import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
+import io.micrometer.tracing.handler.PropagatingSenderTracingObservationHandler;
+import io.micrometer.tracing.propagation.Propagator;
 
 /**
  * A base class of tracing observation handler for JDBC operations.
  *
  * @author Tadaya Tsuyukubo
  */
-public abstract class DataSourceBaseObservationHandler extends DefaultTracingObservationHandler {
+public abstract class DataSourceBaseObservationHandler
+		extends PropagatingSenderTracingObservationHandler<DataSourceBaseContext> {
+
+	private static final NoopPropagator NOOP_PROPAGATOR = new NoopPropagator();
 
 	public DataSourceBaseObservationHandler(Tracer tracer) {
-		super(tracer);
+		// The handler is implemented as "PropagatingSenderTracingObservationHandler" to
+		// specify span kind to client; however, db operations do not need to propagate
+		// anything about observation. Therefore, here creates an empty propagator.
+		super(tracer, NOOP_PROPAGATOR);
 	}
 
 	@Override
-	public void tagSpan(Context context, Span span) {
-		super.tagSpan(context, span);
-
-		DataSourceBaseContext baseContext = (DataSourceBaseContext) context;
-		if (baseContext.getHost() != null) {
-			span.remoteIpAndPort(baseContext.getHost(), baseContext.getPort());
+	public void customizeSenderSpan(DataSourceBaseContext context, Span span) {
+		if (context.getHost() != null) {
+			span.remoteIpAndPort(context.getHost(), context.getPort());
 		}
-		span.remoteServiceName(baseContext.getDataSourceName());
+	}
+
+	static class NoopPropagator implements Propagator {
+
+		@Override
+		public List<String> fields() {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public <C> void inject(TraceContext context, C carrier, Setter<C> setter) {
+			// no-op
+		}
+
+		@Override
+		public <C> Builder extract(C carrier, Getter<C> getter) {
+			throw new UnsupportedOperationException();
+		}
+
 	}
 
 }

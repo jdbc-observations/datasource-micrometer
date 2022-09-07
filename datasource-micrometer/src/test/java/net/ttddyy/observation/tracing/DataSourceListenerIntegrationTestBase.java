@@ -81,7 +81,7 @@ abstract class DataSourceListenerIntegrationTestBase extends SampleTestRunner {
 	void createProxyDataSource() {
 		DataSourceObservationListener listener = new DataSourceObservationListener(getObservationRegistry());
 		customizeListener(listener);
-		ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource).listener(listener)
+		ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource).listener(listener).name("proxy-ds")
 				.methodListener(listener);
 		customizeProxyDataSourceBuilder(builder);
 		proxyDataSource = builder.build();

@@ -140,7 +140,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		if (connectionAttributes != null) {
 			context.setHost(connectionAttributes.host);
 			context.setPort(connectionAttributes.port);
-			context.setDataSourceName(connectionAttributes.connectionInfo.getDataSourceName());
+			context.setRemoteServiceName(connectionAttributes.connectionInfo.getDataSourceName());
 			context.setDataSource(connectionAttributes.dataSource);
 		}
 	}

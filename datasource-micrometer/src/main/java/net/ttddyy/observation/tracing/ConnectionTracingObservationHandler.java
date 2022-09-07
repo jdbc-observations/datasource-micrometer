@@ -17,6 +17,7 @@
 package net.ttddyy.observation.tracing;
 
 import io.micrometer.observation.Observation.Context;
+import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.handler.TracingObservationHandler;
 
@@ -34,6 +35,18 @@ public class ConnectionTracingObservationHandler extends DataSourceBaseObservati
 	@Override
 	public boolean supportsContext(Context context) {
 		return context instanceof ConnectionContext;
+	}
+
+	@Override
+	public void customizeSenderSpan(DataSourceBaseContext context, Span span) {
+		super.customizeSenderSpan(context, span);
+		// A observation is created before executing "getConnection" method.
+		// PropagatingSenderTracingObservationHandler populates the remote
+		// service name at "onStart"("createSenderSpan"). However, the remote service name
+		// is determined after "getConnection" is called.
+		// To reflect the populated remote-service-name, here (called at "onStop") sets
+		// the value.
+		span.remoteServiceName(context.getRemoteServiceName());
 	}
 
 }
