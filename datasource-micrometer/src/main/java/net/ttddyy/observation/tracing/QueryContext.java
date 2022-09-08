@@ -16,6 +16,10 @@
 
 package net.ttddyy.observation.tracing;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.micrometer.common.lang.Nullable;
 import io.micrometer.observation.Observation;
 
 /**
@@ -24,5 +28,36 @@ import io.micrometer.observation.Observation;
  * @author Tadaya Tsuyukubo
  */
 public final class QueryContext extends DataSourceBaseContext {
+
+	private List<String> queries = new ArrayList<>();
+
+	private List<String> params = new ArrayList<>();
+
+	private String affectedRowCount;
+
+	public List<String> getParams() {
+		return this.params;
+	}
+
+	public void setParams(List<String> params) {
+		this.params = params;
+	}
+
+	public List<String> getQueries() {
+		return this.queries;
+	}
+
+	public void setQueries(List<String> queries) {
+		this.queries = queries;
+	}
+
+	@Nullable
+	public String getAffectedRowCount() {
+		return this.affectedRowCount;
+	}
+
+	public void setAffectedRowCount(String affectedRowCount) {
+		this.affectedRowCount = affectedRowCount;
+	}
 
 }

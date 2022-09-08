@@ -16,8 +16,14 @@
 
 package net.ttddyy.observation.tracing;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import io.micrometer.common.KeyValue;
+import io.micrometer.common.KeyValues;
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.Observation.ObservationConvention;
+import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNames;
 
 /**
  * A {@link ObservationConvention} for query.
@@ -34,6 +40,27 @@ public interface QueryObservationConvention extends ObservationConvention<QueryC
 	@Override
 	default String getName() {
 		return "jdbc.query";
+	}
+
+	@Override
+	default KeyValues getHighCardinalityKeyValues(QueryContext context) {
+		Set<KeyValue> keyValues = new HashSet<>();
+		for (int i = 0; i < context.getQueries().size(); i++) {
+			String key = context.getQueries().get(i);
+			String queryKey = String.format(QueryHighCardinalityKeyNames.QUERY.asString(), i);
+			keyValues.add(KeyValue.of(queryKey, key));
+		}
+		// params could be empty when "includeParameterValues=false" in the listener.
+		for (int i = 0; i < context.getParams().size(); i++) {
+			String params = context.getParams().get(i);
+			String key = String.format(QueryHighCardinalityKeyNames.QUERY_PARAMETERS.asString(), i);
+			keyValues.add(KeyValue.of(key, params));
+		}
+		String affectedRowCount = context.getAffectedRowCount();
+		if (affectedRowCount != null) {
+			keyValues.add(KeyValue.of(QueryHighCardinalityKeyNames.ROW_AFFECTED, affectedRowCount));
+		}
+		return KeyValues.of(keyValues);
 	}
 
 }

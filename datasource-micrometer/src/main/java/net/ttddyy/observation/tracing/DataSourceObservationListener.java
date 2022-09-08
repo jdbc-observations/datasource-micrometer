@@ -44,7 +44,6 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ResultSetAttributes;
 import net.ttddyy.observation.tracing.JdbcObservation.JdbcEvents;
-import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNames;
 
 /**
  * Datasource-proxy listener implementation for JDBC observation.
@@ -103,6 +102,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	private void startQueryObservation(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList) {
 		QueryContext queryContext = new QueryContext();
+		executionInfo.addCustomValue(QueryContext.class.getName(), queryContext);
 		populateFromConnectionAttributes(queryContext, executionInfo.getConnectionId());
 
 		Observation observation = createAndStartObservation(JdbcObservation.QUERY, queryContext,
@@ -111,7 +111,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new child observation before query [" + observation + "]");
 		}
-		tagQueries(executionInfo, queryInfoList, observation);
+		populateQueryContext(executionInfo, queryInfoList, queryContext);
 		executionInfo.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
 	}
 
@@ -121,17 +121,14 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 				.observationConvention(observationConvention).start();
 	}
 
-	private void tagQueries(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList, Observation observation) {
-		int i = 0;
+	private void populateQueryContext(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList,
+			QueryContext context) {
 		for (QueryInfo queryInfo : queryInfoList) {
-			observation.highCardinalityKeyValue(String.format(QueryHighCardinalityKeyNames.QUERY.asString(), i),
-					queryInfo.getQuery());
+			context.getQueries().add(queryInfo.getQuery());
 			if (this.includeParameterValues) {
 				String params = this.queryParametersSpanTagProvider.getParameters(executionInfo, queryInfoList);
-				observation.highCardinalityKeyValue(
-						String.format(QueryHighCardinalityKeyNames.QUERY_PARAMETERS.asString(), i), params);
+				context.getParams().add(params);
 			}
-			i++;
 		}
 	}
 
@@ -161,18 +158,20 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 				logger.debug("Continued the child observation in after query [" + observation + "]");
 			}
 			if (hasAffectedRowCount) {
-				String value;
+				String affectedRowCount;
 				Object result = executionInfo.getResult();
 				if ("executeUpdate".equals(methodName) || "executeLargeUpdate".equals(methodName)) {
-					value = String.valueOf(executionInfo.getResult());
+					affectedRowCount = String.valueOf(result);
 				}
 				else if ("executeBatch".equals(methodName)) {
-					value = Arrays.toString((int[]) result);
+					affectedRowCount = Arrays.toString((int[]) result);
 				}
 				else {
-					value = Arrays.toString((long[]) result);
+					affectedRowCount = Arrays.toString((long[]) result);
 				}
-				observation.highCardinalityKeyValue(QueryHighCardinalityKeyNames.ROW_AFFECTED.asString(), value);
+				QueryContext queryContext = executionInfo.getCustomValue(QueryContext.class.getName(),
+						QueryContext.class);
+				queryContext.setAffectedRowCount(affectedRowCount);
 			}
 			stopObservation(observation, executionInfo.getThrowable());
 		}
