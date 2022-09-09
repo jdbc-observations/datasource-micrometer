@@ -21,7 +21,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -74,8 +73,6 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	 * Whether to tag query parameter values.
 	 */
 	private boolean includeParameterValues;
-
-	private List<JdbcObservationCustomizer> jdbcObservationCustomizers = new ArrayList<>();
 
 	public DataSourceObservationListener(ObservationRegistry observationRegistry) {
 		this(() -> observationRegistry);
@@ -298,10 +295,6 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		if (throwable != null) {
 			observation.error(throwable);
 		}
-		// Customize the observation before close.
-		DataSource dataSource = ((DataSourceBaseContext) observation.getContext()).getDataSource();
-		this.jdbcObservationCustomizers.stream().filter(customizer -> customizer.support(dataSource))
-				.forEach(customizer -> customizer.customize(dataSource, observation));
 		observation.stop();
 	}
 
@@ -463,14 +456,6 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	public void setIncludeParameterValues(boolean includeParameterValues) {
 		this.includeParameterValues = includeParameterValues;
-	}
-
-	public List<JdbcObservationCustomizer> getJdbcObservationCustomizers() {
-		return this.jdbcObservationCustomizers;
-	}
-
-	public void setJdbcObservationCustomizers(List<JdbcObservationCustomizer> jdbcObservationCustomizers) {
-		this.jdbcObservationCustomizers = jdbcObservationCustomizers;
 	}
 
 }

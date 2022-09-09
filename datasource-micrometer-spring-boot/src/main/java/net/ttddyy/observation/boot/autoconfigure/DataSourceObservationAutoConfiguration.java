@@ -39,7 +39,6 @@ import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
 import net.ttddyy.observation.tracing.HikariJdbcObservationFilter;
-import net.ttddyy.observation.tracing.JdbcObservationCustomizer;
 import net.ttddyy.observation.tracing.QueryObservationConvention;
 import net.ttddyy.observation.tracing.QueryTracingObservationHandler;
 import net.ttddyy.observation.tracing.ResultSetObservationConvention;
@@ -90,8 +89,7 @@ public class DataSourceObservationAutoConfiguration {
 			JdbcProperties jdbcProperties,
 			ObjectProvider<ConnectionObservationConvention> connectionObservationConventions,
 			ObjectProvider<QueryObservationConvention> queryObservationConventions,
-			ObjectProvider<ResultSetObservationConvention> resultSetObservationConventions,
-			ObjectProvider<JdbcObservationCustomizer> jdbcObservationCustomizers) {
+			ObjectProvider<ResultSetObservationConvention> resultSetObservationConventions) {
 		// to avoid circular reference due to MeterBinder creation at MeterRegistry,
 		// use supplier to lazily reference observation registry.
 		DataSourceObservationListener listener = new DataSourceObservationListener(registry::getObject);
@@ -99,7 +97,6 @@ public class DataSourceObservationAutoConfiguration {
 		connectionObservationConventions.ifAvailable(listener::setConnectionObservationConvention);
 		queryObservationConventions.ifAvailable(listener::setQueryObservationConvention);
 		resultSetObservationConventions.ifAvailable(listener::setResultSetObservationConvention);
-		jdbcObservationCustomizers.orderedStream().forEach(listener.getJdbcObservationCustomizers()::add);
 		return listener;
 	}
 

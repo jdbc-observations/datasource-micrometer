@@ -39,7 +39,6 @@ import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceBaseObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
 import net.ttddyy.observation.tracing.HikariJdbcObservationFilter;
-import net.ttddyy.observation.tracing.JdbcObservationCustomizer;
 import net.ttddyy.observation.tracing.QueryObservationConvention;
 import net.ttddyy.observation.tracing.QueryTracingObservationHandler;
 import net.ttddyy.observation.tracing.ResultSetObservationConvention;
@@ -196,28 +195,6 @@ class DataSourceObservationAutoConfigurationTests {
 		runner.withClassLoader(new FilteredClassLoader("com.zaxxer.hikari.HikariDataSource")).run((context) -> {
 			assertThat(context).doesNotHaveBean(HikariJdbcObservationFilter.class);
 		});
-	}
-
-	@Test
-	void observationCustomizers() {
-		// multiple customizer beans
-		JdbcObservationCustomizer customizerA = mock(JdbcObservationCustomizer.class);
-		JdbcObservationCustomizer customizerB = mock(JdbcObservationCustomizer.class);
-		JdbcObservationCustomizer customizerC = mock(JdbcObservationCustomizer.class);
-
-		new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
-				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class)).withBean(CustomConnectionObservationConvention.class)
-				.withBean("customizerA", JdbcObservationCustomizer.class, () -> customizerA)
-				.withBean("customizerB", JdbcObservationCustomizer.class, () -> customizerB)
-				.withBean("customizerC", JdbcObservationCustomizer.class, () -> customizerC)
-				.withClassLoader(new FilteredClassLoader("com.zaxxer.hikari.HikariDataSource")).run((context) -> {
-					assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
-						assertThat(listener.getJdbcObservationCustomizers()).hasSize(3).contains(customizerA,
-								customizerB, customizerC);
-					});
-				});
 	}
 
 	@Test
