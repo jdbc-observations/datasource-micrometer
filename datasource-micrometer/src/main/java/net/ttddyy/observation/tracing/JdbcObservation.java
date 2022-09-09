@@ -164,7 +164,7 @@ public enum JdbcObservation implements DocumentedObservation {
 	enum ConnectionKeyNames implements KeyName {
 
 		/**
-		 * Name of the JDBC datasource driver. (For HikariCP)
+		 * Name of the JDBC datasource driver. (HikariCP only)
 		 */
 		DATASOURCE_DRIVER {
 			@Override
@@ -174,7 +174,7 @@ public enum JdbcObservation implements DocumentedObservation {
 		},
 
 		/**
-		 * Name of the JDBC datasource pool. (For HikariCP)
+		 * Name of the JDBC datasource pool. (HikariCP only)
 		 */
 		DATASOURCE_POOL {
 			@Override
