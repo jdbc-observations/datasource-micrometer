@@ -38,7 +38,7 @@ import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceBaseObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
-import net.ttddyy.observation.tracing.HikariJdbcObservationCustomizer;
+import net.ttddyy.observation.tracing.HikariJdbcObservationFilter;
 import net.ttddyy.observation.tracing.JdbcObservationCustomizer;
 import net.ttddyy.observation.tracing.QueryObservationConvention;
 import net.ttddyy.observation.tracing.QueryTracingObservationHandler;
@@ -49,6 +49,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationRegistryCustomizer;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -187,25 +188,13 @@ class DataSourceObservationAutoConfigurationTests {
 
 		// hikari is available in classpath
 		runner.run((context) -> {
-			assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
-				assertThat(listener.getJdbcObservationCustomizers()).hasSize(1).first()
-						.isInstanceOf(HikariJdbcObservationCustomizer.class);
-			});
+			assertThat(context).hasSingleBean(HikariJdbcObservationFilter.class);
+			assertThat(context).hasSingleBean(ObservationRegistryCustomizer.class);
 		});
 
 		// hikari is not in classpath
 		runner.withClassLoader(new FilteredClassLoader("com.zaxxer.hikari.HikariDataSource")).run((context) -> {
-			assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
-				assertThat(listener.getJdbcObservationCustomizers()).isEmpty();
-			});
-		});
-
-		// with another customizer
-		JdbcObservationCustomizer customizer = mock(JdbcObservationCustomizer.class);
-		runner.withBean("myCustomizer", JdbcObservationCustomizer.class, () -> customizer).run((context) -> {
-			assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
-				assertThat(listener.getJdbcObservationCustomizers()).hasSize(2).contains(customizer);
-			});
+			assertThat(context).doesNotHaveBean(HikariJdbcObservationFilter.class);
 		});
 	}
 

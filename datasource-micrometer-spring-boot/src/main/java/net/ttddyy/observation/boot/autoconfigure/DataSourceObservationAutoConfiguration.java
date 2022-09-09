@@ -38,7 +38,7 @@ import net.ttddyy.observation.boot.autoconfigure.JdbcProperties.TraceType;
 import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
-import net.ttddyy.observation.tracing.HikariJdbcObservationCustomizer;
+import net.ttddyy.observation.tracing.HikariJdbcObservationFilter;
 import net.ttddyy.observation.tracing.JdbcObservationCustomizer;
 import net.ttddyy.observation.tracing.QueryObservationConvention;
 import net.ttddyy.observation.tracing.QueryTracingObservationHandler;
@@ -47,6 +47,7 @@ import net.ttddyy.observation.tracing.ResultSetTracingObservationHandler;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationRegistryCustomizer;
 import org.springframework.boot.actuate.autoconfigure.tracing.ConditionalOnEnabledTracing;
 import org.springframework.boot.actuate.autoconfigure.tracing.MicrometerTracingAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -115,12 +116,6 @@ public class DataSourceObservationAutoConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnClass(name = "com.zaxxer.hikari.HikariDataSource")
-	public HikariJdbcObservationCustomizer hikariJdbcObservationCustomizer() {
-		return new HikariJdbcObservationCustomizer();
-	}
-
-	@Bean
 	public static DataSourceObservationBeanPostProcessor dataSourceObservationBeanPostProcessor(
 			ObjectProvider<JdbcProperties> jdbcProperties,
 			ObjectProvider<DataSourceNameResolver> dataSourceNameResolvers,
@@ -134,6 +129,23 @@ public class DataSourceObservationAutoConfiguration {
 		return new DataSourceObservationBeanPostProcessor(jdbcProperties, dataSourceNameResolvers, listeners,
 				methodExecutionListeners, parameterTransformer, queryTransformer, resultSetProxyLogicFactory,
 				dataSourceProxyConnectionIdManagerProvider, proxyDataSourceBuilderCustomizers);
+	}
+
+	@Configuration(proxyBeanMethods = false)
+	@ConditionalOnClass(name = "com.zaxxer.hikari.HikariDataSource")
+	static class Hikari {
+
+		@Bean
+		public HikariJdbcObservationFilter hikariJdbcObservationFilter() {
+			return new HikariJdbcObservationFilter();
+		}
+
+		@Bean
+		public ObservationRegistryCustomizer<ObservationRegistry> hikariJdbcObservationFilterObservationRegistryCustomizer(
+				HikariJdbcObservationFilter hikariJdbcObservationFilter) {
+			return registry -> registry.observationConfig().observationFilter(hikariJdbcObservationFilter);
+		}
+
 	}
 
 	@Configuration(proxyBeanMethods = false)
