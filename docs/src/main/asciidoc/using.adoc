@@ -26,6 +26,16 @@ For Spring Boot, see <<howto.adoc#how-to-choose-what-to-observe>>.
 
 `jdbc.datasource.driver` and `jdbc.datasource.pool` tags are available when the target datasource is a `HikariDataSource`.
 
+The `HikariJdbcObservationFilter` provides this feature and this observation filter needs to be registered to the `ObservationRegistry`.
+
+[source,java,indent=0]
+----
+ObservationRegistry registry = ...
+registry.observationConfig().observationFilter(new HikariJdbcObservationFilter());
+----
+
+It is auto configured in `datasource-micrometer-spring-boot`.
+
 [[using-features-remote-ip-and-port]]
 === Remote IP and Port
 
