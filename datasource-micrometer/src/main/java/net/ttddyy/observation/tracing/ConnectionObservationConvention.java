@@ -17,7 +17,7 @@
 package net.ttddyy.observation.tracing;
 
 import io.micrometer.observation.Observation.Context;
-import io.micrometer.observation.Observation.ObservationConvention;
+import io.micrometer.observation.ObservationConvention;
 
 /**
  * A {@link ObservationConvention} for connection.

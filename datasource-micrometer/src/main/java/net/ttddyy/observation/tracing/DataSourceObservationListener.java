@@ -34,6 +34,7 @@ import io.micrometer.common.util.internal.logging.InternalLogger;
 import io.micrometer.common.util.internal.logging.InternalLoggerFactory;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.Observation.Context;
+import io.micrometer.observation.ObservationConvention;
 import io.micrometer.observation.ObservationRegistry;
 import net.ttddyy.dsproxy.ConnectionInfo;
 import net.ttddyy.dsproxy.ExecutionInfo;
@@ -116,7 +117,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	}
 
 	private Observation createAndStartObservation(JdbcObservation observationType, DataSourceBaseContext context,
-			Observation.ObservationConvention<? extends Context> observationConvention) {
+			ObservationConvention<? extends Context> observationConvention) {
 		return observationType.observation(this.observationRegistrySupplier.get(), context)
 				.observationConvention(observationConvention).start();
 	}
