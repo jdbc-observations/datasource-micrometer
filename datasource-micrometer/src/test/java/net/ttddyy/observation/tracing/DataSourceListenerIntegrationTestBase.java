@@ -26,6 +26,7 @@ import javax.sql.DataSource;
 
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationHandler;
+import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.test.SampleTestRunner;
 import io.micrometer.tracing.test.reporter.BuildingBlocks;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
@@ -48,6 +49,13 @@ abstract class DataSourceListenerIntegrationTestBase extends SampleTestRunner {
 
 	public DataSourceListenerIntegrationTestBase() {
 		super(SampleRunnerConfig.builder().build());
+	}
+
+	@Override
+	protected ObservationRegistry createObservationRegistry() {
+		ObservationRegistry registry = super.createObservationRegistry();
+		registry.observationConfig().observationFilter(new HikariJdbcObservationFilter());
+		return registry;
 	}
 
 	@BeforeAll

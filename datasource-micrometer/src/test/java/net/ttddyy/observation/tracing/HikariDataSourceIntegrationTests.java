@@ -49,11 +49,6 @@ class HikariDataSourceIntegrationTests extends DataSourceListenerIntegrationTest
 		builder.dataSource(this.hikariDataSource);
 	}
 
-	@Override
-	protected void customizeListener(DataSourceObservationListener listener) {
-		listener.getJdbcObservationCustomizers().add(new HikariJdbcObservationCustomizer());
-	}
-
 	@AfterEach
 	void shutDownHikari() {
 		this.hikariDataSource.close();
