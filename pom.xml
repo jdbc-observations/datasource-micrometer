@@ -29,7 +29,7 @@
 
     <properties>
         <java.version>17</java.version>
-        <micrometer-tracing-bom.version>1.0.0-SNAPSHOT</micrometer-tracing-bom.version>
+        <micrometer-tracing-bom.version>1.0.0-M8</micrometer-tracing-bom.version>
         <junit.version>5.8.2</junit.version>
         <mockito.version>4.6.1</mockito.version>
         <assertj.version>3.23.1</assertj.version>
