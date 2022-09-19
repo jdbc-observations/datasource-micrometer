@@ -35,24 +35,25 @@ Spring Boot 3.x AutoConfiguration for micrometer observability.
 </dependency>
 ```
 
-To use snapshot dependencies you need add Sonatype Snapshot repositories
+### Using Snapshot
 
-.pom.xml
+You need add Sonatype Snapshot repositories.
+
+For maven:
 ```xml
-
-    <repositories>
-		<repository>
-			<id>sonatype-snapshots</id>
-			<name>Sonatype Snapshots</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+<repositories>
+    <repository>
+        <id>sonatype-snapshots</id>
+        <name>Sonatype Snapshots</name>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
 ```
 
-.gradle
+For gradle:
 ```groovy
 repositories {
     maven {
