@@ -30,7 +30,7 @@
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
-        <spring-boot.version>3.0.0-SNAPSHOT</spring-boot.version>
+        <spring-boot.version>3.0.0-M5</spring-boot.version>
     </properties>
 
     <dependencies>
