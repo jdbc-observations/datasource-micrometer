@@ -69,16 +69,6 @@ The produced jars support following JDK versions at runtime:
 - `datasource-micrometer`: Java 8+ to match with micrometer 1.x java baseline.
 - `datasource-micrometer-spring-boot`: Java 17+ to match with Spring Boot 3.x java baseline.
 
-## Dependent Library Versions
-
-### `1.0.0-M1`
-
-| Library                |    Version    |
-|------------------------|:-------------:|
-| Spring Boot            |   3.0.0-M6    |
-| Micrometer Tracing BOM |   1.0.0-M8    |
-| _(Micrometer BOM)_     | _(1.10.0-M5)_ |
-
 ## Documentation
 
 - Current release
@@ -98,6 +88,16 @@ The produced jars support following JDK versions at runtime:
 [javadoc-snapshot]: https://jdbc-observations.github.io/datasource-micrometer/docs/current-snapshot/api/
 [changelog-current]: https://jdbc-observations.github.io/datasource-micrometer/docs/current/CHANGELOG.txt
 [changelog-snapshot]: https://jdbc-observations.github.io/datasource-micrometer/docs/current-snapshot/CHANGELOG.txt
+
+## Dependent Library Versions
+
+### `1.0.0-M1`
+
+| Library                |    Version    |
+|------------------------|:-------------:|
+| Spring Boot            |   3.0.0-M6    |
+| Micrometer Tracing BOM |   1.0.0-M8    |
+| _(Micrometer BOM)_     | _(1.10.0-M5)_ |
 
 ## Development
 
