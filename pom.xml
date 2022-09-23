@@ -49,6 +49,8 @@
         <script-spring-core.version>5.3.22</script-spring-core.version>
         <script-jackson-databind.version>2.13.3</script-jackson-databind.version>
         <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
+
+        <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
     </properties>
 
     <modules>
@@ -104,6 +106,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>${maven-antrun-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-deploy-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
