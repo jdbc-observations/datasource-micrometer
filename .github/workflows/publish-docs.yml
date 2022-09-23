@@ -70,7 +70,7 @@ jobs:
           cp CHANGELOG target/deploy-documents/docs/current-snapshot/CHANGELOG.txt
 
       - name: Prepare "current" documents
-        if: "contains(env.project_version, 'release')"
+        if: "!contains(env.project_version, 'release')"
         run: |
           mkdir -p target/deploy-documents/docs/current/docs/html
           mkdir -p target/deploy-documents/docs/current/api
@@ -83,17 +83,30 @@ jobs:
         with:
           path: target/deploy-documents
 
-  # Deployment job  (see https://github.com/actions/deploy-pages)
-  deploy:
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+#  # Deployment job  (see https://github.com/actions/deploy-pages)
+#  deploy:
+#    permissions:
+#      pages: write
+#      id-token: write
+#    environment:
+#      name: github-pages
+#      url: ${{ steps.deployment.outputs.page_url }}
+#    runs-on: ubuntu-latest
+#    needs: build
+#    steps:
+#      - name: Deploy to GitHub Pages
+#        id: deployment
+#        uses: actions/deploy-pages@v1
+
+      #   The deploy job creates new environment which does not contain old version docs.
+      #   Commenting out the job and use gh-pages instead.
+
+      - name: Deploy documents
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: target/deploy-documents
+          destination_dir: docs
+          keep_files: true
+          full_commit_message: "Deploying documents(${{ env.project_version}}) to ${{ github.ref }} from ${{ github.repository }}@${{ github.sha }}"
