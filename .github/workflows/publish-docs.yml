@@ -70,7 +70,7 @@ jobs:
           cp CHANGELOG target/deploy-documents/docs/current-snapshot/CHANGELOG.txt
 
       - name: Prepare "current" documents
-        if: "!contains(env.project_version, 'release')"
+        if: "!contains(env.project_version, 'snapshot')"
         run: |
           mkdir -p target/deploy-documents/docs/current/docs/html
           mkdir -p target/deploy-documents/docs/current/api
@@ -106,7 +106,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: target/deploy-documents
+          publish_dir: target/deploy-documents/docs
           destination_dir: docs
           keep_files: true
           full_commit_message: "Deploying documents(${{ env.project_version}}) to ${{ github.ref }} from ${{ github.repository }}@${{ github.sha }}"
