@@ -1,6 +1,6 @@
 # Datasource Micrometer
 [![CI](https://github.com/jdbc-observations/datasource-micrometer/actions/workflows/ci.yml/badge.svg)](https://github.com/jdbc-observations/datasource-micrometer/actions/workflows/ci.yml?event=push&branch=main)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/jdbc-observations/datasource-micrometer/badge.svg)](https://maven-badges.herokuapp.com/maven-central/jdbc-observations/datasource-micrometer)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy.observation/datasource-micrometer/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.ttddyy.observation/datasource-micrometer)
 
 The Datasource Micrometer provides a [Micrometer Tracing][micrometer-tracing] instrumentation for JDBC operations.
 
