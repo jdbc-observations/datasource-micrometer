@@ -55,7 +55,11 @@ public class DefaultQueryParametersSpanTagProvider extends DefaultQueryLogEntryC
 				}
 			}
 		}
-		chompIfEndWith(sb, ',');
+		// Until this method works with empty string, check the length.
+		// https://github.com/jdbc-observations/datasource-proxy/issues/86
+		if (sb.length() > 0) {
+			chompIfEndWith(sb, ',');
+		}
 		return sb.toString();
 	}
 
