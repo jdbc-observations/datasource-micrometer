@@ -675,11 +675,10 @@ The name is specified when creating a proxy datasource by <a href="https://githu
 </div>
 </div>
 <div class="paragraph">
-<p>For <code>datasource-micrometer-spring-boot</code>, the datasource name is resolved as its bean name (or the connection pool name for Hikari) by default.
-See the <code>DefaultDataSourceNameResolver</code> for reference.</p>
+<p>For <code>datasource-micrometer-spring-boot</code>, the datasource name is resolved by looking the catalog name at start up (or the connection pool name for Hikari, then fallback to its beanname) by default.</p>
 </div>
 <div class="paragraph">
-<p>To specify a custom datasource name, see <a href="howto.html#how-to-customize-the-proxydatasource-creation">howto.html</a> section.</p>
+<p>To specify a custom datasource name, see <a href="howto.html#how-to-customize-the-proxydatasource-name">howto.html</a> and <a href="howto.html#how-to-customize-the-proxydatasource-creation">howto.html</a> section.</p>
 </div>
 </div>
 </div>
