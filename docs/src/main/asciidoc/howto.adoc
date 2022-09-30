@@ -110,6 +110,12 @@ To enable the query logging, set the `jdbc.datasource-proxy.query.enable-logging
 	logging.level.my.query-logger=DEBUG,
 ----
 
+[[how-to-customize-the-proxydatasource-name]]
+=== How to Customize the ProxyDataSource Name
+
+Create a custom `DataSourceNameResolver` bean.
+It replaces the default bean, `DefaultDataSourceNameResolver`.
+
 [[how-to-customize-the-proxydatasource-creation]]
 === How to Customize the ProxyDataSource Creation
 

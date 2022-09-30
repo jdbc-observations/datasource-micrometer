@@ -57,7 +57,6 @@ DataSource instrumented =
         .build;
 ----
 
-For `datasource-micrometer-spring-boot`, the datasource name is resolved as its bean name (or the connection pool name for Hikari) by default.
-See the `DefaultDataSourceNameResolver` for reference.
+For `datasource-micrometer-spring-boot`, the datasource name is resolved by looking the catalog name at start up (or the connection pool name for Hikari, then fallback to its beanname) by default.
 
-To specify a custom datasource name, see <<howto.adoc#how-to-customize-the-proxydatasource-creation>> section.
+To specify a custom datasource name, see <<howto.adoc#how-to-customize-the-proxydatasource-name>> and <<howto.adoc#how-to-customize-the-proxydatasource-creation>> section.

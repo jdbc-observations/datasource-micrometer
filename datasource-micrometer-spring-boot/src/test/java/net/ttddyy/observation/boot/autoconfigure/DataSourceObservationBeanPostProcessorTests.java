@@ -16,6 +16,7 @@
 
 package net.ttddyy.observation.boot.autoconfigure;
 
+import java.sql.Connection;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -86,7 +87,7 @@ class DataSourceObservationBeanPostProcessorTests {
 	}
 
 	@Test
-	void postProcessAfterInitialization() {
+	void postProcessAfterInitialization() throws Exception {
 		JdbcProperties jdbcProperties = new JdbcProperties();
 		given(this.jdbcPropertiesProvider.getObject()).willReturn(jdbcProperties);
 
@@ -95,11 +96,14 @@ class DataSourceObservationBeanPostProcessorTests {
 
 		given(this.proxyDataSourceBuilderCustomizers.orderedStream()).willReturn(Stream.of());
 
+		// the DefaultDataSourceNameResolver retrieves catalog from connection
+		Connection connection = mock(Connection.class);
 		DataSource dataSource = mock(DataSource.class);
+		given(dataSource.getConnection()).willReturn(connection);
+
 		Object result = this.processor.postProcessAfterInitialization(dataSource, "foo");
 
 		assertThat(result).isInstanceOf(ProxyDataSource.class);
-
 	}
 
 	@Test

@@ -16,6 +16,9 @@
 
 package net.ttddyy.observation.boot.autoconfigure;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -39,6 +42,21 @@ public class DefaultDataSourceNameResolver implements DataSourceNameResolver {
 				return hikariDataSource.getPoolName();
 			}
 		}
+
+		// retrieve catalog name
+		try {
+			try (Connection connection = dataSource.getConnection()) {
+				String catalogName = connection.getCatalog();
+				if (catalogName != null) {
+					return catalogName;
+				}
+			}
+		}
+		catch (SQLException ex) {
+			// no-op
+		}
+
+		// fallback to the bean name
 		return beanName;
 	}
 

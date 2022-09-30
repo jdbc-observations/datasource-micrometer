@@ -16,6 +16,8 @@
 
 package net.ttddyy.observation.boot.autoconfigure;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +57,7 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.core.Ordered;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -108,7 +111,7 @@ class DataSourceObservationAutoConfigurationTests {
 		QueryExecutionListener queryListenerB = mock(QueryExecutionListener.class);
 		MethodExecutionListener methodListenerA = mock(MethodExecutionListener.class);
 		MethodExecutionListener methodListenerB = mock(MethodExecutionListener.class);
-		DataSource dataSource = mock(DataSource.class);
+		DataSource dataSource = createMockDataSource();
 
 		// @formatter:off
 		new ApplicationContextRunner()
@@ -165,7 +168,7 @@ class DataSourceObservationAutoConfigurationTests {
 				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
 				.withBean(ObservationRegistry.class, ObservationRegistry::create)
 				.withBean(Tracer.class, () -> mock(Tracer.class))
-				.withBean(DataSource.class, () -> mock(DataSource.class))
+				.withBean(DataSource.class, this::createMockDataSource)
 				.withBean("customizerA", ProxyDataSourceBuilderCustomizer.class, () -> customizerA)
 				.withBean("customizerB", ProxyDataSourceBuilderCustomizer.class, () -> customizerB)
 				.withBean("customizerC", ProxyDataSourceBuilderCustomizer.class, () -> customizerC)
@@ -176,6 +179,18 @@ class DataSourceObservationAutoConfigurationTests {
 					assertThat(callOrder).containsExactly("customizerC", "customizerA", "customizerB");
 				});
 		// @formatter:on
+	}
+
+	private DataSource createMockDataSource() {
+		Connection connection = mock(Connection.class);
+		DataSource dataSource = mock(DataSource.class);
+		try {
+			given(dataSource.getConnection()).willReturn(connection);
+		}
+		catch (SQLException ex) {
+			throw new RuntimeException(ex);
+		}
+		return dataSource;
 	}
 
 	@Test
