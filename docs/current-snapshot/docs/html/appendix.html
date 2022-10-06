@@ -720,7 +720,7 @@ Also, you can define your own properties.
 <div class="sect2">
 <h3 id="observability-metrics"><a class="anchor" href="#observability-metrics"></a><a class="link" href="#observability-metrics">2.1. Observability - Metrics</a></h3>
 <div class="paragraph">
-<p>Below you can find a list of all samples declared by this project.</p>
+<p>Below you can find a list of all metrics declared by this project.</p>
 </div>
 <div class="sect3">
 <h4 id="observability-metrics-connection"><a class="anchor" href="#observability-metrics-connection"></a><a class="link" href="#observability-metrics-connection">2.1.1. Connection</a></h4>
@@ -757,16 +757,28 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Description</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.datasource.driver</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the JDBC datasource driver. (HikariCP only)</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>jdbc.datasource.driver</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name of the JDBC datasource driver. (HikariCP only)</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.datasource.pool</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the JDBC datasource pool. (HikariCP only)</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>jdbc.datasource.pool</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name of the JDBC datasource pool. (HikariCP only)</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -848,20 +860,36 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Description</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.params[%s]</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JDBC query parameter values. (since the name contains <code>%s</code> the final value will be resolved at runtime)</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>jdbc.params[%s]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>JDBC query parameter values. (since the name contains <code>%s</code> the final value will be resolved at runtime)</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.query[%s]</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the JDBC query. (since the name contains <code>%s</code> the final value will be resolved at runtime)</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>jdbc.query[%s]</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name of the JDBC query. (since the name contains <code>%s</code> the final value will be resolved at runtime)</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.row-affected</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Result of "executeUpdate()", "executeLargeUpdate()", "executeBatch()", or "executeLargeBatch()" on "Statement". For batch operations, the value is represented as array.</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>jdbc.row-affected</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Result of "executeUpdate()", "executeLargeUpdate()", "executeBatch()", or "executeLargeBatch()" on "Statement". For batch operations, the value is represented as array.</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -901,12 +929,20 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Description</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.row-count</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number of SQL rows.</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>jdbc.row-count</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Number of SQL rows.</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -939,7 +975,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-All tags and event names must be prefixed with <code>jdbc</code> prefix!
+All tags must be prefixed with <code>jdbc</code> prefix!
 </td>
 </tr>
 </table>
@@ -1013,7 +1049,7 @@ All tags and event names must be prefixed with <code>jdbc</code> prefix!
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-All tags and event names must be prefixed with <code>jdbc</code> prefix!
+All tags must be prefixed with <code>jdbc</code> prefix!
 </td>
 </tr>
 </table>
@@ -1066,7 +1102,7 @@ All tags and event names must be prefixed with <code>jdbc</code> prefix!
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-All tags and event names must be prefixed with <code>jdbc</code> prefix!
+All tags must be prefixed with <code>jdbc</code> prefix!
 </td>
 </tr>
 </table>
