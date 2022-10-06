@@ -115,7 +115,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	private Observation createAndStartObservation(JdbcObservation observationType, DataSourceBaseContext context,
 			ObservationConvention<? extends Context> observationConvention) {
-		return observationType.observation(this.observationRegistrySupplier.get(), context)
+		return observationType.observation(this.observationRegistrySupplier.get(), () -> context)
 				.observationConvention(observationConvention).start();
 	}
 

@@ -18,14 +18,14 @@ package net.ttddyy.observation.tracing;
 
 import io.micrometer.common.docs.KeyName;
 import io.micrometer.observation.Observation.Event;
-import io.micrometer.observation.docs.DocumentedObservation;
+import io.micrometer.observation.docs.ObservationDocumentation;
 
 /**
- * {@link DocumentedObservation} for JDBC operations.
+ * {@link ObservationDocumentation} for JDBC operations.
  *
  * @author Tadaya Tsuyukubo
  */
-public enum JdbcObservation implements DocumentedObservation {
+public enum JdbcObservation implements ObservationDocumentation {
 
 	/**
 	 * Span created when a JDBC connection takes place.

@@ -30,7 +30,10 @@
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
-        <spring-boot.version>3.0.0-M5</spring-boot.version>
+        <spring-boot.version>3.0.0-SNAPSHOT</spring-boot.version>
+
+        <!-- Tests  -->
+        <brave-bom.version>5.14.1</brave-bom.version>
     </properties>
 
     <dependencies>
@@ -122,6 +125,15 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Zipkin BOM -->
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-bom</artifactId>
+                <version>${brave-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
