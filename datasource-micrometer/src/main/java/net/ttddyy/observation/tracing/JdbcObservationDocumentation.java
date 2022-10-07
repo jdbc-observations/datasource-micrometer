@@ -25,7 +25,7 @@ import io.micrometer.observation.docs.ObservationDocumentation;
  *
  * @author Tadaya Tsuyukubo
  */
-public enum JdbcObservation implements ObservationDocumentation {
+public enum JdbcObservationDocumentation implements ObservationDocumentation {
 
 	/**
 	 * Span created when a JDBC connection takes place.

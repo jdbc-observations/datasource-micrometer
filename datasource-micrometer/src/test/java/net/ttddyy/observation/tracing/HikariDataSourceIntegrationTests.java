@@ -25,7 +25,7 @@ import java.util.Set;
 import com.zaxxer.hikari.HikariDataSource;
 import io.micrometer.tracing.test.simple.SpansAssert;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
-import net.ttddyy.observation.tracing.JdbcObservation.ConnectionKeyNames;
+import net.ttddyy.observation.tracing.JdbcObservationDocumentation.ConnectionKeyNames;
 import org.junit.jupiter.api.AfterEach;
 
 import static org.assertj.core.api.Assertions.assertThat;

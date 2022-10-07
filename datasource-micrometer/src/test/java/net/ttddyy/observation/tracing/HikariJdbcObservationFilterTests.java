@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 import com.zaxxer.hikari.HikariDataSource;
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.tck.ObservationContextAssert;
-import net.ttddyy.observation.tracing.JdbcObservation.ConnectionKeyNames;
+import net.ttddyy.observation.tracing.JdbcObservationDocumentation.ConnectionKeyNames;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

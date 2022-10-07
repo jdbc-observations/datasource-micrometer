@@ -23,7 +23,7 @@ import io.micrometer.common.KeyValue;
 import io.micrometer.common.KeyValues;
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationConvention;
-import net.ttddyy.observation.tracing.JdbcObservation.QueryHighCardinalityKeyNames;
+import net.ttddyy.observation.tracing.JdbcObservationDocumentation.QueryHighCardinalityKeyNames;
 
 /**
  * A {@link ObservationConvention} for query.

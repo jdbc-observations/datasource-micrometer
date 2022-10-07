@@ -43,7 +43,7 @@ import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ResultSetAttributes;
-import net.ttddyy.observation.tracing.JdbcObservation.JdbcEvents;
+import net.ttddyy.observation.tracing.JdbcObservationDocumentation.JdbcEvents;
 
 /**
  * Datasource-proxy listener implementation for JDBC observation.
@@ -103,7 +103,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		executionInfo.addCustomValue(QueryContext.class.getName(), queryContext);
 		populateFromConnectionAttributes(queryContext, executionInfo.getConnectionId());
 
-		Observation observation = createAndStartObservation(JdbcObservation.QUERY, queryContext,
+		Observation observation = createAndStartObservation(JdbcObservationDocumentation.QUERY, queryContext,
 				this.queryObservationConvention);
 
 		if (logger.isDebugEnabled()) {
@@ -113,8 +113,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		executionInfo.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
 	}
 
-	private Observation createAndStartObservation(JdbcObservation observationType, DataSourceBaseContext context,
-			ObservationConvention<? extends Context> observationConvention) {
+	private Observation createAndStartObservation(JdbcObservationDocumentation observationType,
+			DataSourceBaseContext context, ObservationConvention<? extends Context> observationConvention) {
 		return observationType.observation(this.observationRegistrySupplier.get(), () -> context)
 				.observationConvention(observationConvention).start();
 	}
@@ -221,7 +221,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		ConnectionContext connectionContext = new ConnectionContext();
 		executionContext.addCustomValue(ConnectionContext.class.getName(), connectionContext);
 
-		Observation observation = createAndStartObservation(JdbcObservation.CONNECTION, connectionContext,
+		Observation observation = createAndStartObservation(JdbcObservationDocumentation.CONNECTION, connectionContext,
 				this.connectionObservationConvention);
 		executionContext.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
 	}
@@ -341,8 +341,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 				ResultSetContext resultSetContext = new ResultSetContext();
 				populateFromConnectionAttributes(resultSetContext,
 						executionContext.getConnectionInfo().getConnectionId());
-				Observation observation = createAndStartObservation(JdbcObservation.RESULT_SET, resultSetContext,
-						this.resultSetObservationConvention);
+				Observation observation = createAndStartObservation(JdbcObservationDocumentation.RESULT_SET,
+						resultSetContext, this.resultSetObservationConvention);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Created a new result-set observation [" + observation + "]");

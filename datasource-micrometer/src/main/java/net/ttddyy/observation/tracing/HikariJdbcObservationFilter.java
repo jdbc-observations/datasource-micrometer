@@ -24,7 +24,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.micrometer.common.util.StringUtils;
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationFilter;
-import net.ttddyy.observation.tracing.JdbcObservation.ConnectionKeyNames;
+import net.ttddyy.observation.tracing.JdbcObservationDocumentation.ConnectionKeyNames;
 
 /**
  * A {@link ObservationFilter} to populate HikariCP specific information.

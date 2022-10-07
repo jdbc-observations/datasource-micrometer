@@ -20,7 +20,7 @@ import io.micrometer.common.KeyValue;
 import io.micrometer.common.KeyValues;
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationConvention;
-import net.ttddyy.observation.tracing.JdbcObservation.ResultSetHighCardinalityKeyNames;
+import net.ttddyy.observation.tracing.JdbcObservationDocumentation.ResultSetHighCardinalityKeyNames;
 
 /**
  * A {@link ObservationConvention} for result-set operations.
