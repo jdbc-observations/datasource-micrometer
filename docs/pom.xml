@@ -123,27 +123,13 @@
                             </execution>
 
                             <execution>
-                                <id>generate-metrics-metadata</id>
+                                <id>generate-docs</id>
                                 <phase>prepare-package</phase>
                                 <goals>
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>
-                                        io.micrometer.docs.metrics.DocsFromSources
-                                    </mainClass>
-                                </configuration>
-                            </execution>
-
-                            <execution>
-                                <id>generate-tracing-metadata</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <mainClass>io.micrometer.docs.spans.DocsFromSources
-                                    </mainClass>
+                                    <mainClass>io.micrometer.docs.DocsGeneratorCommand</mainClass>
                                 </configuration>
                             </execution>
 
@@ -151,13 +137,7 @@
                         <dependencies>
                             <dependency>
                                 <groupId>io.micrometer</groupId>
-                                <artifactId>micrometer-docs-generator-spans</artifactId>
-                                <version>${micrometer-docs-generator.version}</version>
-                                <type>jar</type>
-                            </dependency>
-                            <dependency>
-                                <groupId>io.micrometer</groupId>
-                                <artifactId>micrometer-docs-generator-metrics</artifactId>
+                                <artifactId>micrometer-docs-generator</artifactId>
                                 <version>${micrometer-docs-generator.version}</version>
                                 <type>jar</type>
                             </dependency>
