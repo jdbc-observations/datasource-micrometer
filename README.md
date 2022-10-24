@@ -91,13 +91,11 @@ The produced jars support following JDK versions at runtime:
 
 ## Dependent Library Versions
 
-### `1.0.0-M1`
 
-| Library                |    Version    |
-|------------------------|:-------------:|
-| Spring Boot            |   3.0.0-M6    |
-| Micrometer Tracing BOM |   1.0.0-M8    |
-| _(Micrometer BOM)_     | _(1.10.0-M5)_ |
+| DataSource Micrometer | Spring Boot | Micrometer Tracing BOM _(Micrometer BOM)_ |
+|:---------------------:|:-----------:|:-----------------------------------------:|
+|      `1.0.0-RC1`      |  3.0.0-RC1  |         1.0.0-RC1  _(1.10.0-RC1)_         | 
+|      `1.0.0-M1`       |  3.0.0-M6   |          1.0.0-M8  _(1.10.0-M5)_          | 
 
 ## Development
 
