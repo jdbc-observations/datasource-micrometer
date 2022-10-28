@@ -646,6 +646,7 @@ window.onload = function() {
 <li><a href="#how-to-enable-and-configure-query-logging">4.2.4. How to Enable and Configure Query Logging</a></li>
 <li><a href="#how-to-customize-the-proxydatasource-name">4.2.5. How to Customize the ProxyDataSource Name</a></li>
 <li><a href="#how-to-customize-the-proxydatasource-creation">4.2.6. How to Customize the ProxyDataSource Creation</a></li>
+<li><a href="#how-to-modify-the-query-in-span">4.2.7. How to Modify the Query in Span</a></li>
 </ul>
 </li>
 </ul>
@@ -1061,6 +1062,48 @@ This callback API allows you to customize the <code>ProxyDataSourceBuilder</code
 public ProxyDataSourceBuilderCustomizer myCustomizer(){
     return (builder, dataSource, beanName, dataSourceName) -&gt; {
         builder.name("MyAppDataSource");
+    };
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="how-to-modify-the-query-in-span"><a class="anchor" href="#how-to-modify-the-query-in-span"></a><a class="link" href="#how-to-modify-the-query-in-span">4.2.7. How to Modify the Query in Span</a></h4>
+<div class="paragraph">
+<p>If you want to modify the query string in the span (high cardinality tag), use <code>ObservationFilter</code> to update the tag value.
+For example, you could perform query sanitization, truncation, etc.</p>
+</div>
+<div class="paragraph">
+<p>This approach is generally applicable to modify the tags in span.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>ObservationFilter</code> is applied when the observation stops.
+The modification will not be available for timers created by <code>DefaultMeterObservationHandler</code> since it sets the timers at observation start.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Bean
+public ObservationFilter observationFilter() {
+    return (context) -&gt; {
+        String tagKey = QueryHighCardinalityKeyNames.QUERY.name();
+        KeyValue tag = context.getHighCardinalityKeyValue(tagKey);
+        if(tag != null) {
+            String query = tag.getValue();
+
+            // ... modify query
+
+            context.addHighCardinalityKeyValue(KeyValue.of(tagKey, modifiedQuery));
+        }
+        return context;
     };
 }</code></pre>
 </div>
