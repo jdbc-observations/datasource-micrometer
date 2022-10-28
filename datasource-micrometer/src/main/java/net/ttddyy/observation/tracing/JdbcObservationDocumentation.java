@@ -111,7 +111,7 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 		}
 	};
 
-	enum QueryHighCardinalityKeyNames implements KeyName {
+	public enum QueryHighCardinalityKeyNames implements KeyName {
 
 		/**
 		 * Name of the JDBC query.
@@ -147,7 +147,7 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 
 	}
 
-	enum ResultSetHighCardinalityKeyNames implements KeyName {
+	public enum ResultSetHighCardinalityKeyNames implements KeyName {
 
 		/**
 		 * Number of SQL rows.
@@ -161,7 +161,7 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 
 	}
 
-	enum ConnectionKeyNames implements KeyName {
+	public enum ConnectionKeyNames implements KeyName {
 
 		/**
 		 * Name of the JDBC datasource driver. (HikariCP only)
@@ -185,7 +185,7 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 
 	}
 
-	enum JdbcEvents implements Event {
+	public enum JdbcEvents implements Event {
 
 		/**
 		 * When the connection is acquired. This event is recorded right after successful
