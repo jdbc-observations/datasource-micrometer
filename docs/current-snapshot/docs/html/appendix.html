@@ -732,7 +732,34 @@ Also, you can define your own properties.
 </blockquote>
 </div>
 <div class="paragraph">
-<p><strong>Metric name</strong> <code>jdbc.connection</code>. <strong>Type</strong> <code>timer</code> and <strong>base unit</strong> <code>seconds</code>.</p>
+<p><strong>Metric name</strong> <code>jdbc.connection</code>. <strong>Type</strong> <code>timer</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Metric name</strong> <code>jdbc.connection.active</code>. <strong>Type</strong> <code>long task timer</code>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+KeyValues that are added after starting the Observation might be missing from the *.active metrics.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Micrometer internally uses <code>nanoseconds</code> for the baseunit. However, each backend determines the actual baseunit. (i.e. Prometheus uses seconds)
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Fully qualified name of the enclosing class <code>net.ttddyy.observation.tracing.JdbcObservationDocumentation</code>.</p>
@@ -766,7 +793,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>jdbc.datasource.driver</code></p>
+<p><code>jdbc.datasource.driver</code> <em>(required)</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Name of the JDBC datasource driver. (HikariCP only)</p>
@@ -774,7 +801,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>jdbc.datasource.pool</code></p>
+<p><code>jdbc.datasource.pool</code> <em>(required)</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Name of the JDBC datasource pool. (HikariCP only)</p>
@@ -835,7 +862,34 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </blockquote>
 </div>
 <div class="paragraph">
-<p><strong>Metric name</strong> <code>jdbc.query</code>. <strong>Type</strong> <code>timer</code> and <strong>base unit</strong> <code>seconds</code>.</p>
+<p><strong>Metric name</strong> <code>jdbc.query</code>. <strong>Type</strong> <code>timer</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Metric name</strong> <code>jdbc.query.active</code>. <strong>Type</strong> <code>long task timer</code>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+KeyValues that are added after starting the Observation might be missing from the *.active metrics.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Micrometer internally uses <code>nanoseconds</code> for the baseunit. However, each backend determines the actual baseunit. (i.e. Prometheus uses seconds)
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Fully qualified name of the enclosing class <code>net.ttddyy.observation.tracing.JdbcObservationDocumentation</code>.</p>
@@ -869,7 +923,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>jdbc.params[%s]</code></p>
+<p><code>jdbc.params[%s]</code> <em>(required)</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>JDBC query parameter values. (since the name contains <code>%s</code> the final value will be resolved at runtime)</p>
@@ -877,7 +931,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>jdbc.query[%s]</code></p>
+<p><code>jdbc.query[%s]</code> <em>(required)</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Name of the JDBC query. (since the name contains <code>%s</code> the final value will be resolved at runtime)</p>
@@ -885,7 +939,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>jdbc.row-affected</code></p>
+<p><code>jdbc.row-affected</code> <em>(required)</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Result of "executeUpdate()", "executeLargeUpdate()", "executeBatch()", or "executeLargeBatch()" on "Statement". For batch operations, the value is represented as array.</p>
@@ -904,7 +958,34 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </blockquote>
 </div>
 <div class="paragraph">
-<p><strong>Metric name</strong> <code>jdbc.result-set</code>. <strong>Type</strong> <code>timer</code> and <strong>base unit</strong> <code>seconds</code>.</p>
+<p><strong>Metric name</strong> <code>jdbc.result-set</code>. <strong>Type</strong> <code>timer</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Metric name</strong> <code>jdbc.result-set.active</code>. <strong>Type</strong> <code>long task timer</code>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+KeyValues that are added after starting the Observation might be missing from the *.active metrics.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Micrometer internally uses <code>nanoseconds</code> for the baseunit. However, each backend determines the actual baseunit. (i.e. Prometheus uses seconds)
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Fully qualified name of the enclosing class <code>net.ttddyy.observation.tracing.JdbcObservationDocumentation</code>.</p>
@@ -938,7 +1019,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>jdbc.row-count</code></p>
+<p><code>jdbc.row-count</code> <em>(required)</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Number of SQL rows.</p>
@@ -992,11 +1073,11 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 <td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.datasource.driver</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.datasource.driver</code> <em>(required)</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Name of the JDBC datasource driver. (HikariCP only)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.datasource.pool</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.datasource.pool</code> <em>(required)</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Name of the JDBC datasource pool. (HikariCP only)</p></td>
 </tr>
 </tbody>
@@ -1066,15 +1147,15 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 <td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.params[%s]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.params[%s]</code> <em>(required)</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">JDBC query parameter values. (since the name contains <code>%s</code> the final value will be resolved at runtime)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.query[%s]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.query[%s]</code> <em>(required)</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Name of the JDBC query. (since the name contains <code>%s</code> the final value will be resolved at runtime)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.row-affected</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.row-affected</code> <em>(required)</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Result of "executeUpdate()", "executeLargeUpdate()", "executeBatch()", or "executeLargeBatch()" on "Statement". For batch operations, the value is represented as array.</p></td>
 </tr>
 </tbody>
@@ -1119,7 +1200,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 <td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.row-count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.row-count</code> <em>(required)</em></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Number of SQL rows.</p></td>
 </tr>
 </tbody>
