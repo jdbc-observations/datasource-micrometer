@@ -29,8 +29,8 @@
 
     <properties>
         <java.version>17</java.version>
-        <micrometer-bom.version>1.10.0-RC1</micrometer-bom.version>
-        <micrometer-tracing-bom.version>1.0.0-RC1</micrometer-tracing-bom.version>
+        <micrometer-bom.version>1.10.0</micrometer-bom.version>
+        <micrometer-tracing-bom.version>1.0.0</micrometer-tracing-bom.version>
         <spring-javaformat.version>0.0.34</spring-javaformat.version>
 
         <!-- Tests  -->
@@ -38,8 +38,11 @@
         <mockito.version>4.6.1</mockito.version>
         <assertj.version>3.23.1</assertj.version>
 
+        <!-- datasource-micrometer-spring-boot module -->
+        <spring-boot.version>3.0.0-RC1</spring-boot.version>
+
         <!-- Docs -->
-        <micrometer-docs-generator.version>1.0.0-RC1</micrometer-docs-generator.version>
+        <micrometer-docs-generator.version>1.0.0</micrometer-docs-generator.version>
         <asciidoctor.maven.plugin.version>2.2.2</asciidoctor.maven.plugin.version>
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>

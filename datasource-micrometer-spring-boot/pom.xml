@@ -30,7 +30,6 @@
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
-        <spring-boot.version>3.0.0-RC1</spring-boot.version>
 
         <!-- Tests  -->
         <brave-bom.version>5.14.1</brave-bom.version>
