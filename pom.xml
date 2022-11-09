@@ -38,6 +38,9 @@
         <mockito.version>4.6.1</mockito.version>
         <assertj.version>3.23.1</assertj.version>
 
+        <!-- datasource-micrometer module -->
+        <datasource-proxy.version>1.8.1</datasource-proxy.version>
+
         <!-- datasource-micrometer-spring-boot module -->
         <spring-boot.version>3.0.0-RC1</spring-boot.version>
 

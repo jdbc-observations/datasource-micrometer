@@ -44,7 +44,7 @@
         <dependency>
             <groupId>net.ttddyy</groupId>
             <artifactId>datasource-proxy</artifactId>
-            <version>1.8</version>
+            <version>${datasource-proxy.version}</version>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
