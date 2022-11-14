@@ -10,7 +10,8 @@
       "name": "jdbc.datasource-proxy.enabled",
       "type": "java.lang.Boolean",
       "description": "Whether to enable JDBC instrumentation.",
-      "defaultValue": true
+      "defaultValue": true,
+      "sourceType": "net.ttddyy.observation.boot.autoconfigure.DataSourceObservationAutoConfiguration"
     }
   ]
 }
