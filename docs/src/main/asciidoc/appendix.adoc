@@ -17,5 +17,6 @@ include::../../../target/_configprops.adoc[]
 [[appendix-observability-metrics-and-spans]]
 == Observability Metrics and Spans
 
+include::../../../target/_conventions.adoc[]
 include::../../../target/_metrics.adoc[]
 include::../../../target/_spans.adoc[]
