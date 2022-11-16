@@ -598,8 +598,9 @@ window.onload = function() {
 <li><a href="#appendix-common-application-properties">1. Common Spring Boot application properties</a></li>
 <li><a href="#appendix-observability-metrics-and-spans">2. Observability Metrics and Spans</a>
 <ul class="sectlevel2">
-<li><a href="#observability-metrics">2.1. Observability - Metrics</a></li>
-<li><a href="#observability-spans">2.2. Observability - Spans</a></li>
+<li><a href="#observability-conventions">2.1. Observability - Conventions</a></li>
+<li><a href="#observability-metrics">2.2. Observability - Metrics</a></li>
+<li><a href="#observability-spans">2.3. Observability - Spans</a></li>
 </ul>
 </li>
 </ul>
@@ -718,12 +719,18 @@ Also, you can define your own properties.
 <h2 id="appendix-observability-metrics-and-spans"><a class="anchor" href="#appendix-observability-metrics-and-spans"></a><a class="link" href="#appendix-observability-metrics-and-spans">2. Observability Metrics and Spans</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="observability-metrics"><a class="anchor" href="#observability-metrics"></a><a class="link" href="#observability-metrics">2.1. Observability - Metrics</a></h3>
+<h3 id="observability-conventions"><a class="anchor" href="#observability-conventions"></a><a class="link" href="#observability-conventions">2.1. Observability - Conventions</a></h3>
+<div class="paragraph">
+<p>Below you can find a list of all <code>GlobalObservabilityConventions</code> and <code>ObservabilityConventions</code> declared by this project.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="observability-metrics"><a class="anchor" href="#observability-metrics"></a><a class="link" href="#observability-metrics">2.2. Observability - Metrics</a></h3>
 <div class="paragraph">
 <p>Below you can find a list of all metrics declared by this project.</p>
 </div>
 <div class="sect3">
-<h4 id="observability-metrics-connection"><a class="anchor" href="#observability-metrics-connection"></a><a class="link" href="#observability-metrics-connection">2.1.1. Connection</a></h4>
+<h4 id="observability-metrics-connection"><a class="anchor" href="#observability-metrics-connection"></a><a class="link" href="#observability-metrics-connection">2.2.1. Connection</a></h4>
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
@@ -853,7 +860,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </div>
 </div>
 <div class="sect3">
-<h4 id="observability-metrics-query"><a class="anchor" href="#observability-metrics-query"></a><a class="link" href="#observability-metrics-query">2.1.2. Query</a></h4>
+<h4 id="observability-metrics-query"><a class="anchor" href="#observability-metrics-query"></a><a class="link" href="#observability-metrics-query">2.2.2. Query</a></h4>
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
@@ -949,7 +956,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <div class="sect3">
-<h4 id="observability-metrics-result-set"><a class="anchor" href="#observability-metrics-result-set"></a><a class="link" href="#observability-metrics-result-set">2.1.3. Result Set</a></h4>
+<h4 id="observability-metrics-result-set"><a class="anchor" href="#observability-metrics-result-set"></a><a class="link" href="#observability-metrics-result-set">2.2.3. Result Set</a></h4>
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
@@ -1030,12 +1037,12 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </div>
 </div>
 <div class="sect2">
-<h3 id="observability-spans"><a class="anchor" href="#observability-spans"></a><a class="link" href="#observability-spans">2.2. Observability - Spans</a></h3>
+<h3 id="observability-spans"><a class="anchor" href="#observability-spans"></a><a class="link" href="#observability-spans">2.3. Observability - Spans</a></h3>
 <div class="paragraph">
 <p>Below you can find a list of all spans declared by this project.</p>
 </div>
 <div class="sect3">
-<h4 id="observability-spans-connection"><a class="anchor" href="#observability-spans-connection"></a><a class="link" href="#observability-spans-connection">2.2.1. Connection Span</a></h4>
+<h4 id="observability-spans-connection"><a class="anchor" href="#observability-spans-connection"></a><a class="link" href="#observability-spans-connection">2.3.1. Connection Span</a></h4>
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
@@ -1109,7 +1116,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <div class="sect3">
-<h4 id="observability-spans-query"><a class="anchor" href="#observability-spans-query"></a><a class="link" href="#observability-spans-query">2.2.2. Query Span</a></h4>
+<h4 id="observability-spans-query"><a class="anchor" href="#observability-spans-query"></a><a class="link" href="#observability-spans-query">2.3.2. Query Span</a></h4>
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
@@ -1162,7 +1169,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <div class="sect3">
-<h4 id="observability-spans-result-set"><a class="anchor" href="#observability-spans-result-set"></a><a class="link" href="#observability-spans-result-set">2.2.3. Result Set Span</a></h4>
+<h4 id="observability-spans-result-set"><a class="anchor" href="#observability-spans-result-set"></a><a class="link" href="#observability-spans-result-set">2.3.3. Result Set Span</a></h4>
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">

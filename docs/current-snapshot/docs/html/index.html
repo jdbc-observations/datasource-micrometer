@@ -656,8 +656,9 @@ window.onload = function() {
 <li><a href="#appendix-common-application-properties">5.1. Common Spring Boot application properties</a></li>
 <li><a href="#appendix-observability-metrics-and-spans">5.2. Observability Metrics and Spans</a>
 <ul class="sectlevel3">
-<li><a href="#observability-metrics">5.2.1. Observability - Metrics</a></li>
-<li><a href="#observability-spans">5.2.2. Observability - Spans</a></li>
+<li><a href="#observability-conventions">5.2.1. Observability - Conventions</a></li>
+<li><a href="#observability-metrics">5.2.2. Observability - Metrics</a></li>
+<li><a href="#observability-spans">5.2.3. Observability - Spans</a></li>
 </ul>
 </li>
 </ul>
@@ -1224,7 +1225,13 @@ Also, you can define your own properties.
 <div class="sect2">
 <h3 id="appendix-observability-metrics-and-spans"><a class="anchor" href="#appendix-observability-metrics-and-spans"></a><a class="link" href="#appendix-observability-metrics-and-spans">5.2. Observability Metrics and Spans</a></h3>
 <div class="sect3">
-<h4 id="observability-metrics"><a class="anchor" href="#observability-metrics"></a><a class="link" href="#observability-metrics">5.2.1. Observability - Metrics</a></h4>
+<h4 id="observability-conventions"><a class="anchor" href="#observability-conventions"></a><a class="link" href="#observability-conventions">5.2.1. Observability - Conventions</a></h4>
+<div class="paragraph">
+<p>Below you can find a list of all <code>GlobalObservabilityConventions</code> and <code>ObservabilityConventions</code> declared by this project.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="observability-metrics"><a class="anchor" href="#observability-metrics"></a><a class="link" href="#observability-metrics">5.2.2. Observability - Metrics</a></h4>
 <div class="paragraph">
 <p>Below you can find a list of all metrics declared by this project.</p>
 </div>
@@ -1536,7 +1543,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </div>
 </div>
 <div class="sect3">
-<h4 id="observability-spans"><a class="anchor" href="#observability-spans"></a><a class="link" href="#observability-spans">5.2.2. Observability - Spans</a></h4>
+<h4 id="observability-spans"><a class="anchor" href="#observability-spans"></a><a class="link" href="#observability-spans">5.2.3. Observability - Spans</a></h4>
 <div class="paragraph">
 <p>Below you can find a list of all spans declared by this project.</p>
 </div>
