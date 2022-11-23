@@ -29,7 +29,7 @@
 
     <properties>
         <java.version>17</java.version>
-        <micrometer-bom.version>1.10.0</micrometer-bom.version>
+        <micrometer-bom.version>1.10.2</micrometer-bom.version>
         <micrometer-tracing-bom.version>1.0.0</micrometer-tracing-bom.version>
         <spring-javaformat.version>0.0.34</spring-javaformat.version>
 
