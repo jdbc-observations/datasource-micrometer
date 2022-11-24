@@ -1,6 +1,13 @@
 Datasource Micrometer Changelog
 ================================
 
+1.0.0
+------------------
+* Upgrade Spring Boot 3.0.0
+* Upgrade Micrometer Bom 1.10.2
+* Upgrade datasource-proxy 1.8.1
+
+
 1.0.0.RC1
 ------------------
 * Fix query param writing for no params #7
