@@ -14,10 +14,11 @@ Micrometer observability instrumentation for JDBC DataSource.
 **datasource-micrometer-spring-boot**  
 Spring Boot 3.x AutoConfiguration for micrometer observability.
 
-### Maven Coordinates
+### Dependency Settings
 **datasource-micrometer**
 
 ```xml
+<!-- Maven -->
 <dependency>
     <groupId>net.ttddyy.observation</groupId>
     <artifactId>datasource-micrometer</artifactId>
@@ -25,22 +26,36 @@ Spring Boot 3.x AutoConfiguration for micrometer observability.
 </dependency>
 ```
 
+```groovy
+// Gradle
+dependencies {
+    implementation "net.ttddyy.observation:datasource-micrometer:..."
+}
+```
+
 **datasource-micrometer-spring-boot**
 
 ```xml
+<!-- Maven -->
 <dependency>
     <groupId>net.ttddyy.observation</groupId>
     <artifactId>datasource-micrometer-spring-boot</artifactId>
     <version>...</version>
 </dependency>
 ```
+```groovy
+// Gradle
+dependencies {
+    implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:..."
+}
+```
 
 ### Using Snapshot
 
 You need add Sonatype Snapshot repositories.
 
-For maven:
 ```xml
+<!-- Maven -->
 <repositories>
     <repository>
         <id>sonatype-snapshots</id>
@@ -53,8 +68,8 @@ For maven:
 </repositories>
 ```
 
-For gradle:
 ```groovy
+// Gradle
 repositories {
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
