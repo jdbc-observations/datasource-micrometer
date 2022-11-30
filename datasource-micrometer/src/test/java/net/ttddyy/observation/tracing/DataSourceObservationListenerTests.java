@@ -377,22 +377,44 @@ class DataSourceObservationListenerTests {
 		connectionInfo.setConnectionId("id-1");
 		connectionInfo.setDataSourceName("myDS");
 
-		createResultSetObservation(listener, connectionInfo, resultSet);
+		createResultSetObservation(listener, connectionInfo, resultSet, true);
 
-		Method closeMethod = ResultSet.class.getMethod("close");
+		// ResultSet#close should stop the observation
+		MethodExecutionContext closeExecutionContext = createResultSetCloseMethodExecutionContext(connectionInfo,
+				resultSet);
+		listener.afterMethod(closeExecutionContext);
 
-		MethodExecutionContext closeExecutionContext = new MethodExecutionContext();
-		closeExecutionContext.setConnectionInfo(connectionInfo);
-		closeExecutionContext.setMethod(closeMethod);
-		closeExecutionContext.setTarget(resultSet);
+		assertThat(tracer.currentSpan()).isNull();
+		TracerAssert.assertThat(this.tracer).onlySpan().hasTag("jdbc.row-count", "1");
+	}
+
+	@Test
+	void resultSetObservationWithEmptyResultSet() throws Exception {
+		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
+
+		ResultSet resultSet = mock(ResultSet.class);
+		Statement statement = mock(Statement.class);
+		given(resultSet.getStatement()).willReturn(statement);
+
+		ConnectionInfo connectionInfo = new ConnectionInfo();
+		connectionInfo.setConnectionId("id-1");
+		connectionInfo.setDataSourceName("myDS");
+
+		createResultSetObservation(listener, connectionInfo, resultSet, false);
+
+		MethodExecutionContext closeExecutionContext = createResultSetCloseMethodExecutionContext(connectionInfo,
+				resultSet);
 
 		// ResultSet#close should stop the observation
 		listener.afterMethod(closeExecutionContext);
 		assertThat(tracer.currentSpan()).isNull();
+
+		TracerAssert.assertThat(this.tracer).onlySpan().hasTag("jdbc.row-count", "0");
 	}
 
 	private void createResultSetObservation(DataSourceObservationListener listener, ConnectionInfo connectionInfo,
-			ResultSet resultSet) throws Exception {
+			ResultSet resultSet, boolean hasNext) throws Exception {
 		Method nextMethod = ResultSet.class.getMethod("next");
 
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
@@ -406,10 +428,20 @@ class DataSourceObservationListenerTests {
 		nextExecutionContext.setConnectionInfo(connectionInfo);
 		nextExecutionContext.setMethod(nextMethod);
 		nextExecutionContext.setTarget(resultSet);
-		nextExecutionContext.setResult(Boolean.TRUE);
+		nextExecutionContext.setResult(hasNext);
 
 		listener.afterMethod(nextExecutionContext);
 		assertThat(tracer.currentSpan()).isNotNull();
+	}
+
+	private MethodExecutionContext createResultSetCloseMethodExecutionContext(ConnectionInfo connectionInfo,
+			ResultSet resultSet) throws Exception {
+		Method closeMethod = ResultSet.class.getMethod("close");
+		MethodExecutionContext closeExecutionContext = new MethodExecutionContext();
+		closeExecutionContext.setConnectionInfo(connectionInfo);
+		closeExecutionContext.setMethod(closeMethod);
+		closeExecutionContext.setTarget(resultSet);
+		return closeExecutionContext;
 	}
 
 	@Test
@@ -425,16 +457,12 @@ class DataSourceObservationListenerTests {
 		Statement statement = mock(Statement.class);
 		given(resultSet.getStatement()).willReturn(statement);
 
-		createResultSetObservation(listener, connectionInfo, resultSet);
+		createResultSetObservation(listener, connectionInfo, resultSet, true);
 
 		// ResultSet#close may be skipped. In such case, Statement#close should
 		// implicitly close the ResultSet.
-		Method closeMethod = Statement.class.getMethod("close");
-
-		MethodExecutionContext closeExecutionContext = new MethodExecutionContext();
-		closeExecutionContext.setConnectionInfo(connectionInfo);
-		closeExecutionContext.setMethod(closeMethod);
-		closeExecutionContext.setTarget(resultSet);
+		MethodExecutionContext closeExecutionContext = createResultSetCloseMethodExecutionContext(connectionInfo,
+				resultSet);
 
 		// Statement#close should stop the ResultSet observation
 		listener.afterMethod(closeExecutionContext);
@@ -454,17 +482,12 @@ class DataSourceObservationListenerTests {
 		Statement statement = mock(Statement.class);
 		given(resultSet.getStatement()).willReturn(statement);
 
-		createResultSetObservation(listener, connectionInfo, resultSet);
+		createResultSetObservation(listener, connectionInfo, resultSet, true);
 
 		// [ResultSet|Statement]#close may be skipped. In such case, Connection#close
-		// should
-		// implicitly close the ResultSet.
-		Method closeMethod = Connection.class.getMethod("close");
-
-		MethodExecutionContext closeExecutionContext = new MethodExecutionContext();
-		closeExecutionContext.setConnectionInfo(connectionInfo);
-		closeExecutionContext.setMethod(closeMethod);
-		closeExecutionContext.setTarget(resultSet);
+		// should implicitly close the ResultSet.
+		MethodExecutionContext closeExecutionContext = createResultSetCloseMethodExecutionContext(connectionInfo,
+				resultSet);
 
 		// Connection#close should stop the ResultSet observation
 		listener.afterMethod(closeExecutionContext);
