@@ -333,38 +333,37 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 		Boolean hasNext = (Boolean) executionContext.getResult();
 		ResultSet resultSet = (ResultSet) executionContext.getTarget();
-		if (hasNext) {
-			ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager
-					.getByResultSet(resultSet);
-			if (resultSetAttributes == null) {
-				// new ResultSet observation
-				ResultSetContext resultSetContext = new ResultSetContext();
-				populateFromConnectionAttributes(resultSetContext,
-						executionContext.getConnectionInfo().getConnectionId());
-				Observation observation = createAndStartObservation(JdbcObservationDocumentation.RESULT_SET,
-						resultSetContext, this.resultSetObservationConvention);
+		ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager
+				.getByResultSet(resultSet);
+		if (resultSetAttributes == null) {
+			// new ResultSet observation
+			ResultSetContext resultSetContext = new ResultSetContext();
+			populateFromConnectionAttributes(resultSetContext, executionContext.getConnectionInfo().getConnectionId());
+			Observation observation = createAndStartObservation(JdbcObservationDocumentation.RESULT_SET,
+					resultSetContext, this.resultSetObservationConvention);
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("Created a new result-set observation [" + observation + "]");
-				}
-
-				resultSetAttributes = new ResultSetAttributes();
-				resultSetAttributes.scope = observation.openScope();
-				resultSetAttributes.context = resultSetContext;
-
-				Statement statement = null;
-				try {
-					// retrieve statement and associate it with ResultSet. It is used to
-					// close associated ResultSets when Statement is closed without
-					// closing ResultSets. See "handleStatementClosed()".
-					statement = resultSet.getStatement();
-				}
-				catch (SQLException exception) {
-					// ignore
-				}
-
-				connectionAttributes.resultSetAttributesManager.add(resultSet, statement, resultSetAttributes);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Created a new result-set observation [" + observation + "]");
 			}
+
+			resultSetAttributes = new ResultSetAttributes();
+			resultSetAttributes.scope = observation.openScope();
+			resultSetAttributes.context = resultSetContext;
+
+			Statement statement = null;
+			try {
+				// retrieve statement and associate it with ResultSet. It is used to
+				// close associated ResultSets when Statement is closed without
+				// closing ResultSets. See "handleStatementClosed()".
+				statement = resultSet.getStatement();
+			}
+			catch (SQLException exception) {
+				// ignore
+			}
+
+			connectionAttributes.resultSetAttributesManager.add(resultSet, statement, resultSetAttributes);
+		}
+		if (hasNext) {
 			resultSetAttributes.context.incrementCount();
 		}
 	}
