@@ -42,3 +42,5 @@ buildNumber.properties
 
 # IntelliJ
 .idea
+
+.flattened-pom.xml
