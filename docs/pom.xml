@@ -22,7 +22,7 @@
     <parent>
         <groupId>net.ttddyy.observation</groupId>
         <artifactId>datasource-micrometer-parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>datasource-micrometer-docs</artifactId>
