@@ -91,6 +91,7 @@
                 <version>3.4.1</version>
                 <configuration>
                     <skippedModules>datasource-micrometer-docs</skippedModules>
+                    <notimestamp/>
                 </configuration>
             </plugin>
             <plugin>
