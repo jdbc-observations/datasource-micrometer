@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,14 +28,18 @@ import io.micrometer.tracing.test.simple.SpanAssert;
 import io.micrometer.tracing.test.simple.SpansAssert;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,91 +49,140 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Tadaya Tsuyukubo
  */
-@SpringBootTest(
-// @formatter:off
-		properties = {
-				// embedded DB
-				"spring.datasource.url=jdbc:h2:mem:testdb",
-				"spring.datasource.driverClassName=org.h2.Driver",
-				"spring.datasource.username=sa",
-				"spring.sql.init.schema-locations=classpath:itest-schema.sql",
-				"spring.sql.init.data-locations=classpath:itest-data.sql",
-
-				// tracing
-				"management.tracing.sampling.probability=1.0",
-
-				// specify query logging
-				"jdbc.datasource-proxy.logging=slf4j",
-//				"jdbc.datasource-proxy.logging=sysout",
-				"jdbc.datasource-proxy.query.enable-logging=true",
-				"jdbc.datasource-proxy.query.log-level=DEBUG",
-				"jdbc.datasource-proxy.query.logger-name=my.query-logger",
-				"logging.level.my.query-logger=DEBUG",
-
-				// for debugging, log spans
-				"logging.level.brave.Tracer=INFO"
-		},
-		// @formatter:on
-		args = "--debug")
-@AutoConfigureObservability // enable tracing in test
 class DataSourceObservationAutoConfigurationIntegrationTests {
 
-	@Autowired
-	DataSource dataSource;
+	// Each test defines own @SpringBootTest
+	@AutoConfigureObservability
+	static class TestCaseBase {
 
-	@Autowired
-	MyService myService;
+		@Autowired
+		DataSource dataSource;
 
-	@Autowired
-	TestSpanHandler testSpanHandler;
+		@Autowired
+		MyService myService;
 
-	@Autowired
-	DataSourceObservationListener observationListener;
+		@Autowired
+		TestSpanHandler testSpanHandler;
 
-	@Test
-	void bootIntegration() {
-		// verify basic things
-		assertThat(this.dataSource).isInstanceOfSatisfying(ProxyDataSource.class, (ds) -> {
-			// check datasource-proxy listener is added
-			assertThat(ds.getProxyConfig().getMethodListener().getListeners()).contains(this.observationListener);
-			assertThat(ds.getProxyConfig().getQueryListener().getListeners()).contains(this.observationListener);
-		});
+		@Autowired
+		DataSourceObservationListener observationListener;
 
-		// verify initial table/data creation
-		SpansAssert.assertThat(getFinishedSpans()).hasNumberOfSpansWithNameEqualTo("query", 3)
-				.assertThatASpanWithNameEqualTo("query").hasTagWithKey("jdbc.query[0]");
+		private List<FinishedSpan> getFinishedSpans() {
+			return this.testSpanHandler.spans().stream().map(BraveFinishedSpan::fromBrave).collect(Collectors.toList());
+		}
 
-		List<FinishedSpan> querySpans = getFinishedSpans().stream().filter((span) -> "query".equals(span.getName()))
-				.toList();
-		SpanAssert.assertThat(querySpans.get(0)).hasTag("jdbc.query[0]", "CREATE TABLE emp(id INT, name VARCHAR(20))");
-		SpansAssert.assertThat(querySpans.subList(1, 3)).allSatisfy((span) -> {
-			SpanAssert.assertThat(span).hasTagWithKey("jdbc.query[0]");
-		});
-		this.testSpanHandler.clear();
+		@Test
+		void bootIntegration() {
+			// verify basic things
+			assertThat(this.dataSource).isInstanceOfSatisfying(ProxyDataSource.class, (ds) -> {
+				// check datasource-proxy listener is added
+				assertThat(ds.getProxyConfig().getMethodListener().getListeners()).contains(this.observationListener);
+				assertThat(ds.getProxyConfig().getQueryListener().getListeners()).contains(this.observationListener);
+			});
 
-		// perform business operation
-		this.myService.add(100, "FOO");
+			// verify initial table/data creation
+			SpansAssert.assertThat(getFinishedSpans()).hasNumberOfSpansWithNameEqualTo("query", 3)
+					.assertThatASpanWithNameEqualTo("query").hasTagWithKey("jdbc.query[0]");
 
-		// verify the add operation
-		SpansAssert.assertThat(getFinishedSpans())
-				.hasASpanWithName("query",
-						(spanAssert) -> spanAssert.hasTag("jdbc.query[0]", "INSERT INTO emp VALUES (?, ?)")
-								.doesNotHaveTagWithKey("jdbc.param[0]"))
-				.hasASpanWithName("connection", (spanAssert -> spanAssert.hasEventWithNameEqualTo("commit")));
-		this.testSpanHandler.clear();
+			List<FinishedSpan> querySpans = getFinishedSpans().stream().filter((span) -> "query".equals(span.getName()))
+					.toList();
+			SpanAssert.assertThat(querySpans.get(0)).hasTag("jdbc.query[0]",
+					"CREATE TABLE emp(id INT, name VARCHAR(20))");
+			SpansAssert.assertThat(querySpans.subList(1, 3)).allSatisfy((span) -> {
+				SpanAssert.assertThat(span).hasTagWithKey("jdbc.query[0]");
+			});
+			this.testSpanHandler.clear();
 
-		// perform count and verify
-		int count = this.myService.count();
-		assertThat(count).isEqualTo(3);
-		SpansAssert.assertThat(getFinishedSpans())
-				.hasASpanWithName("query",
-						(spanAssert) -> spanAssert.hasTag("jdbc.query[0]", "SELECT COUNT(*) FROM emp"))
-				.hasASpanWithName("result-set", (spanAssert) -> spanAssert.hasTag("jdbc.row-count", "1"))
-				.hasASpanWithName("connection");
+			// perform business operation
+			this.myService.add(100, "FOO");
+
+			// verify the add operation
+			SpansAssert.assertThat(getFinishedSpans())
+					.hasASpanWithName("query",
+							(spanAssert) -> spanAssert.hasTag("jdbc.query[0]", "INSERT INTO emp VALUES (?, ?)")
+									.doesNotHaveTagWithKey("jdbc.param[0]"))
+					.hasASpanWithName("connection", (spanAssert -> spanAssert.hasEventWithNameEqualTo("commit")));
+			this.testSpanHandler.clear();
+
+			// perform count and verify
+			int count = this.myService.count();
+			assertThat(count).isEqualTo(3);
+			SpansAssert.assertThat(getFinishedSpans())
+					.hasASpanWithName("query",
+							(spanAssert) -> spanAssert.hasTag("jdbc.query[0]", "SELECT COUNT(*) FROM emp"))
+					.hasASpanWithName("result-set", (spanAssert) -> spanAssert.hasTag("jdbc.row-count", "1"))
+					.hasASpanWithName("connection");
+		}
+
 	}
 
-	private List<FinishedSpan> getFinishedSpans() {
-		return this.testSpanHandler.spans().stream().map(BraveFinishedSpan::fromBrave).collect(Collectors.toList());
+	@Nested
+	@SpringBootTest(
+	// @formatter:off
+			properties = {
+					// embedded DB
+					"spring.datasource.url=jdbc:h2:mem:testdb",
+					"spring.datasource.driverClassName=org.h2.Driver",
+					"spring.datasource.username=sa",
+
+					// populate db
+					"spring.sql.init.schema-locations=classpath:itest-schema.sql",
+					"spring.sql.init.data-locations=classpath:itest-data.sql",
+
+					// tracing
+					"management.tracing.sampling.probability=1.0",
+
+					// specify query logging
+					"jdbc.datasource-proxy.logging=slf4j",
+					"jdbc.datasource-proxy.query.enable-logging=true",
+					"jdbc.datasource-proxy.query.log-level=DEBUG",
+					"jdbc.datasource-proxy.query.logger-name=my.query-logger",
+					"logging.level.my.query-logger=DEBUG",
+
+					// for debugging, log spans
+					"logging.level.brave.Tracer=INFO"
+			},
+	// @formatter:on
+			args = "--debug")
+	class WithAutoConfigurationDataSource extends TestCaseBase {
+
+	}
+
+	@Nested
+	@SpringBootTest(
+	// @formatter:off
+			properties = {
+					"spring.sql.init.schema-locations=classpath:itest-schema.sql",
+					"spring.sql.init.data-locations=classpath:itest-data.sql",
+
+					// tracing
+					"management.tracing.sampling.probability=1.0",
+
+					// specify query logging
+					"jdbc.datasource-proxy.logging=slf4j",
+					"jdbc.datasource-proxy.query.enable-logging=true",
+					"jdbc.datasource-proxy.query.log-level=DEBUG",
+					"jdbc.datasource-proxy.query.logger-name=my.query-logger",
+					"logging.level.my.query-logger=DEBUG",
+
+					// for debugging, log spans
+					"logging.level.brave.Tracer=INFO"
+			},
+			// @formatter:on
+			args = "--debug", classes = { MyDataSourceConfiguration.class })
+	class WithManualDataSourceBean extends TestCaseBase {
+
+	}
+
+	@TestConfiguration(proxyBeanMethods = false)
+	static class MyDataSourceConfiguration {
+
+		// Define DataSource bean
+		@Bean
+		DataSource dataSource() {
+			return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).generateUniqueName(true).build();
+		}
+
 	}
 
 	@SpringBootApplication
