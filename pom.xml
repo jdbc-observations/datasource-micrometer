@@ -42,10 +42,10 @@
         <datasource-proxy.version>1.8.1</datasource-proxy.version>
 
         <!-- datasource-micrometer-spring-boot module -->
-        <spring-boot.version>3.0.1</spring-boot.version>
+        <spring-boot.version>3.0.5</spring-boot.version>
 
         <!-- Docs -->
-        <micrometer-docs-generator.version>1.0.0</micrometer-docs-generator.version>
+        <micrometer-docs-generator.version>1.0.1</micrometer-docs-generator.version>
         <asciidoctor.maven.plugin.version>2.2.2</asciidoctor.maven.plugin.version>
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
