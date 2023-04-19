@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceBaseObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
 import net.ttddyy.observation.tracing.HikariJdbcObservationFilter;
+import net.ttddyy.observation.tracing.JdbcObservationDocumentation;
 import net.ttddyy.observation.tracing.QueryObservationConvention;
 import net.ttddyy.observation.tracing.QueryTracingObservationHandler;
 import net.ttddyy.observation.tracing.ResultSetObservationConvention;
@@ -55,6 +56,7 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.core.Ordered;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -239,7 +241,8 @@ class DataSourceObservationAutoConfigurationTests {
 
 	@ParameterizedTest
 	@MethodSource
-	void includeTypes(String property, Set<Class<? extends DataSourceBaseObservationHandler>> handlers) {
+	void includeTypes(String property, Set<Class<? extends DataSourceBaseObservationHandler>> handlers,
+			Set<JdbcObservationDocumentation> expectedSupportedTypes) {
 		new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
 				.withPropertyValues("management.tracing.enabled=true").withPropertyValues(property)
@@ -249,6 +252,13 @@ class DataSourceObservationAutoConfigurationTests {
 							.satisfies((beans) -> {
 								assertThat(beans).extracting(Object::getClass).allMatch(handlers::contains);
 							});
+					assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
+						assertThat(ReflectionTestUtils.getField(listener, "supportedTypes"))
+								.isInstanceOfSatisfying(Set.class, (supportedTypes) -> {
+									assertThat(supportedTypes)
+											.containsExactlyInAnyOrderElementsOf(expectedSupportedTypes);
+								});
+					});
 				});
 	}
 
@@ -256,11 +266,16 @@ class DataSourceObservationAutoConfigurationTests {
 		Class<?> connection = ConnectionTracingObservationHandler.class;
 		Class<?> query = QueryTracingObservationHandler.class;
 		Class<?> resultSet = ResultSetTracingObservationHandler.class;
-		return Stream.of(Arguments.of("jdbc.includes=CONNECTION", Set.of(connection)),
-				Arguments.of("jdbc.includes=QUERY", Set.of(query)),
-				Arguments.of("jdbc.includes=FETCH", Set.of(resultSet)),
-				Arguments.of("jdbc.includes=CONNECTION,FETCH", Set.of(connection, resultSet)),
-				Arguments.of("jdbc.includes=CONNECTION,QUERY, FETCH", Set.of(connection, query, resultSet)));
+		return Stream.of(
+				Arguments.of("jdbc.includes=CONNECTION", Set.of(connection),
+						Set.of(JdbcObservationDocumentation.CONNECTION)),
+				Arguments.of("jdbc.includes=QUERY", Set.of(query), Set.of(JdbcObservationDocumentation.QUERY)),
+				Arguments.of("jdbc.includes=FETCH", Set.of(resultSet), Set.of(JdbcObservationDocumentation.RESULT_SET)),
+				Arguments.of("jdbc.includes=CONNECTION,FETCH", Set.of(connection, resultSet),
+						Set.of(JdbcObservationDocumentation.CONNECTION, JdbcObservationDocumentation.RESULT_SET)),
+				Arguments.of("jdbc.includes=CONNECTION,QUERY, FETCH", Set.of(connection, query, resultSet),
+						Set.of(JdbcObservationDocumentation.CONNECTION, JdbcObservationDocumentation.QUERY,
+								JdbcObservationDocumentation.RESULT_SET)));
 	}
 
 	static class CustomConnectionObservationConvention implements ConnectionObservationConvention {

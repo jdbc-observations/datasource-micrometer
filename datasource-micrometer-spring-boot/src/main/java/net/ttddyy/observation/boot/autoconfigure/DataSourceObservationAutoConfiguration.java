@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -39,6 +40,7 @@ import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
 import net.ttddyy.observation.tracing.HikariJdbcObservationFilter;
+import net.ttddyy.observation.tracing.JdbcObservationDocumentation;
 import net.ttddyy.observation.tracing.QueryObservationConvention;
 import net.ttddyy.observation.tracing.QueryTracingObservationHandler;
 import net.ttddyy.observation.tracing.ResultSetObservationConvention;
@@ -90,10 +92,13 @@ public class DataSourceObservationAutoConfiguration {
 			ObjectProvider<ConnectionObservationConvention> connectionObservationConventions,
 			ObjectProvider<QueryObservationConvention> queryObservationConventions,
 			ObjectProvider<ResultSetObservationConvention> resultSetObservationConventions) {
+		Set<JdbcObservationDocumentation> supportedDocumentations = jdbcProperties.getIncludes().stream()
+				.map((include) -> include.supportedDocumentation).collect(Collectors.toSet());
 		// to avoid circular reference due to MeterBinder creation at MeterRegistry,
 		// use supplier to lazily reference observation registry.
 		DataSourceObservationListener listener = new DataSourceObservationListener(registry::getObject);
 		listener.setIncludeParameterValues(jdbcProperties.getDatasourceProxy().isIncludeParameterValues());
+		listener.setSupportedTypes(supportedDocumentations);
 		connectionObservationConventions.ifAvailable(listener::setConnectionObservationConvention);
 		queryObservationConventions.ifAvailable(listener::setQueryObservationConvention);
 		resultSetObservationConventions.ifAvailable(listener::setResultSetObservationConvention);
