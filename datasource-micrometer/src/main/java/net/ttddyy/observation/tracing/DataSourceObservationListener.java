@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -74,6 +75,16 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	 */
 	private boolean includeParameterValues;
 
+	/**
+	 * A set of {@link JdbcObservationDocumentation} to observe by this listener. For
+	 * non-matched {@link JdbcObservationDocumentation}, no-op {@link Observation} will be
+	 * used.
+	 * <p>
+	 * Default value matches all {@link JdbcObservationDocumentation} types.
+	 */
+	private Set<JdbcObservationDocumentation> supportedTypes = new HashSet<>(
+			Arrays.asList(JdbcObservationDocumentation.values()));
+
 	public DataSourceObservationListener(ObservationRegistry observationRegistry) {
 		this(() -> observationRegistry);
 	}
@@ -115,8 +126,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	private Observation createAndStartObservation(JdbcObservationDocumentation observationType,
 			DataSourceBaseContext context, ObservationConvention<? extends Context> observationConvention) {
-		return observationType.observation(this.observationRegistrySupplier.get(), () -> context)
-				.observationConvention(observationConvention).start();
+		if (this.supportedTypes.contains(observationType)) {
+			return observationType.observation(this.observationRegistrySupplier.get(), () -> context)
+					.observationConvention(observationConvention).start();
+		}
+		return Observation.NOOP;
 	}
 
 	private void populateQueryContext(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList,
@@ -455,6 +469,10 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	public void setIncludeParameterValues(boolean includeParameterValues) {
 		this.includeParameterValues = includeParameterValues;
+	}
+
+	public void setSupportedTypes(Set<JdbcObservationDocumentation> supportedTypes) {
+		this.supportedTypes = supportedTypes;
 	}
 
 }

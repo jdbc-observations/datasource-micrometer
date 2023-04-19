@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
+import net.ttddyy.observation.tracing.JdbcObservationDocumentation;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -297,17 +298,23 @@ public class JdbcProperties {
 		/**
 		 * Related to JDBC connections.
 		 */
-		CONNECTION,
+		CONNECTION(JdbcObservationDocumentation.CONNECTION),
 
 		/**
 		 * Related to query executions.
 		 */
-		QUERY,
+		QUERY(JdbcObservationDocumentation.QUERY),
 
 		/**
 		 * Related to ResultSets.
 		 */
-		FETCH
+		FETCH(JdbcObservationDocumentation.RESULT_SET);
+
+		final JdbcObservationDocumentation supportedDocumentation;
+
+		TraceType(JdbcObservationDocumentation supportedDocumentation) {
+			this.supportedDocumentation = supportedDocumentation;
+		}
 
 	}
 
