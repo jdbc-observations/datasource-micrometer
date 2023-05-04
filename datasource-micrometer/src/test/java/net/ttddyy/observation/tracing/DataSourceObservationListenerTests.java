@@ -25,12 +25,14 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
 import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationPredicate;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 import io.micrometer.tracing.test.simple.SimpleTracer;
@@ -93,6 +95,38 @@ class DataSourceObservationListenerTests {
 
 		assertThat(tracer).onlySpan().hasNameEqualTo("query").hasTag("jdbc.query[0]", "SELECT 1")
 				.doesNotHaveTagWithKey("jdbc.row-affected").doesNotHaveTagWithKey("jdbc.params[0]");
+	}
+
+	@Test
+	void queryPredicateGetsExpectedData() throws Exception{
+		ObservationPredicate testQueryObservationPredicate = (observationName, observationContext) -> {
+			if (observationContext instanceof QueryContext) {
+				QueryContext queryContext = (QueryContext) observationContext;
+				List<String> queries = queryContext.getQueries();
+
+				assertThat(queries).isNotEmpty();
+				assertThat(queries.get(0)).isEqualTo("SELECT 1");
+				return true;
+			}
+			return true;
+		};
+
+		this.registry.observationConfig().observationHandler(new DefaultTracingObservationHandler(this.tracer));
+		this.registry.observationConfig().observationPredicate(testQueryObservationPredicate);
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
+
+		Method execute = Statement.class.getMethod("execute", String.class);
+
+		QueryInfo queryInfo = new QueryInfo();
+		queryInfo.setQuery("SELECT 1");
+
+		ExecutionInfo executionInfo = new ExecutionInfo();
+		executionInfo.setConnectionId("id-1");
+		executionInfo.setDataSourceName("myDS");
+		executionInfo.setMethod(execute);
+		List<QueryInfo> queryInfos = Collections.singletonList(queryInfo);
+
+		listener.beforeQuery(executionInfo, queryInfos);
 	}
 
 	@Test
