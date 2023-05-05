@@ -113,6 +113,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		QueryContext queryContext = new QueryContext();
 		executionInfo.addCustomValue(QueryContext.class.getName(), queryContext);
 		populateFromConnectionAttributes(queryContext, executionInfo.getConnectionId());
+		populateQueryContext(executionInfo, queryInfoList, queryContext);
 
 		Observation observation = createAndStartObservation(JdbcObservationDocumentation.QUERY, queryContext,
 				this.queryObservationConvention);
@@ -120,7 +121,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new child observation before query [" + observation + "]");
 		}
-		populateQueryContext(executionInfo, queryInfoList, queryContext);
+
 		executionInfo.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
 	}
 
