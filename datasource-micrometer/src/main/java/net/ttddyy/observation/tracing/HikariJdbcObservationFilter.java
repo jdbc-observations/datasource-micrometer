@@ -38,11 +38,11 @@ public class HikariJdbcObservationFilter implements ObservationFilter {
 
 	@Override
 	public Context map(Context context) {
-		if (!(context instanceof ConnectionContext)) {
+		if (!(context instanceof DataSourceBaseContext)) {
 			return context;
 		}
 
-		ConnectionContext connectionContext = (ConnectionContext) context;
+		DataSourceBaseContext connectionContext = (DataSourceBaseContext) context;
 		DataSource dataSource = connectionContext.getDataSource();
 
 		HikariDataSource hikariDataSource;
