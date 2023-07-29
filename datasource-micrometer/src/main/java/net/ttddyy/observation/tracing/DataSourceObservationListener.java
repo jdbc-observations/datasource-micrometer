@@ -203,32 +203,40 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	public void afterMethod(MethodExecutionContext executionContext) {
 		String methodName = executionContext.getMethod().getName();
 		Object target = executionContext.getTarget();
-		if (target instanceof DataSource && "getConnection".equals(methodName)) {
-			handleGetConnectionAfter(executionContext);
-		}
-		else if (target instanceof Connection) {
-			if ("close".equals(methodName)) {
-				handleConnectionClose(executionContext);
+		try {
+			if (target instanceof DataSource && "getConnection".equals(methodName)) {
+				handleGetConnectionAfter(executionContext);
 			}
-			else if ("commit".equals(methodName)) {
-				handleConnectionCommit(executionContext);
+			else if (target instanceof Connection) {
+				if ("close".equals(methodName)) {
+					handleConnectionClose(executionContext);
+				}
+				else if ("commit".equals(methodName)) {
+					handleConnectionCommit(executionContext);
+				}
+				else if ("rollback".equals(methodName)) {
+					handleConnectionRollback(executionContext);
+				}
 			}
-			else if ("rollback".equals(methodName)) {
-				handleConnectionRollback(executionContext);
+			else if (target instanceof Statement) {
+				if ("close".equals(methodName)) {
+					handleStatementClose(executionContext);
+				}
 			}
-		}
-		else if (target instanceof Statement) {
-			if ("close".equals(methodName)) {
-				handleStatementClose(executionContext);
+			else if (target instanceof ResultSet) {
+				if ("close".equals(methodName)) {
+					handleResultSetClose(executionContext);
+				}
+				else if ("next".equals(methodName)) {
+					handleResultSetNext(executionContext);
+				}
 			}
-		}
-		else if (target instanceof ResultSet) {
-			if ("close".equals(methodName)) {
-				handleResultSetClose(executionContext);
-			}
-			else if ("next".equals(methodName)) {
-				handleResultSetNext(executionContext);
-			}
+		} catch (Throwable ignored) {
+			//Any exceptions in Listener code should not affect calling code
+			logger.debug(
+					"Unexpected exception in DataSourceObservationListener#afterMethod. Execution context: {}",
+					executionContext, ignored
+			);
 		}
 	}
 
@@ -378,7 +386,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 			connectionAttributes.resultSetAttributesManager.add(resultSet, statement, resultSetAttributes);
 		}
-		if (hasNext) {
+		if (hasNext == Boolean.TRUE) {
 			resultSetAttributes.context.incrementCount();
 		}
 	}
