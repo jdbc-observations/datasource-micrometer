@@ -203,40 +203,32 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	public void afterMethod(MethodExecutionContext executionContext) {
 		String methodName = executionContext.getMethod().getName();
 		Object target = executionContext.getTarget();
-		try {
-			if (target instanceof DataSource && "getConnection".equals(methodName)) {
-				handleGetConnectionAfter(executionContext);
+		if (target instanceof DataSource && "getConnection".equals(methodName)) {
+			handleGetConnectionAfter(executionContext);
+		}
+		else if (target instanceof Connection) {
+			if ("close".equals(methodName)) {
+				handleConnectionClose(executionContext);
 			}
-			else if (target instanceof Connection) {
-				if ("close".equals(methodName)) {
-					handleConnectionClose(executionContext);
-				}
-				else if ("commit".equals(methodName)) {
-					handleConnectionCommit(executionContext);
-				}
-				else if ("rollback".equals(methodName)) {
-					handleConnectionRollback(executionContext);
-				}
+			else if ("commit".equals(methodName)) {
+				handleConnectionCommit(executionContext);
 			}
-			else if (target instanceof Statement) {
-				if ("close".equals(methodName)) {
-					handleStatementClose(executionContext);
-				}
+			else if ("rollback".equals(methodName)) {
+				handleConnectionRollback(executionContext);
 			}
-			else if (target instanceof ResultSet) {
-				if ("close".equals(methodName)) {
-					handleResultSetClose(executionContext);
-				}
-				else if ("next".equals(methodName)) {
-					handleResultSetNext(executionContext);
-				}
+		}
+		else if (target instanceof Statement) {
+			if ("close".equals(methodName)) {
+				handleStatementClose(executionContext);
 			}
-		} catch (Throwable ignored) {
-			//Any exceptions in Listener code should not affect calling code
-			logger.debug(
-					"Unexpected exception in DataSourceObservationListener#afterMethod. Execution context: {}",
-					executionContext, ignored
-			);
+		}
+		else if (target instanceof ResultSet) {
+			if ("close".equals(methodName)) {
+				handleResultSetClose(executionContext);
+			}
+			else if ("next".equals(methodName)) {
+				handleResultSetNext(executionContext);
+			}
 		}
 	}
 
@@ -354,7 +346,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			return;
 		}
 
-		Boolean hasNext = (Boolean) executionContext.getResult();
+		// result could be null if exception is thrown by ResultSet#next()
+		boolean hasNext = Boolean.TRUE.equals(executionContext.getResult());
 		ResultSet resultSet = (ResultSet) executionContext.getTarget();
 		ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager
 				.getByResultSet(resultSet);
@@ -386,7 +379,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 			connectionAttributes.resultSetAttributesManager.add(resultSet, statement, resultSetAttributes);
 		}
-		if (hasNext == Boolean.TRUE) {
+		if (hasNext) {
 			resultSetAttributes.context.incrementCount();
 		}
 	}
