@@ -346,7 +346,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			return;
 		}
 
-		Boolean hasNext = (Boolean) executionContext.getResult();
+		// result could be null if exception is thrown by ResultSet#next()
+		boolean hasNext = Boolean.TRUE.equals(executionContext.getResult());
 		ResultSet resultSet = (ResultSet) executionContext.getTarget();
 		ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager
 				.getByResultSet(resultSet);
