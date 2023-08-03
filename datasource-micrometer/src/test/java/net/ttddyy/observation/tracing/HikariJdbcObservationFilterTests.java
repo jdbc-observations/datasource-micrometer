@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,8 @@ import static org.mockito.Mockito.mock;
  */
 class HikariJdbcObservationFilterTests {
 
-	public static final String DRIVER = "my-driver";
-	public static final String POOL = "my-pool";
+	private static final String DRIVER = "my-driver";
+	private static final String POOL = "my-pool";
 
 	@Test
 	void filter() throws Exception {
@@ -110,8 +110,8 @@ class HikariJdbcObservationFilterTests {
 
 	private static void assertObservationHasHikariKeys(Context result) {
 		ObservationContextAssert.assertThat(result)
-				.hasLowCardinalityKeyValue(ConnectionKeyNames.DATASOURCE_DRIVER.asString(), "my-driver")
-				.hasLowCardinalityKeyValue(ConnectionKeyNames.DATASOURCE_POOL.asString(), "my-pool");
+				.hasLowCardinalityKeyValue(ConnectionKeyNames.DATASOURCE_DRIVER.asString(), DRIVER)
+				.hasLowCardinalityKeyValue(ConnectionKeyNames.DATASOURCE_POOL.asString(), POOL);
 	}
 
 	private static DataSource givenHikariDataSource() throws SQLException {
