@@ -24,18 +24,19 @@ The instrumentation implementation uses https://github.com/ttddyy/datasource-pro
 [[getting-started-intro-background]]
 === Background
 
-The Micrometer v1.10.0 introduced a new module, {micrometer-tracing}[Micrometer Tracing], which abstracts the popular tracers and provides the vendor free APIs for observations.
-The Spring Boot 3 and its portfolio projects natively support {micrometer-tracing}[Micrometer Tracing].
+The Micrometer v1.10.0 introduced the new {micrometer-observation}[Observation API] and {micrometer-tracing}[Micrometer Tracing] module.
+The {micrometer-observation}[Observation API] allows measuring(observing) any interested behavior from the code in action. Then, notifies it to the registered handlers.
+The {micrometer-tracing}[Micrometer Tracing] module provides an observation handler implementation that creates distributed traces(spans). It uses a tracer that has abstracted the popular tracer implementations and gives the vendor free APIs for tracing.
 
 In Spring Boot 2.x, the {spring-cloud-sleuth}[Spring Cloud Sleuth] provided the instrumentation to the many components including JDBC operations.
 It was a central library that provides tracing instrumentation to the Spring Boot applications.
 However, with the new observability, the responsibility for instrumentation has shifted to the individual component.
-For example, Spring Framework will provide native instrumentation support for its components.
+For example, Spring Framework will provide native instrumentation support for its components using the {micrometer-observation}[Observation API].
 As a result, there will be no {spring-cloud-sleuth}[Spring Cloud Sleuth] for Spring Boot 3.
 
-This Datasource Micrometer project provides instrumentation on the JDBC operations with the {micrometer-tracing}[Micrometer Tracing] to cover what was provided by the {spring-cloud-sleuth}[Spring Cloud Sleuth].
+This Datasource Micrometer project provides instrumentation on the JDBC operations to cover what was provided by the {spring-cloud-sleuth}[Spring Cloud Sleuth] but with the {micrometer-observation}[Observation API].
 The initial version aims users to smoothly transition from Spring Boot 2.x with Spring Cloud Sleuth to the Spring Boot 3 in JDBC instrumentation.
-In addition, since the {micrometer-tracing}[Micrometer Tracing] is independent of Spring Framework, the instrumentation is available to the non-spring applications as well.
+In addition, since the {micrometer-observation}[Observation API] and {micrometer-tracing}[Micrometer Tracing] are independent from Spring ecosystem, the instrumentation is available to the non-spring applications as well.
 
 [[getting-started-intro-modules]]
 === Modules

@@ -20,4 +20,5 @@
 
 :datasource-proxy: https://github.com/ttddyy/datasource-proxy
 :micrometer-tracing: https://micrometer.io/docs/tracing
+:micrometer-observation: https://micrometer.io/docs/observation
 :spring-cloud-sleuth: https://spring.io/projects/spring-cloud-sleuth
