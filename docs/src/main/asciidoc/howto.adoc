@@ -40,7 +40,7 @@ There are 3 tracing observation handlers that react to the observations from `Da
 ----
 ObservationRegistry registry = ...
 registry.observationConfig().observationHandler(new ConnectionTracingObservationHandler(tracer));
-registry.observationConfig().observationHandler(new QueryTracingObservationHandler(tracer);
+registry.observationConfig().observationHandler(new QueryTracingObservationHandler(tracer));
 registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(tracer));
 ----
 
