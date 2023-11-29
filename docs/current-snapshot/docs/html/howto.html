@@ -671,7 +671,7 @@ DataSource instrumented = ProxyDataSourceBuilder.create(dataSource).listener(lis
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">ObservationRegistry registry = ...
 registry.observationConfig().observationHandler(new ConnectionTracingObservationHandler(tracer));
-registry.observationConfig().observationHandler(new QueryTracingObservationHandler(tracer);
+registry.observationConfig().observationHandler(new QueryTracingObservationHandler(tracer));
 registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(tracer));</code></pre>
 </div>
 </div>

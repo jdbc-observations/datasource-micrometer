@@ -747,7 +747,7 @@ Non-spring applications can directly use this module.</p>
 ObservationRegistry observationRegistry = ObservationRegistry.create();
 ObservationConfig observationConfig = observationRegistry.observationConfig();
 observationConfig.observationHandler(new ConnectionTracingObservationHandler(tracer));
-observationConfig.observationHandler(new QueryTracingObservationHandler(tracer);
+observationConfig.observationHandler(new QueryTracingObservationHandler(tracer));
 observationConfig.observationHandler(new ResultSetTracingObservationHandler(tracer));
 //  add other necessary handlers
 
