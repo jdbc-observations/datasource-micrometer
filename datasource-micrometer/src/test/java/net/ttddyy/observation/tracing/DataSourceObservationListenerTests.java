@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,25 @@
 
 package net.ttddyy.observation.tracing;
 
+import java.lang.reflect.Method;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
+import javax.sql.DataSource;
+
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationPredicate;
 import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.observation.tck.TestObservationRegistry;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 import io.micrometer.tracing.test.simple.SimpleTracer;
 import io.micrometer.tracing.test.simple.TracerAssert;
@@ -29,22 +45,12 @@ import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
 
 import static io.micrometer.tracing.test.simple.TracingAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,7 +72,17 @@ class DataSourceObservationListenerTests {
 	@BeforeEach
 	void setup() {
 		this.tracer = new SimpleTracer();
-		this.registry = ObservationRegistry.create();
+		this.registry = TestObservationRegistry.create();
+	}
+
+	@AfterEach
+	void cleanUp() {
+		// Some of the tests do not close the scope. To prevent leakage, make sure to
+		// close the scope if exists.
+		Observation.Scope scope = this.registry.getCurrentObservationScope();
+		if (scope != null) {
+			scope.close();
+		}
 	}
 
 	@Test
@@ -95,7 +111,7 @@ class DataSourceObservationListenerTests {
 	}
 
 	@Test
-	void queryPredicateGetsExpectedData() throws Exception{
+	void queryPredicateGetsExpectedData() throws Exception {
 		ObservationPredicate testQueryObservationPredicate = (observationName, observationContext) -> {
 			if (observationContext instanceof QueryContext) {
 				QueryContext queryContext = (QueryContext) observationContext;
@@ -526,9 +542,11 @@ class DataSourceObservationListenerTests {
 	}
 
 	/**
-	 * Test to reproduce NPE thrown from {@link DataSourceObservationListener#handleResultSetNext(MethodExecutionContext)}
+	 * Test to reproduce NPE thrown from
+	 * {@link DataSourceObservationListener#handleResultSetNext(MethodExecutionContext)}
 	 * when {@link MethodExecutionContext#getResult()} returns {@code  null}
-	 * @see <a href="https://github.com/jdbc-observations/datasource-micrometer/issues/22">Issue 22</a>
+	 * @see <a href=
+	 * "https://github.com/jdbc-observations/datasource-micrometer/issues/22">Issue 22</a>
 	 */
 	@Test
 	void resultSetObservationWithNullResult() throws Exception {
@@ -546,14 +564,13 @@ class DataSourceObservationListenerTests {
 		nextExecutionContext.setConnectionInfo(connectionInfo);
 		nextExecutionContext.setMethod(closeMethod);
 		nextExecutionContext.setTarget(resultSet);
-		//Result is explicitly null
-		//Listener should not produce NPE
+		// Result is explicitly null
+		// Listener should not produce NPE
 		nextExecutionContext.setResult(null);
 
 		createResultSetObservation(listener, connectionInfo, resultSet, false);
 
-		assertThatNoException()
-				.isThrownBy(() -> listener.afterMethod(nextExecutionContext));
+		assertThatNoException().isThrownBy(() -> listener.afterMethod(nextExecutionContext));
 
 		// ResultSet#next should not stop the observation
 		assertThat(tracer.currentSpan()).isNotNull();
