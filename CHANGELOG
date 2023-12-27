@@ -3,6 +3,7 @@ Datasource Micrometer Changelog
 
 1.0.3
 ------------------
+* Upgrade dependencies #32
 * NPE in DataSourceObservationListener #22
 * Populate QueryContext with the list of queries before creating observation #19
 
