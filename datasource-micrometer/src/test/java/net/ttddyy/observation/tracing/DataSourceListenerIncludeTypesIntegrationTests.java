@@ -104,6 +104,9 @@ class DataSourceListenerIncludeTypesIntegrationTests {
 		assertThat(result).isEqualTo("Bar");
 		assertThat(tracer.getSpans()).extracting(SimpleSpan::getName)
 				.containsExactlyInAnyOrderElementsOf(expectedSpanNames);
+
+		// make sure, observation scope is closed.
+		assertThat(registry.getCurrentObservation()).isNull();
 	}
 
 	private String doLogic(DataSource ds) throws Exception {
