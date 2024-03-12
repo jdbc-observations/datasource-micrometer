@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package net.ttddyy.observation.tracing;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.micrometer.observation.Observation;
 
@@ -29,6 +31,8 @@ public final class ResultSetContext extends DataSourceBaseContext {
 
 	private int count;
 
+	private final List<ResultSetOperation> operations = new ArrayList<>();
+
 	public void incrementCount() {
 		this.count++;
 	}
@@ -39,6 +43,18 @@ public final class ResultSetContext extends DataSourceBaseContext {
 
 	public void setCount(int count) {
 		this.count = count;
+	}
+
+	public List<ResultSetOperation> getOperations() {
+		return this.operations;
+	}
+
+	public boolean addOperation(ResultSetOperation operation) {
+		return this.operations.add(operation);
+	}
+
+	public void clearOperations() {
+		this.operations.clear();
 	}
 
 }

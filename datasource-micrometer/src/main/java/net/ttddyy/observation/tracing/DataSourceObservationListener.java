@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 the original author or authors.
+ * Copyright 2022-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -223,12 +223,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			}
 		}
 		else if (target instanceof ResultSet) {
-			if ("close".equals(methodName)) {
-				handleResultSetClose(executionContext);
-			}
-			else if ("next".equals(methodName)) {
-				handleResultSetNext(executionContext);
-			}
+			handleResultSet(executionContext);
 		}
 	}
 
@@ -339,38 +334,24 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		scopeToUse.getCurrentObservation().event(JdbcEvents.CONNECTION_ROLLBACK);
 	}
 
-	private void handleResultSetNext(MethodExecutionContext executionContext) {
+	private void handleResultSet(MethodExecutionContext executionContext) {
 		String connectionId = executionContext.getConnectionInfo().getConnectionId();
 		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
 		if (connectionAttributes == null) {
 			return;
 		}
 
-		// result could be null if exception is thrown by ResultSet#next()
-		boolean hasNext = Boolean.TRUE.equals(executionContext.getResult());
 		ResultSet resultSet = (ResultSet) executionContext.getTarget();
 		ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager
 				.getByResultSet(resultSet);
 		if (resultSetAttributes == null) {
-			// new ResultSet observation
-			ResultSetContext resultSetContext = new ResultSetContext();
-			populateFromConnectionAttributes(resultSetContext, executionContext.getConnectionInfo().getConnectionId());
-			Observation observation = createAndStartObservation(JdbcObservationDocumentation.RESULT_SET,
-					resultSetContext, this.resultSetObservationConvention);
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Created a new result-set observation [" + observation + "]");
-			}
-
-			resultSetAttributes = new ResultSetAttributes();
-			resultSetAttributes.scope = observation.openScope();
-			resultSetAttributes.context = resultSetContext;
+			resultSetAttributes = createResultSetAttributesAndStartObservation(executionContext);
 
 			Statement statement = null;
 			try {
 				// retrieve statement and associate it with ResultSet. It is used to
 				// close associated ResultSets when Statement is closed without
-				// closing ResultSets. See "handleStatementClosed()".
+				// closing ResultSets. See "handleStatementClose()".
 				statement = resultSet.getStatement();
 			}
 			catch (SQLException exception) {
@@ -379,9 +360,38 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 			connectionAttributes.resultSetAttributesManager.add(resultSet, statement, resultSetAttributes);
 		}
-		if (hasNext) {
-			resultSetAttributes.context.incrementCount();
+
+		ResultSetOperation operation = new ResultSetOperation(executionContext.getMethod(), executionContext.getResult());
+		resultSetAttributes.context.addOperation(operation);
+
+		String methodName = executionContext.getMethod().getName();
+		if ("close".equals(methodName)) {
+			connectionAttributes.resultSetAttributesManager.removeByResultSet(resultSet);
+			stopResultSetObservation(resultSetAttributes.scope, executionContext.getThrown());
 		}
+		else if ("next".equals(methodName)) {
+			boolean hasNext = Boolean.TRUE.equals(executionContext.getResult());
+			if (hasNext) {
+				resultSetAttributes.context.incrementCount();
+			}
+		}
+	}
+
+	private ResultSetAttributes createResultSetAttributesAndStartObservation(MethodExecutionContext executionContext) {
+		// new ResultSet observation
+		ResultSetContext resultSetContext = new ResultSetContext();
+		populateFromConnectionAttributes(resultSetContext, executionContext.getConnectionInfo().getConnectionId());
+		Observation observation = createAndStartObservation(JdbcObservationDocumentation.RESULT_SET, resultSetContext,
+				this.resultSetObservationConvention);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Created a new result-set observation [" + observation + "]");
+		}
+
+		ResultSetAttributes resultSetAttributes = new ResultSetAttributes();
+		resultSetAttributes.scope = observation.openScope();
+		resultSetAttributes.context = resultSetContext;
+		return resultSetAttributes;
 	}
 
 	/**
@@ -421,23 +431,6 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		for (ResultSetAttributes resultSetAttribute : resultSetAttributes) {
 			stopResultSetObservation(resultSetAttribute.scope, executionContext.getThrown());
 		}
-	}
-
-	private void handleResultSetClose(MethodExecutionContext executionContext) {
-		String connectionId = executionContext.getConnectionInfo().getConnectionId();
-		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
-		if (connectionAttributes == null) {
-			return;
-		}
-
-		ResultSet resultSet = (ResultSet) executionContext.getTarget();
-		ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager
-				.removeByResultSet(resultSet);
-		if (resultSetAttributes == null) {
-			return;
-		}
-
-		stopResultSetObservation(resultSetAttributes.scope, executionContext.getThrown());
 	}
 
 	private void stopResultSetObservation(@Nullable Observation.Scope scopeToUse, @Nullable Throwable throwable) {
