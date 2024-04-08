@@ -106,14 +106,17 @@ implements io.micrometer.observation.docs.ObservationDocumentation</span></div>
 <div class="col-second even-row-color"><code><a href="JdbcObservationDocumentation.ConnectionKeyNames.html" class="type-name-link" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation.ConnectionKeyNames</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>static enum&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="JdbcObservationDocumentation.JdbcEvents.html" class="type-name-link" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation.JdbcEvents</a></code></div>
+<div class="col-second odd-row-color"><code><a href="JdbcObservationDocumentation.GeneratedKeysHighCardinalityKeyNames.html" class="type-name-link" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation.GeneratedKeysHighCardinalityKeyNames</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="JdbcObservationDocumentation.QueryHighCardinalityKeyNames.html" class="type-name-link" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation.QueryHighCardinalityKeyNames</a></code></div>
+<div class="col-second even-row-color"><code><a href="JdbcObservationDocumentation.JdbcEvents.html" class="type-name-link" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation.JdbcEvents</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>static enum&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="JdbcObservationDocumentation.ResultSetHighCardinalityKeyNames.html" class="type-name-link" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation.ResultSetHighCardinalityKeyNames</a></code></div>
+<div class="col-second odd-row-color"><code><a href="JdbcObservationDocumentation.QueryHighCardinalityKeyNames.html" class="type-name-link" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation.QueryHighCardinalityKeyNames</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="JdbcObservationDocumentation.ResultSetHighCardinalityKeyNames.html" class="type-name-link" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation.ResultSetHighCardinalityKeyNames</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
 </div>
 <div class="inherited-list">
 <h2 id="nested-classes-inherited-from-class-java.lang.Enum">Nested classes/interfaces inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a></h2>
@@ -132,12 +135,16 @@ implements io.micrometer.observation.docs.ObservationDocumentation</span></div>
 <div class="col-last even-row-color">
 <div class="block">Span created when a JDBC connection takes place.</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#QUERY" class="member-name-link">QUERY</a></code></div>
+<div class="col-first odd-row-color"><code><a href="#GENERATED_KEYS" class="member-name-link">GENERATED_KEYS</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Span created when generated keys are returned.</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#QUERY" class="member-name-link">QUERY</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Span created when executing a query.</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#RESULT_SET" class="member-name-link">RESULT_SET</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#RESULT_SET" class="member-name-link">RESULT_SET</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Span created when working with JDBC result set.</div>
 </div>
 </div>
@@ -218,6 +225,13 @@ the order they are declared.</div>
 <div class="block">Span created when working with JDBC result set.</div>
 </section>
 </li>
+<li>
+<section class="detail" id="GENERATED_KEYS">
+<h3>GENERATED_KEYS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="JdbcObservationDocumentation.html" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation</a></span>&nbsp;<span class="element-name">GENERATED_KEYS</span></div>
+<div class="block">Span created when generated keys are returned.</div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -266,7 +280,7 @@ not permitted.)</div>
 </main>
 <footer role="contentinfo">
 <hr>
-<p class="legal-copy"><small>Copyright &#169; 2023. All rights reserved.</small></p>
+<p class="legal-copy"><small>Copyright &#169; 2024. All rights reserved.</small></p>
 </footer>
 </div>
 </div>

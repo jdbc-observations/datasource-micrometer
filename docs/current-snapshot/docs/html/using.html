@@ -618,11 +618,12 @@ window.onload = function() {
 <h2 id="using-types-of-observation"><a class="anchor" href="#using-types-of-observation"></a><a class="link" href="#using-types-of-observation">1. Types of Observations</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Datasource Micrometer creates Connection, Query, and ResultSet observations.</p>
+<p>The Datasource Micrometer creates Connection, Query, Generated Keys(from <code>v1.1</code>), and ResultSet observations.</p>
 </div>
 <div class="paragraph">
 <p>The Connection observation represents the database connection operations. It is the base observation, as any database access requires a connection.
 The Query observation provides query execution details, such as execution time, SQL query, bind parameters, etc.
+The Generated Keys observation records generated keys when auto-generated keys feature is used for the insert statements.
 The ResultSet observation shows how the operations fetched the data from the query result, including the number of retrieved rows.</p>
 </div>
 <div class="paragraph">

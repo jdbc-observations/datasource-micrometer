@@ -635,7 +635,8 @@ window.onload = function() {
 <li><a href="#how-to-instrument-datasource">4.1.1. How to instrument <code>DataSource</code></a></li>
 <li><a href="#how-to-add-tracingobservationhandler">4.1.2. How to Add Tracing Observation Handlers for JDBC operations</a></li>
 <li><a href="#how-to-instrument-resultset">4.1.3. How to Instrument <code>ResultSet</code></a></li>
-<li><a href="#how-to-include-bind-parameter-values">4.1.4. How to Include Bind Parameter Values</a></li>
+<li><a href="#how-to-instrument-generated-keys">4.1.4. How to Instrument Generated Keys</a></li>
+<li><a href="#how-to-include-bind-parameter-values">4.1.5. How to Include Bind Parameter Values</a></li>
 </ul>
 </li>
 <li><a href="#how-to-datasource-micrometer-spring-boot">4.2. datasource-micrometer-spring-boot</a>
@@ -832,7 +833,7 @@ DataSource instrumented = ProxyDataSourceBuilder.create(dataSource).listener(lis
 <div class="sect2">
 <h3 id="getting-started-migration-from-spring-cloud-sleuth"><a class="anchor" href="#getting-started-migration-from-spring-cloud-sleuth"></a><a class="link" href="#getting-started-migration-from-spring-cloud-sleuth">2.3. Migration from Spring Cloud Sleuth</a></h3>
 <div class="paragraph">
-<p>Datasource Micrometer deliberatively provides similar property names to ease the migration from <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a>.
+<p>Datasource Micrometer deliberately provides similar property names to ease the migration from <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a>.
 Most of the JDBC related properties from <code>spring.sleuth.jdbc</code> and <code>spring.sleuth.jdbc.datasource-proxy</code> map to the <code>jdbc</code> and <code>jdbc.datasource-proxy</code> properties.</p>
 </div>
 <div class="paragraph">
@@ -850,11 +851,12 @@ Most of the JDBC related properties from <code>spring.sleuth.jdbc</code> and <co
 <div class="sect2">
 <h3 id="using-types-of-observation"><a class="anchor" href="#using-types-of-observation"></a><a class="link" href="#using-types-of-observation">3.1. Types of Observations</a></h3>
 <div class="paragraph">
-<p>The Datasource Micrometer creates Connection, Query, and ResultSet observations.</p>
+<p>The Datasource Micrometer creates Connection, Query, Generated Keys(from <code>v1.1</code>), and ResultSet observations.</p>
 </div>
 <div class="paragraph">
 <p>The Connection observation represents the database connection operations. It is the base observation, as any database access requires a connection.
 The Query observation provides query execution details, such as execution time, SQL query, bind parameters, etc.
+The Generated Keys observation records generated keys when auto-generated keys feature is used for the insert statements.
 The ResultSet observation shows how the operations fetched the data from the query result, including the number of retrieved rows.</p>
 </div>
 <div class="paragraph">
@@ -961,6 +963,18 @@ DataSource instrumented = ProxyDataSourceBuilder.create(dataSource).listener(lis
 </li>
 </ul>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+generated-keys are also handled by <code>ResultSetTracingObservationHandler</code>.
+</td>
+</tr>
+</table>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">ObservationRegistry registry = ...
@@ -987,7 +1001,21 @@ DataSource instrumented = builder.build();</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="how-to-include-bind-parameter-values"><a class="anchor" href="#how-to-include-bind-parameter-values"></a><a class="link" href="#how-to-include-bind-parameter-values">4.1.4. How to Include Bind Parameter Values</a></h4>
+<h4 id="how-to-instrument-generated-keys"><a class="anchor" href="#how-to-instrument-generated-keys"></a><a class="link" href="#how-to-instrument-generated-keys">4.1.4. How to Instrument Generated Keys</a></h4>
+<div class="paragraph">
+<p>By default, <a href="https://github.com/ttddyy/datasource-proxy">datasource-proxy</a> does not create a proxy for the generated-keys.
+You need to explicitly enable the generated-keys proxy creation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource).listener(listener).methodListener(listener);
+builder.proxyGeneratedKeys();  // enable Generated-Keys proxy creation
+DataSource instrumented = builder.build();</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="how-to-include-bind-parameter-values"><a class="anchor" href="#how-to-include-bind-parameter-values"></a><a class="link" href="#how-to-include-bind-parameter-values">4.1.5. How to Include Bind Parameter Values</a></h4>
 <div class="paragraph">
 <p>Bind parameter values - values from <code>setInt</code>, <code>setString</code>, etc operations on prepared and callable statement - are not tagged to spans by default.
 The <code>DataSourceObservationListener</code> class has a toggle to enable this.
@@ -1013,7 +1041,8 @@ listener.setIncludeParameterValues(true);</code></pre>
 <h4 id="how-to-choose-what-to-observe"><a class="anchor" href="#how-to-choose-what-to-observe"></a><a class="link" href="#how-to-choose-what-to-observe">4.2.2. How to Choose What To Observe</a></h4>
 <div class="paragraph">
 <p>Specify <code>jdbc.includes</code> property.
-By default, the property is set to include(observe) all(<code>CONNECTION</code>, <code>QUERY</code>, <code>FETCH</code>) types.</p>
+By default, the property is set to include(observe) all(<code>CONNECTION</code>, <code>QUERY</code>,
+<code>KEYS</code>, <code>FETCH</code>) types.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1250,6 +1279,10 @@ Also, you can define your own properties.
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>QueryContext</code></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>net.ttddyy.observation.tracing.GeneratedKeysObservationConvention</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ResultSetContext</code></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>net.ttddyy.observation.tracing.ResultSetObservationConvention</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ResultSetContext</code></p></td>
 </tr>
@@ -1392,6 +1425,86 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </div>
 </div>
 <div class="sect4">
+<h5 id="observability-metrics-generated-keys"><a class="anchor" href="#observability-metrics-generated-keys"></a><a class="link" href="#observability-metrics-generated-keys">Generated Keys</a></h5>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Span created when generated keys are returned.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p><strong>Metric name</strong> <code>jdbc.generated-keys</code>. <strong>Type</strong> <code>timer</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Metric name</strong> <code>jdbc.generated-keys.active</code>. <strong>Type</strong> <code>long task timer</code>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+KeyValues that are added after starting the Observation might be missing from the *.active metrics.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Micrometer internally uses <code>nanoseconds</code> for the baseunit. However, each backend determines the actual baseunit. (i.e. Prometheus uses seconds)
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Fully qualified name of the enclosing class <code>net.ttddyy.observation.tracing.JdbcObservationDocumentation</code>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+All tags must be prefixed with <code>jdbc</code> prefix!
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. High cardinality Keys</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Description</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>jdbc.generated-keys</code> <em>(required)</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Generated keys.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
 <h5 id="observability-metrics-query"><a class="anchor" href="#observability-metrics-query"></a><a class="link" href="#observability-metrics-query">Query</a></h5>
 <div class="quoteblock">
 <blockquote>
@@ -1446,7 +1559,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. High cardinality Keys</caption>
+<caption class="title">Table 4. High cardinality Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1542,7 +1655,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. High cardinality Keys</caption>
+<caption class="title">Table 5. High cardinality Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1601,7 +1714,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 5. Tag Keys</caption>
+<caption class="title">Table 6. Tag Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1622,7 +1735,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 6. Event Values</caption>
+<caption class="title">Table 7. Event Values</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1643,6 +1756,51 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>rollback</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">When the connection is rolled back.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="observability-spans-generated-keys"><a class="anchor" href="#observability-spans-generated-keys"></a><a class="link" href="#observability-spans-generated-keys">Generated Keys Span</a></h5>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Span created when generated keys are returned.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p><strong>Span name</strong> <code>generated-keys</code>.</p>
+</div>
+<div class="paragraph">
+<p>Fully qualified name of the enclosing class <code>net.ttddyy.observation.tracing.JdbcObservationDocumentation</code>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+All tags must be prefixed with <code>jdbc</code> prefix!
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 8. Tag Keys</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.generated-keys</code> <em>(required)</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Generated keys.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1675,7 +1833,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 7. Tag Keys</caption>
+<caption class="title">Table 9. Tag Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1728,7 +1886,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 8. Tag Keys</caption>
+<caption class="title">Table 10. Tag Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">

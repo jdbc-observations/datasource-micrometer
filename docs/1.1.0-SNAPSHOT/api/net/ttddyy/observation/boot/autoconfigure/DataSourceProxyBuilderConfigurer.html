@@ -101,12 +101,13 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(net.ttddyy.observation.boot.autoconfigure.JdbcProperties,java.util.List,java.util.List,net.ttddyy.dsproxy.transform.ParameterTransformer,net.ttddyy.dsproxy.transform.QueryTransformer,net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory,net.ttddyy.observation.boot.autoconfigure.DataSourceProxyConnectionIdManagerProvider)" class="member-name-link">DataSourceProxyBuilderConfigurer</a><wbr>(<a href="JdbcProperties.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties</a>&nbsp;jdbcProperties,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(net.ttddyy.observation.boot.autoconfigure.JdbcProperties,java.util.List,java.util.List,net.ttddyy.dsproxy.transform.ParameterTransformer,net.ttddyy.dsproxy.transform.QueryTransformer,net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory,net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory,net.ttddyy.observation.boot.autoconfigure.DataSourceProxyConnectionIdManagerProvider)" class="member-name-link">DataSourceProxyBuilderConfigurer</a><wbr>(<a href="JdbcProperties.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties</a>&nbsp;jdbcProperties,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.ttddyy.dsproxy.listener.QueryExecutionListener&gt;&nbsp;listeners,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.ttddyy.dsproxy.listener.MethodExecutionListener&gt;&nbsp;methodExecutionListeners,
  net.ttddyy.dsproxy.transform.ParameterTransformer&nbsp;parameterTransformer,
  net.ttddyy.dsproxy.transform.QueryTransformer&nbsp;queryTransformer,
  net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory&nbsp;resultSetProxyLogicFactory,
+ net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory&nbsp;generatedKeysProxyLogicFactory,
  <a href="DataSourceProxyConnectionIdManagerProvider.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceProxyConnectionIdManagerProvider</a>&nbsp;dataSourceProxyConnectionIdManagerProvider)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
@@ -144,7 +145,7 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(net.ttddyy.observation.boot.autoconfigure.JdbcProperties,java.util.List,java.util.List,net.ttddyy.dsproxy.transform.ParameterTransformer,net.ttddyy.dsproxy.transform.QueryTransformer,net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory,net.ttddyy.observation.boot.autoconfigure.DataSourceProxyConnectionIdManagerProvider)">
+<section class="detail" id="&lt;init&gt;(net.ttddyy.observation.boot.autoconfigure.JdbcProperties,java.util.List,java.util.List,net.ttddyy.dsproxy.transform.ParameterTransformer,net.ttddyy.dsproxy.transform.QueryTransformer,net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory,net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory,net.ttddyy.observation.boot.autoconfigure.DataSourceProxyConnectionIdManagerProvider)">
 <h3>DataSourceProxyBuilderConfigurer</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DataSourceProxyBuilderConfigurer</span><wbr><span class="parameters">(<a href="JdbcProperties.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties</a>&nbsp;jdbcProperties,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.ttddyy.dsproxy.listener.QueryExecutionListener&gt;&nbsp;listeners,
@@ -155,6 +156,8 @@ loadScripts(document, 'script');</script>
  net.ttddyy.dsproxy.transform.QueryTransformer&nbsp;queryTransformer,
  @Nullable
  net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory&nbsp;resultSetProxyLogicFactory,
+ @Nullable
+ net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory&nbsp;generatedKeysProxyLogicFactory,
  @Nullable
  <a href="DataSourceProxyConnectionIdManagerProvider.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceProxyConnectionIdManagerProvider</a>&nbsp;dataSourceProxyConnectionIdManagerProvider)</span></div>
 </section>
@@ -182,7 +185,7 @@ loadScripts(document, 'script');</script>
 </main>
 <footer role="contentinfo">
 <hr>
-<p class="legal-copy"><small>Copyright &#169; 2023. All rights reserved.</small></p>
+<p class="legal-copy"><small>Copyright &#169; 2024. All rights reserved.</small></p>
 </footer>
 </div>
 </div>

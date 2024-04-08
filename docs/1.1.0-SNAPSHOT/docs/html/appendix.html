@@ -743,6 +743,10 @@ Also, you can define your own properties.
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>QueryContext</code></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>net.ttddyy.observation.tracing.GeneratedKeysObservationConvention</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ResultSetContext</code></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>net.ttddyy.observation.tracing.ResultSetObservationConvention</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ResultSetContext</code></p></td>
 </tr>
@@ -885,19 +889,19 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </div>
 </div>
 <div class="sect3">
-<h4 id="observability-metrics-query"><a class="anchor" href="#observability-metrics-query"></a><a class="link" href="#observability-metrics-query">2.2.2. Query</a></h4>
+<h4 id="observability-metrics-generated-keys"><a class="anchor" href="#observability-metrics-generated-keys"></a><a class="link" href="#observability-metrics-generated-keys">2.2.2. Generated Keys</a></h4>
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p>Span created when executing a query.</p>
+<p>Span created when generated keys are returned.</p>
 </div>
 </blockquote>
 </div>
 <div class="paragraph">
-<p><strong>Metric name</strong> <code>jdbc.query</code>. <strong>Type</strong> <code>timer</code>.</p>
+<p><strong>Metric name</strong> <code>jdbc.generated-keys</code>. <strong>Type</strong> <code>timer</code>.</p>
 </div>
 <div class="paragraph">
-<p><strong>Metric name</strong> <code>jdbc.query.active</code>. <strong>Type</strong> <code>long task timer</code>.</p>
+<p><strong>Metric name</strong> <code>jdbc.generated-keys.active</code>. <strong>Type</strong> <code>long task timer</code>.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -955,6 +959,86 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>jdbc.generated-keys</code> <em>(required)</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Generated keys.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="observability-metrics-query"><a class="anchor" href="#observability-metrics-query"></a><a class="link" href="#observability-metrics-query">2.2.3. Query</a></h4>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Span created when executing a query.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p><strong>Metric name</strong> <code>jdbc.query</code>. <strong>Type</strong> <code>timer</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Metric name</strong> <code>jdbc.query.active</code>. <strong>Type</strong> <code>long task timer</code>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+KeyValues that are added after starting the Observation might be missing from the *.active metrics.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Micrometer internally uses <code>nanoseconds</code> for the baseunit. However, each backend determines the actual baseunit. (i.e. Prometheus uses seconds)
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Fully qualified name of the enclosing class <code>net.ttddyy.observation.tracing.JdbcObservationDocumentation</code>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+All tags must be prefixed with <code>jdbc</code> prefix!
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. High cardinality Keys</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Description</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p><code>jdbc.params[%s]</code> <em>(required)</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -981,7 +1065,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <div class="sect3">
-<h4 id="observability-metrics-result-set"><a class="anchor" href="#observability-metrics-result-set"></a><a class="link" href="#observability-metrics-result-set">2.2.3. Result Set</a></h4>
+<h4 id="observability-metrics-result-set"><a class="anchor" href="#observability-metrics-result-set"></a><a class="link" href="#observability-metrics-result-set">2.2.4. Result Set</a></h4>
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
@@ -1035,7 +1119,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. High cardinality Keys</caption>
+<caption class="title">Table 5. High cardinality Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1094,7 +1178,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 5. Tag Keys</caption>
+<caption class="title">Table 6. Tag Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1115,7 +1199,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 6. Event Values</caption>
+<caption class="title">Table 7. Event Values</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1141,7 +1225,52 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <div class="sect3">
-<h4 id="observability-spans-query"><a class="anchor" href="#observability-spans-query"></a><a class="link" href="#observability-spans-query">2.3.2. Query Span</a></h4>
+<h4 id="observability-spans-generated-keys"><a class="anchor" href="#observability-spans-generated-keys"></a><a class="link" href="#observability-spans-generated-keys">2.3.2. Generated Keys Span</a></h4>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Span created when generated keys are returned.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p><strong>Span name</strong> <code>generated-keys</code>.</p>
+</div>
+<div class="paragraph">
+<p>Fully qualified name of the enclosing class <code>net.ttddyy.observation.tracing.JdbcObservationDocumentation</code>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+All tags must be prefixed with <code>jdbc</code> prefix!
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 8. Tag Keys</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc.generated-keys</code> <em>(required)</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Generated keys.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="observability-spans-query"><a class="anchor" href="#observability-spans-query"></a><a class="link" href="#observability-spans-query">2.3.3. Query Span</a></h4>
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
@@ -1168,7 +1297,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 7. Tag Keys</caption>
+<caption class="title">Table 9. Tag Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1194,7 +1323,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <div class="sect3">
-<h4 id="observability-spans-result-set"><a class="anchor" href="#observability-spans-result-set"></a><a class="link" href="#observability-spans-result-set">2.3.3. Result Set Span</a></h4>
+<h4 id="observability-spans-result-set"><a class="anchor" href="#observability-spans-result-set"></a><a class="link" href="#observability-spans-result-set">2.3.4. Result Set Span</a></h4>
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
@@ -1221,7 +1350,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 8. Tag Keys</caption>
+<caption class="title">Table 10. Tag Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
