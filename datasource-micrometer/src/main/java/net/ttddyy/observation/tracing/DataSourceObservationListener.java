@@ -42,6 +42,7 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ResultSetAttributes;
 import net.ttddyy.observation.tracing.JdbcObservationDocumentation.JdbcEvents;
@@ -55,6 +56,14 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	private static final InternalLogger logger = InternalLoggerFactory.getInstance(DataSourceObservationListener.class);
 
+	private static final Set<String> METHODS_TO_IGNORE = new HashSet<>(Arrays.asList(
+			// java.lang.Object methods
+			"toString", "equals", "hashCode",
+			// java.sql.Wrapper methods
+			"unwrap", "isWrapperFor",
+			// datasource-proxy methods
+			"getTarget", "getProxyConfig", "getDataSourceName"));
+
 	private final Supplier<ObservationRegistry> observationRegistrySupplier;
 
 	private ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
@@ -66,6 +75,9 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	};
 
 	private ResultSetObservationConvention resultSetObservationConvention = new ResultSetObservationConvention() {
+	};
+
+	private GeneratedKeysObservationConvention generatedKeysObservationConvention = new GeneratedKeysObservationConvention() {
 	};
 
 	private QueryParametersSpanTagProvider queryParametersSpanTagProvider = new DefaultQueryParametersSpanTagProvider();
@@ -193,6 +205,9 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	@Override
 	public void beforeMethod(MethodExecutionContext executionContext) {
 		String methodName = executionContext.getMethod().getName();
+		if (METHODS_TO_IGNORE.contains(methodName)) {
+			return;
+		}
 		Object target = executionContext.getTarget();
 		if (target instanceof DataSource && "getConnection".equals(methodName)) {
 			handleGetConnectionBefore(executionContext);
@@ -202,6 +217,9 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	@Override
 	public void afterMethod(MethodExecutionContext executionContext) {
 		String methodName = executionContext.getMethod().getName();
+		if (METHODS_TO_IGNORE.contains(methodName)) {
+			return;
+		}
 		Object target = executionContext.getTarget();
 		if (target instanceof DataSource && "getConnection".equals(methodName)) {
 			handleGetConnectionAfter(executionContext);
@@ -220,6 +238,18 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		else if (target instanceof Statement) {
 			if ("close".equals(methodName)) {
 				handleStatementClose(executionContext);
+			}
+			else if ("getGeneratedKeys".equals(methodName) && executionContext.getResult() instanceof ResultSet) {
+				String connectionId = executionContext.getConnectionInfo().getConnectionId();
+				ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
+				if (connectionAttributes != null) {
+					ResultSet resultSet = (ResultSet) executionContext.getResult();
+					// result could be a proxy, unwrap it.
+					if (resultSet instanceof ProxyJdbcObject) {
+						resultSet = (ResultSet) ((ProxyJdbcObject) resultSet).getTarget();
+					}
+					connectionAttributes.resultSetAttributesManager.addGeneratedKeys(resultSet);
+				}
 			}
 		}
 		else if (target instanceof ResultSet) {
@@ -345,7 +375,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager
 				.getByResultSet(resultSet);
 		if (resultSetAttributes == null) {
-			resultSetAttributes = createResultSetAttributesAndStartObservation(executionContext);
+			boolean isGeneratedKey = connectionAttributes.resultSetAttributesManager.isGeneratedKeys(resultSet);
+			resultSetAttributes = createResultSetAttributesAndStartObservation(executionContext, isGeneratedKey);
 
 			Statement statement = null;
 			try {
@@ -361,7 +392,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			connectionAttributes.resultSetAttributesManager.add(resultSet, statement, resultSetAttributes);
 		}
 
-		ResultSetOperation operation = new ResultSetOperation(executionContext.getMethod(), executionContext.getResult());
+		ResultSetOperation operation = new ResultSetOperation(executionContext.getMethod(),
+				executionContext.getResult());
 		resultSetAttributes.context.addOperation(operation);
 
 		String methodName = executionContext.getMethod().getName();
@@ -377,12 +409,21 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		}
 	}
 
-	private ResultSetAttributes createResultSetAttributesAndStartObservation(MethodExecutionContext executionContext) {
+	private ResultSetAttributes createResultSetAttributesAndStartObservation(MethodExecutionContext executionContext,
+			boolean isGeneratedKeys) {
 		// new ResultSet observation
 		ResultSetContext resultSetContext = new ResultSetContext();
 		populateFromConnectionAttributes(resultSetContext, executionContext.getConnectionInfo().getConnectionId());
-		Observation observation = createAndStartObservation(JdbcObservationDocumentation.RESULT_SET, resultSetContext,
-				this.resultSetObservationConvention);
+
+		Observation observation;
+		if (isGeneratedKeys) {
+			observation = createAndStartObservation(JdbcObservationDocumentation.GENERATED_KEYS, resultSetContext,
+					this.generatedKeysObservationConvention);
+		}
+		else {
+			observation = createAndStartObservation(JdbcObservationDocumentation.RESULT_SET, resultSetContext,
+					this.resultSetObservationConvention);
+		}
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created a new result-set observation [" + observation + "]");
@@ -456,6 +497,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	public void setResultSetObservationConvention(ResultSetObservationConvention resultSetObservationConvention) {
 		this.resultSetObservationConvention = resultSetObservationConvention;
+	}
+
+	public void setGeneratedKeysObservationConvention(
+			GeneratedKeysObservationConvention generatedKeysObservationConvention) {
+		this.generatedKeysObservationConvention = generatedKeysObservationConvention;
 	}
 
 	public void setQueryParametersSpanTagProvider(QueryParametersSpanTagProvider queryParametersSpanTagProvider) {

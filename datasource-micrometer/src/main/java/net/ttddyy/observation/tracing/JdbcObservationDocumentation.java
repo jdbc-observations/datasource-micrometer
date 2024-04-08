@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,6 +109,31 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 		public String getPrefix() {
 			return "jdbc";
 		}
+	},
+
+	/**
+	 * Span created when generated keys are returned.
+	 */
+	GENERATED_KEYS {
+		@Override
+		public String getName() {
+			return "jdbc.generated-keys";
+		}
+
+		@Override
+		public String getContextualName() {
+			return "generated-keys";
+		}
+
+		@Override
+		public KeyName[] getHighCardinalityKeyNames() {
+			return GeneratedKeysHighCardinalityKeyNames.values();
+		}
+
+		@Override
+		public String getPrefix() {
+			return "jdbc";
+		}
 	};
 
 	public enum QueryHighCardinalityKeyNames implements KeyName {
@@ -156,6 +181,20 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 			@Override
 			public String asString() {
 				return "jdbc.row-count";
+			}
+		}
+
+	}
+
+	public enum GeneratedKeysHighCardinalityKeyNames implements KeyName {
+
+		/**
+		 * Generated keys.
+		 */
+		KEYS {
+			@Override
+			public String asString() {
+				return "jdbc.generated-keys";
 			}
 		}
 

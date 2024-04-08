@@ -36,6 +36,8 @@ There are 3 tracing observation handlers that react to the observations from `Da
 * `QueryTracingObservationHandler`
 * `ResultSetTracingObservationHandler`
 
+NOTE: generated-keys are also handled by `ResultSetTracingObservationHandler`.
+
 [source,java,indent=0]
 ----
 ObservationRegistry registry = ...
@@ -56,6 +58,19 @@ Then, `ResultSet` get instrumented automatically.
 ----
 ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource).listener(listener).methodListener(listener);
 builder.proxyResultSet();  // enable ResultSet proxy creation
+DataSource instrumented = builder.build();
+----
+
+[[how-to-instrument-generated-keys]]
+=== How to Instrument Generated Keys
+
+By default, {datasource-proxy}[datasource-proxy] does not create a proxy for the generated-keys.
+You need to explicitly enable the generated-keys proxy creation.
+
+[source,java,indent=0]
+----
+ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource).listener(listener).methodListener(listener);
+builder.proxyGeneratedKeys();  // enable Generated-Keys proxy creation
 DataSource instrumented = builder.build();
 ----
 
@@ -84,7 +99,8 @@ Set the `jdbc.datasource-proxy.enabled` property to `false`.
 === How to Choose What To Observe
 
 Specify `jdbc.includes` property.
-By default, the property is set to include(observe) all(`CONNECTION`, `QUERY`, `FETCH`) types.
+By default, the property is set to include(observe) all(`CONNECTION`, `QUERY`,
+`KEYS`, `FETCH`) types.
 
 [[how-to-include-bind-parameter-values-in-boot]]
 === How to Include the Bind Parameter Values in Spans

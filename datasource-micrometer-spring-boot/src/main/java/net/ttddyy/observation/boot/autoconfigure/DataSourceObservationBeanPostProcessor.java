@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,8 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 
 	private final ObjectProvider<ResultSetProxyLogicFactory> resultSetProxyLogicFactoryProvider;
 
+	private final ObjectProvider<ResultSetProxyLogicFactory> generatedKeysProxyLogicFactoryProvider;
+
 	private final ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProviderProvider;
 
 	private DataSourceProxyBuilderConfigurer dataSourceProxyBuilderConfigurer;
@@ -64,6 +66,7 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 			ObjectProvider<ParameterTransformer> parameterTransformerProvider,
 			ObjectProvider<QueryTransformer> queryTransformerProvider,
 			ObjectProvider<ResultSetProxyLogicFactory> resultSetProxyLogicFactoryProvider,
+			ObjectProvider<ResultSetProxyLogicFactory> generatedKeysProxyLogicFactoryProvider,
 			ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProviderProvider,
 			ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers) {
 		this.jdbcPropertiesProvider = jdbcPropertiesProvider;
@@ -73,6 +76,7 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 		this.parameterTransformerProvider = parameterTransformerProvider;
 		this.queryTransformerProvider = queryTransformerProvider;
 		this.resultSetProxyLogicFactoryProvider = resultSetProxyLogicFactoryProvider;
+		this.generatedKeysProxyLogicFactoryProvider = generatedKeysProxyLogicFactoryProvider;
 		this.dataSourceProxyConnectionIdManagerProviderProvider = dataSourceProxyConnectionIdManagerProviderProvider;
 		this.proxyDataSourceBuilderCustomizers = proxyDataSourceBuilderCustomizers;
 	}
@@ -100,6 +104,7 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 					this.methodExecutionListenersProvider.orderedStream().toList(),
 					this.parameterTransformerProvider.getIfAvailable(), this.queryTransformerProvider.getIfAvailable(),
 					this.resultSetProxyLogicFactoryProvider.getIfAvailable(),
+					this.generatedKeysProxyLogicFactoryProvider.getIfAvailable(),
 					this.dataSourceProxyConnectionIdManagerProviderProvider.getIfAvailable());
 		}
 		return this.dataSourceProxyBuilderConfigurer;

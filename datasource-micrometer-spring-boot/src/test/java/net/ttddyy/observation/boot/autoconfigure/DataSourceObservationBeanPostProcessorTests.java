@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,8 @@ class DataSourceObservationBeanPostProcessorTests {
 
 	private ObjectProvider<ResultSetProxyLogicFactory> resultSetProxyLogicFactoryProvider;
 
+	private ObjectProvider<ResultSetProxyLogicFactory> generatedKeysProxyLogicFactoryProvider;
+
 	private ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProviderProvider;
 
 	private ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers;
@@ -76,14 +78,15 @@ class DataSourceObservationBeanPostProcessorTests {
 		this.parameterTransformerProvider = mock(ObjectProvider.class);
 		this.queryTransformerProvider = mock(ObjectProvider.class);
 		this.resultSetProxyLogicFactoryProvider = mock(ObjectProvider.class);
+		this.generatedKeysProxyLogicFactoryProvider = mock(ObjectProvider.class);
 		this.dataSourceProxyConnectionIdManagerProviderProvider = mock(ObjectProvider.class);
 		this.proxyDataSourceBuilderCustomizers = mock(ObjectProvider.class);
 
 		this.processor = new DataSourceObservationBeanPostProcessor(this.jdbcPropertiesProvider,
 				this.dataSourceNameResolverProvider, this.listenersProvider, this.methodExecutionListenersProvider,
 				this.parameterTransformerProvider, this.queryTransformerProvider,
-				this.resultSetProxyLogicFactoryProvider, this.dataSourceProxyConnectionIdManagerProviderProvider,
-				this.proxyDataSourceBuilderCustomizers);
+				this.resultSetProxyLogicFactoryProvider, this.generatedKeysProxyLogicFactoryProvider,
+				this.dataSourceProxyConnectionIdManagerProviderProvider, this.proxyDataSourceBuilderCustomizers);
 	}
 
 	@Test

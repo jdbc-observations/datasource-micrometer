@@ -38,6 +38,7 @@ import static org.mockito.Mockito.mock;
 class HikariJdbcObservationFilterTests {
 
 	private static final String DRIVER = "my-driver";
+
 	private static final String POOL = "my-pool";
 
 	@Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 the original author or authors.
+ * Copyright 2022-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class JdbcProperties {
 	/**
 	 * Which types of tracing we would like to include.
 	 */
-	private Set<TraceType> includes = Set.of(TraceType.CONNECTION, TraceType.QUERY, TraceType.FETCH);
+	private Set<TraceType> includes = Set.of(TraceType.CONNECTION, TraceType.QUERY, TraceType.FETCH, TraceType.KEYS);
 
 	/**
 	 * List of DataSource bean names that will not be decorated.
@@ -308,7 +308,12 @@ public class JdbcProperties {
 		/**
 		 * Related to ResultSets.
 		 */
-		FETCH(JdbcObservationDocumentation.RESULT_SET);
+		FETCH(JdbcObservationDocumentation.RESULT_SET),
+
+		/**
+		 * Related to generated keys.
+		 */
+		KEYS(JdbcObservationDocumentation.GENERATED_KEYS);
 
 		final JdbcObservationDocumentation supportedDocumentation;
 

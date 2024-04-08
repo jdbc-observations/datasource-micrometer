@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 the original author or authors.
+ * Copyright 2022-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,11 +126,13 @@ public class DataSourceObservationAutoConfiguration {
 			ObjectProvider<ParameterTransformer> parameterTransformer,
 			ObjectProvider<QueryTransformer> queryTransformer,
 			ObjectProvider<ResultSetProxyLogicFactory> resultSetProxyLogicFactory,
+			ObjectProvider<ResultSetProxyLogicFactory> generatedKeysProxyLogicFactory,
 			ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProvider,
 			ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers) {
 		return new DataSourceObservationBeanPostProcessor(jdbcProperties, dataSourceNameResolvers, listeners,
 				methodExecutionListeners, parameterTransformer, queryTransformer, resultSetProxyLogicFactory,
-				dataSourceProxyConnectionIdManagerProvider, proxyDataSourceBuilderCustomizers);
+				generatedKeysProxyLogicFactory, dataSourceProxyConnectionIdManagerProvider,
+				proxyDataSourceBuilderCustomizers);
 	}
 
 	@Configuration(proxyBeanMethods = false)

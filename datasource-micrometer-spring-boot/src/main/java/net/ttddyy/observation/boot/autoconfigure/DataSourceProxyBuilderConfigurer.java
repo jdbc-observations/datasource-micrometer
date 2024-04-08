@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2022 the original author or authors.
+ * Copyright 2013-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,12 +53,19 @@ public class DataSourceProxyBuilderConfigurer {
 
 	private final List<MethodExecutionListener> methodExecutionListeners;
 
+	@Nullable
 	private final ParameterTransformer parameterTransformer;
 
+	@Nullable
 	private final QueryTransformer queryTransformer;
 
+	@Nullable
 	private final ResultSetProxyLogicFactory resultSetProxyLogicFactory;
 
+	@Nullable
+	private final ResultSetProxyLogicFactory generatedKeysProxyLogicFactory;
+
+	@Nullable
 	private final DataSourceProxyConnectionIdManagerProvider dataSourceProxyConnectionIdManagerProvider;
 
 	private final JdbcProperties jdbcProperties;
@@ -67,6 +74,7 @@ public class DataSourceProxyBuilderConfigurer {
 			List<MethodExecutionListener> methodExecutionListeners, @Nullable ParameterTransformer parameterTransformer,
 			@Nullable QueryTransformer queryTransformer,
 			@Nullable ResultSetProxyLogicFactory resultSetProxyLogicFactory,
+			@Nullable ResultSetProxyLogicFactory generatedKeysProxyLogicFactory,
 			@Nullable DataSourceProxyConnectionIdManagerProvider dataSourceProxyConnectionIdManagerProvider) {
 		this.jdbcProperties = jdbcProperties;
 		this.listeners = listeners;
@@ -74,6 +82,7 @@ public class DataSourceProxyBuilderConfigurer {
 		this.parameterTransformer = parameterTransformer;
 		this.queryTransformer = queryTransformer;
 		this.resultSetProxyLogicFactory = resultSetProxyLogicFactory;
+		this.generatedKeysProxyLogicFactory = generatedKeysProxyLogicFactory;
 		this.dataSourceProxyConnectionIdManagerProvider = dataSourceProxyConnectionIdManagerProvider;
 	}
 
@@ -150,6 +159,11 @@ public class DataSourceProxyBuilderConfigurer {
 			ResultSetProxyLogicFactory factory = this.resultSetProxyLogicFactory == null
 					? ResultSetProxyLogicFactory.DEFAULT : this.resultSetProxyLogicFactory;
 			proxyDataSourceBuilder.proxyResultSet(factory);
+		}
+		if (this.jdbcProperties.getIncludes().contains(TraceType.KEYS)) {
+			ResultSetProxyLogicFactory factory = this.generatedKeysProxyLogicFactory == null
+					? ResultSetProxyLogicFactory.DEFAULT : this.generatedKeysProxyLogicFactory;
+			proxyDataSourceBuilder.proxyGeneratedKeys(factory);
 		}
 		ifAvailable(this.listeners, l -> l.forEach(proxyDataSourceBuilder::listener));
 		ifAvailable(this.methodExecutionListeners, m -> m.forEach(proxyDataSourceBuilder::methodListener));

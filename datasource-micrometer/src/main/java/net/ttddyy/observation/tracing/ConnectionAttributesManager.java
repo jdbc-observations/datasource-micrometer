@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,9 +69,19 @@ public interface ConnectionAttributesManager {
 
 	class ResultSetAttributesManager {
 
-		Map<ResultSet, ResultSetAttributes> byResultSet = new ConcurrentHashMap<>();
+		private final Map<ResultSet, ResultSetAttributes> byResultSet = new ConcurrentHashMap<>();
 
-		Map<ResultSet, Statement> statements = new ConcurrentHashMap<>();
+		private final Map<ResultSet, Statement> statements = new ConcurrentHashMap<>();
+
+		private final Set<ResultSet> generatedKeys = new HashSet<>();
+
+		boolean isGeneratedKeys(ResultSet resultSet) {
+			return this.generatedKeys.contains(resultSet);
+		}
+
+		void addGeneratedKeys(ResultSet resultSet) {
+			this.generatedKeys.add(resultSet);
+		}
 
 		ResultSetAttributes add(ResultSet resultSet, @Nullable Statement statement, ResultSetAttributes attributes) {
 			this.byResultSet.put(resultSet, attributes);
@@ -88,6 +98,7 @@ public interface ConnectionAttributesManager {
 
 		@Nullable
 		ResultSetAttributes removeByResultSet(ResultSet resultSet) {
+			this.generatedKeys.remove(resultSet);
 			this.statements.remove(resultSet);
 			return this.byResultSet.remove(resultSet);
 		}
@@ -102,13 +113,14 @@ public interface ConnectionAttributesManager {
 					iter.remove();
 				}
 			}
-
+			this.generatedKeys.removeAll(resultSets);
 			return resultSets.stream().map(this.byResultSet::remove).filter(Objects::nonNull)
 					.collect(Collectors.toSet());
 		}
 
 		Set<ResultSetAttributes> removeAll() {
 			Set<ResultSetAttributes> attributes = new HashSet<>(this.byResultSet.values());
+			this.generatedKeys.clear();
 			this.byResultSet.clear();
 			this.statements.clear();
 			return attributes;

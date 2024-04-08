@@ -18,6 +18,9 @@ package net.ttddyy.observation.tracing;
 
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represent an operation(method call) performed on the proxy {@link ResultSet}.
@@ -34,6 +37,19 @@ public class ResultSetOperation {
 	public ResultSetOperation(Method method, Object result) {
 		this.method = method;
 		this.result = result;
+	}
+
+	private static final Set<String> NON_DATA_RETRIEVAL_METHODS = new HashSet<>();
+	static {
+		// start with "get" but not data retrieval
+		NON_DATA_RETRIEVAL_METHODS
+				.addAll(Arrays.asList("getConcurrency", "getCursorName", "getMetaData", "getFetchDirection",
+						"getFetchSize", "getHoldability", "getRow", "getStatement", "getType", "getWarnings"));
+	}
+
+	public static boolean isDataRetrievalOperation(ResultSetOperation op) {
+		String methodName = op.getMethod().getName();
+		return methodName.startsWith("get") && !NON_DATA_RETRIEVAL_METHODS.contains(methodName);
 	}
 
 	public Method getMethod() {
