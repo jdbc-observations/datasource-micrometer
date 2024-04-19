@@ -625,13 +625,13 @@ It includes an introduction to Datasource Micrometer, along with installation in
 <h2 id="getting-started-introducing-datasource-micrometer"><a class="anchor" href="#getting-started-introducing-datasource-micrometer"></a><a class="link" href="#getting-started-introducing-datasource-micrometer">1. Introducing Datasource Micrometer</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Datasource Micrometer provides a <a href="https://micrometer.io/docs/tracing">Micrometer Tracing</a> instrumentation for JDBC operations.</p>
+<p>The Datasource Micrometer provides a <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Micrometer Observation API</a> instrumentation for JDBC operations.</p>
 </div>
 <div class="paragraph">
 <p>Currently, this project provides two modules - core instrumentation and its Spring Boot Auto Configuration.</p>
 </div>
 <div class="paragraph">
-<p>If you are a <a href="https://micrometer.io/docs/tracing">Micrometer Tracing</a> user but not using Spring Boot, you can directly use the <code>datasource-micrometer</code> module, which doesn&#8217;t have a dependency on Spring Framework.<br>
+<p>If you are a <a href="https://micrometer.io">Micrometer</a> user but not using Spring Boot, you can directly use the <code>datasource-micrometer</code> module, which doesn&#8217;t have a dependency on Spring Framework.<br>
 If you are a Spring Boot 3 user, then you can add the <code>datasource-micrometer-spring-boot</code> module to the classpath.
 Then, it automatically instruments the <code>DataSource</code> and provides a tracing capability on the JDBC operations.</p>
 </div>
@@ -641,21 +641,21 @@ Then, it automatically instruments the <code>DataSource</code> and provides a tr
 <div class="sect2">
 <h3 id="getting-started-intro-background"><a class="anchor" href="#getting-started-intro-background"></a><a class="link" href="#getting-started-intro-background">1.1. Background</a></h3>
 <div class="paragraph">
-<p>The Micrometer v1.10.0 introduced the new <a href="https://micrometer.io/docs/observation">Observation API</a> and <a href="https://micrometer.io/docs/tracing">Micrometer Tracing</a> module.
-The <a href="https://micrometer.io/docs/observation">Observation API</a> allows measuring(observing) any interested behavior from the code in action. Then, notifies it to the registered handlers.
-The <a href="https://micrometer.io/docs/tracing">Micrometer Tracing</a> module provides an observation handler implementation that creates distributed traces(spans). It uses a tracer that has abstracted the popular tracer implementations and gives the vendor free APIs for tracing.</p>
+<p>The Micrometer v1.10.0 introduced the new <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a> and <a href="https://docs.micrometer.io/tracing/reference/">Micrometer Tracing</a> module.
+The <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a> allows measuring(observing) any interested behavior from the code in action. Then, notifies it to the registered handlers.
+The <a href="https://docs.micrometer.io/tracing/reference/">Micrometer Tracing</a> module provides an observation handler implementation that creates distributed traces(spans). It uses a tracer that has abstracted the popular tracer implementations and gives the vendor free APIs for tracing.</p>
 </div>
 <div class="paragraph">
 <p>In Spring Boot 2.x, the <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a> provided the instrumentation to the many components including JDBC operations.
 It was a central library that provides tracing instrumentation to the Spring Boot applications.
 However, with the new observability, the responsibility for instrumentation has shifted to the individual component.
-For example, Spring Framework will provide native instrumentation support for its components using the <a href="https://micrometer.io/docs/observation">Observation API</a>.
+For example, Spring Framework will provide native instrumentation support for its components using the <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a>.
 As a result, there will be no <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a> for Spring Boot 3.</p>
 </div>
 <div class="paragraph">
-<p>This Datasource Micrometer project provides instrumentation on the JDBC operations to cover what was provided by the <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a> but with the <a href="https://micrometer.io/docs/observation">Observation API</a>.
+<p>This Datasource Micrometer project provides instrumentation on the JDBC operations to cover what was provided by the <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a> but with the <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a>.
 The initial version aims users to smoothly transition from Spring Boot 2.x with Spring Cloud Sleuth to the Spring Boot 3 in JDBC instrumentation.
-In addition, since the <a href="https://micrometer.io/docs/observation">Observation API</a> and <a href="https://micrometer.io/docs/tracing">Micrometer Tracing</a> are independent from Spring ecosystem, the instrumentation is available to the non-spring applications as well.</p>
+In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a> and <a href="https://docs.micrometer.io/tracing/reference/">Micrometer Tracing</a> are independent from Spring ecosystem, the instrumentation is available to the non-spring applications as well.</p>
 </div>
 </div>
 <div class="sect2">
