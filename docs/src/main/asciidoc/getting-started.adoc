@@ -11,11 +11,11 @@ It includes an introduction to {project-full-name}, along with installation inst
 [[getting-started-introducing-datasource-micrometer]]
 == Introducing Datasource Micrometer
 
-The Datasource Micrometer provides a {micrometer-tracing}[Micrometer Tracing] instrumentation for JDBC operations.
+The Datasource Micrometer provides a {micrometer-observation}[Micrometer Observation API] instrumentation for JDBC operations.
 
 Currently, this project provides two modules - core instrumentation and its Spring Boot Auto Configuration.
 
-If you are a {micrometer-tracing}[Micrometer Tracing] user but not using Spring Boot, you can directly use the `datasource-micrometer` module, which doesn't have a dependency on Spring Framework. +
+If you are a {micrometer}[Micrometer] user but not using Spring Boot, you can directly use the `datasource-micrometer` module, which doesn't have a dependency on Spring Framework. +
 If you are a Spring Boot 3 user, then you can add the `datasource-micrometer-spring-boot` module to the classpath.
 Then, it automatically instruments the `DataSource` and provides a tracing capability on the JDBC operations.
 
