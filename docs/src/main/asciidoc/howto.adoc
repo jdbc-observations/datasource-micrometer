@@ -114,16 +114,16 @@ To enable the query logging, set the `jdbc.datasource-proxy.query.enable-logging
 
 [source,properties,indent=0]
 ----
-	jdbc.datasource-proxy.query.enable-logging=true,
+	jdbc.datasource-proxy.query.enable-logging=true
 
 	# logging configuration
-	jdbc.datasource-proxy.logging=slf4j,
-	jdbc.datasource-proxy.query.log-level=DEBUG,
-	jdbc.datasource-proxy.query.logger-name=my.query-logger,
-	jdbc.datasource-proxy.multiline=false,
+	jdbc.datasource-proxy.logging=slf4j
+	jdbc.datasource-proxy.query.log-level=DEBUG
+	jdbc.datasource-proxy.query.logger-name=my.query-logger
+	jdbc.datasource-proxy.multiline=false
 
 	# spring boot log level property
-	logging.level.my.query-logger=DEBUG,
+	logging.level.my.query-logger=DEBUG
 ----
 
 [[how-to-customize-the-proxydatasource-name]]
@@ -153,10 +153,10 @@ For example, you can use  `ProxyDataSourceBuilderCustomizer` to specify the data
 [[how-to-modify-the-query-in-span]]
 === How to Modify the Query in Span
 
-If you want to modify the query string in the span (high cardinality tag), use `ObservationFilter` to update the tag value.
-For example, you could perform query sanitization, truncation, etc.
+If you want to modify the query string in the span (in high cardinality tags), use `ObservationFilter` to update the tag value.
+For example, you could perform sanitization, truncation, etc on the query.
 
-This approach is generally applicable to modify the tags in span.
+This approach is generally applicable to modify any tags in span.
 
 NOTE: `ObservationFilter` is applied when the observation stops.
 The modification will not be available for timers created by `DefaultMeterObservationHandler` since it sets the timers at observation start.
