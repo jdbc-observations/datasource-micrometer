@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"net.ttddyy.observation.boot.autoconfigure"},{"l":"net.ttddyy.observation.tracing"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"net.ttddyy.observation.boot.autoconfigure"},{"l":"net.ttddyy.observation.boot.event"},{"l":"net.ttddyy.observation.tracing"}];updateSearchResults();

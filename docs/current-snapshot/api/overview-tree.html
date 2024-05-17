@@ -52,6 +52,7 @@ loadScripts(document, 'script');</script>
 <span class="package-hierarchy-label">Package Hierarchies:</span>
 <ul class="horizontal">
 <li><a href="net/ttddyy/observation/boot/autoconfigure/package-tree.html">net.ttddyy.observation.boot.autoconfigure</a>, </li>
+<li><a href="net/ttddyy/observation/boot/event/package-tree.html">net.ttddyy.observation.boot.event</a>, </li>
 <li><a href="net/ttddyy/observation/tracing/package-tree.html">net.ttddyy.observation.tracing</a></li>
 </ul>
 </div>
@@ -78,9 +79,25 @@ loadScripts(document, 'script');</script>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DataSourceProxyBuilderConfigurer.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">DataSourceProxyBuilderConfigurer</a></li>
 <li class="circle">net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/DefaultConnectionAttributesManager.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">DefaultConnectionAttributesManager</a> (implements net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/ConnectionAttributesManager.html" title="interface in net.ttddyy.observation.tracing">ConnectionAttributesManager</a>)</li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DefaultDataSourceNameResolver.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">DefaultDataSourceNameResolver</a> (implements net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DataSourceNameResolver.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceNameResolver</a>)</li>
+<li class="circle">java.util.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/EventObject.html" class="type-name-link external-link" title="class or interface in java.util">EventObject</a> (implements java.io.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a>)
+<ul>
+<li class="circle">org.springframework.context.ApplicationEvent
+<ul>
+<li class="circle">net.ttddyy.observation.boot.event.<a href="net/ttddyy/observation/boot/event/JdbcEvent.html" class="type-name-link" title="class in net.ttddyy.observation.boot.event">JdbcEvent</a>
+<ul>
+<li class="circle">net.ttddyy.observation.boot.event.<a href="net/ttddyy/observation/boot/event/JdbcMethodExecutionEvent.html" class="type-name-link" title="class in net.ttddyy.observation.boot.event">JdbcMethodExecutionEvent</a></li>
+<li class="circle">net.ttddyy.observation.boot.event.<a href="net/ttddyy/observation/boot/event/JdbcQueryExecutionEvent.html" class="type-name-link" title="class in net.ttddyy.observation.boot.event">JdbcQueryExecutionEvent</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="circle">net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/HikariJdbcObservationFilter.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">HikariJdbcObservationFilter</a> (implements io.micrometer.observation.ObservationFilter)</li>
+<li class="circle">net.ttddyy.observation.boot.event.<a href="net/ttddyy/observation/boot/event/JdbcEventPublishingListener.html" class="type-name-link" title="class in net.ttddyy.observation.boot.event">JdbcEventPublishingListener</a> (implements net.ttddyy.dsproxy.listener.MethodExecutionListener, net.ttddyy.dsproxy.listener.QueryExecutionListener)</li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceProxy.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.DataSourceProxy</a></li>
+<li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Event.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.Event</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Query.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.Query</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.SlowQuery.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.SlowQuery</a></li>
 <li class="circle">io.micrometer.observation.Observation.Context (implements io.micrometer.observation.Observation.ContextView)

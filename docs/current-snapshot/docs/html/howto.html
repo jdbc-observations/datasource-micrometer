@@ -613,6 +613,7 @@ window.onload = function() {
 <li><a href="#how-to-customize-the-proxydatasource-name">2.5. How to Customize the ProxyDataSource Name</a></li>
 <li><a href="#how-to-customize-the-proxydatasource-creation">2.6. How to Customize the ProxyDataSource Creation</a></li>
 <li><a href="#how-to-modify-the-query-in-span">2.7. How to Modify the Query in Span</a></li>
+<li><a href="#how-to-publish-application-events">2.8. How to enable application events</a></li>
 </ul>
 </li>
 </ul>
@@ -765,16 +766,16 @@ By default, the property is set to include(observe) all(<code>CONNECTION</code>,
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-properties" data-lang="properties">jdbc.datasource-proxy.query.enable-logging=true,
+<pre class="highlight"><code class="language-properties" data-lang="properties">jdbc.datasource-proxy.query.enable-logging=true
 
 # logging configuration
-jdbc.datasource-proxy.logging=slf4j,
-jdbc.datasource-proxy.query.log-level=DEBUG,
-jdbc.datasource-proxy.query.logger-name=my.query-logger,
-jdbc.datasource-proxy.multiline=false,
+jdbc.datasource-proxy.logging=slf4j
+jdbc.datasource-proxy.query.log-level=DEBUG
+jdbc.datasource-proxy.query.logger-name=my.query-logger
+jdbc.datasource-proxy.multiline=false
 
 # spring boot log level property
-logging.level.my.query-logger=DEBUG,</code></pre>
+logging.level.my.query-logger=DEBUG</code></pre>
 </div>
 </div>
 </div>
@@ -808,11 +809,11 @@ public ProxyDataSourceBuilderCustomizer myCustomizer(){
 <div class="sect2">
 <h3 id="how-to-modify-the-query-in-span"><a class="anchor" href="#how-to-modify-the-query-in-span"></a><a class="link" href="#how-to-modify-the-query-in-span">2.7. How to Modify the Query in Span</a></h3>
 <div class="paragraph">
-<p>If you want to modify the query string in the span (high cardinality tag), use <code>ObservationFilter</code> to update the tag value.
-For example, you could perform query sanitization, truncation, etc.</p>
+<p>If you want to modify the query string in the span (in high cardinality tags), use <code>ObservationFilter</code> to update the tag value.
+For example, you could perform sanitization, truncation, etc on the query.</p>
 </div>
 <div class="paragraph">
-<p>This approach is generally applicable to modify the tags in span.</p>
+<p>This approach is generally applicable to modify any tags in span.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -845,6 +846,12 @@ public ObservationFilter observationFilter() {
     };
 }</code></pre>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-publish-application-events"><a class="anchor" href="#how-to-publish-application-events"></a><a class="link" href="#how-to-publish-application-events">2.8. How to enable application events</a></h3>
+<div class="paragraph">
+<p>Set the <code>jdbc.event.enabled</code> property to <code>true</code>.</p>
 </div>
 </div>
 </div>

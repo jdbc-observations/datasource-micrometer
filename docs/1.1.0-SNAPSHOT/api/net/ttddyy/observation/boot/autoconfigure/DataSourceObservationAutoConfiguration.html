@@ -45,13 +45,13 @@ loadScripts(document, 'script');</script>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field-detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor-detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
@@ -94,6 +94,24 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- =========== FIELD SUMMARY =========== -->
+<li>
+<section class="field-summary" id="field-summary">
+<h2>Field Summary</h2>
+<div class="caption"><span>Fields</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Field</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static final int</code></div>
+<div class="col-second even-row-color"><code><a href="#EVENT_PUBLISHING_LISTENER_ORDER" class="member-name-link">EVENT_PUBLISHING_LISTENER_ORDER</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final int</code></div>
+<div class="col-second odd-row-color"><code><a href="#OBSERVATION_LISTENER_ORDER" class="member-name-link">OBSERVATION_LISTENER_ORDER</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+</div>
+</section>
+</li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <li>
 <section class="constructor-summary" id="constructor-summary">
@@ -155,6 +173,42 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="details">
 <ul class="details-list">
+<!-- ============ FIELD DETAIL =========== -->
+<li>
+<section class="field-details" id="field-detail">
+<h2>Field Details</h2>
+<ul class="member-list">
+<li>
+<section class="detail" id="OBSERVATION_LISTENER_ORDER">
+<h3>OBSERVATION_LISTENER_ORDER</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">OBSERVATION_LISTENER_ORDER</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#net.ttddyy.observation.boot.autoconfigure.DataSourceObservationAutoConfiguration.OBSERVATION_LISTENER_ORDER">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="EVENT_PUBLISHING_LISTENER_ORDER">
+<h3>EVENT_PUBLISHING_LISTENER_ORDER</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">EVENT_PUBLISHING_LISTENER_ORDER</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#net.ttddyy.observation.boot.autoconfigure.DataSourceObservationAutoConfiguration.EVENT_PUBLISHING_LISTENER_ORDER">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+</ul>
+</section>
+</li>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <li>
 <section class="constructor-details" id="constructor-detail">
@@ -178,6 +232,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="dataSourceObservationListener(org.springframework.beans.factory.ObjectProvider,net.ttddyy.observation.boot.autoconfigure.JdbcProperties,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider)">
 <h3>dataSourceObservationListener</h3>
 <div class="member-signature"><span class="annotations">@Bean
+@Order(1000)
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../tracing/DataSourceObservationListener.html" title="class in net.ttddyy.observation.tracing">DataSourceObservationListener</a></span>&nbsp;<span class="element-name">dataSourceObservationListener</span><wbr><span class="parameters">(org.springframework.beans.factory.ObjectProvider&lt;io.micrometer.observation.ObservationRegistry&gt;&nbsp;registry,
  <a href="JdbcProperties.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties</a>&nbsp;jdbcProperties,
  org.springframework.beans.factory.ObjectProvider&lt;<a href="../../tracing/ConnectionObservationConvention.html" title="interface in net.ttddyy.observation.tracing">ConnectionObservationConvention</a>&gt;&nbsp;connectionObservationConventions,
