@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 the original author or authors.
+ * Copyright 2022-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
+import net.ttddyy.observation.boot.event.JdbcEventPublishingListener;
 import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceBaseObservationHandler;
@@ -237,6 +238,20 @@ class DataSourceObservationAutoConfigurationTests {
 							.hasSingleBean(QueryTracingObservationHandler.class)
 							.hasSingleBean(ResultSetTracingObservationHandler.class);
 				});
+	}
+
+	@Test
+	void event() {
+		ApplicationContextRunner runner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+				.withBean(ObservationRegistry.class, ObservationRegistry::create)
+				.withBean(Tracer.class, () -> mock(Tracer.class));
+		runner.run((context) -> {
+			assertThat(context).doesNotHaveBean(JdbcEventPublishingListener.class);
+		});
+		runner.withPropertyValues("jdbc.event.enabled=true").run((context) -> {
+			assertThat(context).hasSingleBean(JdbcEventPublishingListener.class);
+		});
 	}
 
 	@ParameterizedTest

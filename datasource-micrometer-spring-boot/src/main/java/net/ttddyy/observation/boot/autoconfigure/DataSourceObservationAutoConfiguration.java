@@ -36,6 +36,7 @@ import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
 import net.ttddyy.observation.boot.autoconfigure.JdbcProperties.TraceType;
+import net.ttddyy.observation.boot.event.JdbcEventPublishingListener;
 import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
@@ -64,6 +65,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.context.properties.bind.BindException;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
@@ -86,7 +88,12 @@ import org.springframework.util.Assert;
 @ConditionalOnProperty(prefix = "jdbc.datasource-proxy", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class DataSourceObservationAutoConfiguration {
 
+	public static final int OBSERVATION_LISTENER_ORDER = 1000;
+
+	public static final int EVENT_PUBLISHING_LISTENER_ORDER = OBSERVATION_LISTENER_ORDER + 100;
+
 	@Bean
+	@Order(OBSERVATION_LISTENER_ORDER)
 	public DataSourceObservationListener dataSourceObservationListener(ObjectProvider<ObservationRegistry> registry,
 			JdbcProperties jdbcProperties,
 			ObjectProvider<ConnectionObservationConvention> connectionObservationConventions,
@@ -133,6 +140,13 @@ public class DataSourceObservationAutoConfiguration {
 				methodExecutionListeners, parameterTransformer, queryTransformer, resultSetProxyLogicFactory,
 				generatedKeysProxyLogicFactory, dataSourceProxyConnectionIdManagerProvider,
 				proxyDataSourceBuilderCustomizers);
+	}
+
+	@Bean
+	@Order(EVENT_PUBLISHING_LISTENER_ORDER)
+	@ConditionalOnProperty(prefix = "jdbc.event", name = "enabled", havingValue = "true")
+	JdbcEventPublishingListener jdbcEventPublishingListener(ApplicationEventPublisher publisher) {
+		return new JdbcEventPublishingListener(publisher);
 	}
 
 	@Configuration(proxyBeanMethods = false)

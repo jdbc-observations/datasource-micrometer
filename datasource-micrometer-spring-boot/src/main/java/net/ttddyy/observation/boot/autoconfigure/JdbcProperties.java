@@ -45,6 +45,11 @@ public class JdbcProperties {
 
 	private DataSourceProxy datasourceProxy = new DataSourceProxy();
 
+	/**
+	 * Query and method execution events.
+	 */
+	private Event event = new Event();
+
 	public Set<TraceType> getIncludes() {
 		return this.includes;
 	}
@@ -67,6 +72,14 @@ public class JdbcProperties {
 
 	public void setDatasourceProxy(DataSourceProxy datasourceProxy) {
 		this.datasourceProxy = datasourceProxy;
+	}
+
+	public Event getEvent() {
+		return this.event;
+	}
+
+	public void setEvent(Event event) {
+		this.event = event;
 	}
 
 	public static class DataSourceProxy {
@@ -319,6 +332,23 @@ public class JdbcProperties {
 
 		TraceType(JdbcObservationDocumentation supportedDocumentation) {
 			this.supportedDocumentation = supportedDocumentation;
+		}
+
+	}
+
+	public static class Event {
+
+		/**
+		 * Enable publishing query/method execution events.
+		 */
+		private boolean enabled;
+
+		public boolean isEnabled() {
+			return this.enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
 		}
 
 	}

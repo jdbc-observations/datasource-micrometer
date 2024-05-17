@@ -179,3 +179,8 @@ public ObservationFilter observationFilter() {
 	};
 }
 ----
+
+[[how-to-publish-application-events]]
+=== How to enable application events
+Set the `jdbc.event.enabled` property to `true`.
+

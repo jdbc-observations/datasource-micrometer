@@ -61,3 +61,9 @@ DataSource instrumented =
 For `datasource-micrometer-spring-boot`, the datasource name is resolved by looking the catalog name at start up (or the connection pool name for Hikari, then fallback to its beanname) by default.
 
 To specify a custom datasource name, see <<howto.adoc#how-to-customize-the-proxydatasource-name>> and <<howto.adoc#how-to-customize-the-proxydatasource-creation>> section.
+
+[[using-features-application-events]]
+=== Application Events
+Since version `1.1`, `datasource-micrometer-spring-boot` can publish Spring's application events for query executions and method invocations on proxied JDBC classes.
+This feature is disabled by default and can be enabled by setting the property `jdbc.event.enabled=true`.
+When enabled, it publishes events - `JdbcQueryExecutionEvent` and `JdbcMethodExecutionEvenet`.
