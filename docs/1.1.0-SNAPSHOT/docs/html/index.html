@@ -692,15 +692,15 @@ It includes an introduction to Datasource Micrometer, along with installation in
 <div class="sect2">
 <h3 id="getting-started-introducing-datasource-micrometer"><a class="anchor" href="#getting-started-introducing-datasource-micrometer"></a><a class="link" href="#getting-started-introducing-datasource-micrometer">2.1. Introducing Datasource Micrometer</a></h3>
 <div class="paragraph">
-<p>The Datasource Micrometer provides a <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Micrometer Observation API</a> instrumentation for JDBC operations.</p>
+<p>The Datasource Micrometer provides <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Micrometer Observation API</a> instrumentation for JDBC operations.</p>
 </div>
 <div class="paragraph">
 <p>Currently, this project provides two modules - core instrumentation and its Spring Boot Auto Configuration.</p>
 </div>
 <div class="paragraph">
-<p>If you are a <a href="https://micrometer.io">Micrometer</a> user but not using Spring Boot, you can directly use the <code>datasource-micrometer</code> module, which doesn&#8217;t have a dependency on Spring Framework.<br>
+<p>If you are a <a href="https://micrometer.io">Micrometer</a> user but not using Spring Boot, you can directly use the <code>datasource-micrometer</code> module, which doesn&#8217;t have a dependency on the Spring Framework.<br>
 If you are a Spring Boot 3 user, then you can add the <code>datasource-micrometer-spring-boot</code> module to the classpath.
-Then, it automatically instruments the <code>DataSource</code> and provides a tracing capability on the JDBC operations.</p>
+This will automatically instruments the <code>DataSource</code> and provide tracing capabilities for JDBC operations.</p>
 </div>
 <div class="paragraph">
 <p>The instrumentation implementation uses <a href="https://github.com/ttddyy/datasource-proxy">datasource-proxy</a> to provide a proxy for JDBC operations.</p>
