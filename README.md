@@ -2,9 +2,9 @@
 [![CI](https://github.com/jdbc-observations/datasource-micrometer/actions/workflows/ci.yml/badge.svg)](https://github.com/jdbc-observations/datasource-micrometer/actions/workflows/ci.yml?event=push&branch=main)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy.observation/datasource-micrometer/badge.svg)](https://search.maven.org/search?q=net.ttddyy.observation)
 
-The Datasource Micrometer provides a [Micrometer Tracing][micrometer-tracing] instrumentation for JDBC operations.
+The Datasource Micrometer provides [Micrometer Observation API][micrometer-observation] instrumentation for JDBC operations.
 
-[micrometer-tracing]: https://micrometer.io/docs/tracing
+[micrometer-observation]: https://docs.micrometer.io/micrometer/reference/observation.html
 
 ## Modules
 
@@ -106,11 +106,11 @@ The produced jars support following JDK versions at runtime:
 
 ## Dependent Library Versions
 
-| DataSource Micrometer | Spring Boot | Micrometer Tracing BOM | Micrometer BOM |
-|:---------------------:|:-----------:|:----------------------:|:--------------:|
-|      `1.0.0`          |    3.0.0    |         1.0.0          |     1.10.2     | 
-|      `1.0.0-RC1`      |  3.0.0-RC1  |       1.0.0-RC1        |   1.10.0-RC1   | 
-|      `1.0.0-M1`       |  3.0.0-M6   |        1.0.0-M8        |   1.10.0-M5    | 
+| DataSource Micrometer | Spring Boot  | Micrometer Tracing BOM | Micrometer BOM |
+|:---------------------:|:------------:|:----------------------:|:--------------:|
+|      `1.0.0`          | 3.0.0 and up |         1.0.0          |     1.10.2     | 
+|      `1.0.0-RC1`      |  3.0.0-RC1   |       1.0.0-RC1        |   1.10.0-RC1   | 
+|      `1.0.0-M1`       |   3.0.0-M6   |        1.0.0-M8        |   1.10.0-M5    | 
 
 ## Development
 
