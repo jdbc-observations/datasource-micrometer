@@ -165,8 +165,8 @@ The modification will not be available for timers created by `DefaultMeterObserv
 ----
 @Bean
 public ObservationFilter observationFilter() {
+	String tagKey = String.format(QueryHighCardinalityKeyNames.QUERY.asString(), 0); // There might be multiple queries, only modify the first
 	return (context) -> {
-		String tagKey = QueryHighCardinalityKeyNames.QUERY.name();
 		KeyValue tag = context.getHighCardinalityKeyValue(tagKey);
 		if(tag != null) {
 			String query = tag.getValue();
