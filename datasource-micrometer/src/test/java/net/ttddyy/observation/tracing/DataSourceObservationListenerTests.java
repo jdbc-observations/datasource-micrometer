@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 the original author or authors.
+ * Copyright 2022-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -326,6 +326,38 @@ class DataSourceObservationListenerTests {
 
 		assertThat(this.tracer).onlySpan().hasNameEqualTo("connection").hasRemoteServiceNameEqualTo("myDS")
 				.hasIpEqualTo("localhost").hasPortEqualTo(5555).hasEventWithNameEqualTo("acquired");
+	}
+
+	@Test
+	void getConnectionFailure() throws Exception {
+		this.registry.observationConfig().observationHandler(new ConnectionTracingObservationHandler(this.tracer));
+		Method getConnection = DataSource.class.getMethod("getConnection");
+		RuntimeException exception = new RuntimeException();
+
+		// when getConnection failed, result is null and thrown has exception
+		MethodExecutionContext executionContext = new MethodExecutionContext();
+		executionContext.setMethod(getConnection);
+		executionContext.setTarget(mock(DataSource.class));
+		executionContext.setThrown(exception);
+
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
+		listener.beforeMethod(executionContext);
+		assertThat(tracer.currentSpan()).isNotNull();
+		listener.afterMethod(executionContext);
+		// when getConnection failed, it closes the connection span.
+		assertThat(tracer.currentSpan()).isNull();
+		assertThat(tracer.getSpans()).hasSize(1);
+
+		// @formatter:off
+		assertThat(this.tracer).onlySpan()
+				.hasNameEqualTo("connection")
+				.doesNotHaveRemoteServiceNameEqualTo("myDS")
+				.hasIpThatIsBlank()
+				.doesNotHavePortEqualTo(5555)
+				.doesNotHaveEventWithNameEqualTo("acquired")
+				.assertThatThrowable()
+				.isSameAs(exception);
+		// @formatter:on
 	}
 
 	@Test
