@@ -269,42 +269,43 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	private void handleGetConnectionAfter(MethodExecutionContext executionContext) {
 		DataSource dataSource = (DataSource) executionContext.getTarget();
 		Connection connection = (Connection) executionContext.getResult();
-		URI connectionUrl = getConnectionUrl(connection);
-
 		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(),
 				Observation.Scope.class);
-		ConnectionInfo connectionInfo = executionContext.getConnectionInfo();
 
-		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
-		connectionAttributes.connectionInfo = connectionInfo;
-		connectionAttributes.scope = scopeToUse;
-		connectionAttributes.dataSource = dataSource;
-		if (connectionUrl != null) {
-			connectionAttributes.host = connectionUrl.getHost();
-			connectionAttributes.port = connectionUrl.getPort();
-		}
-
-		String connectionId = connectionInfo.getConnectionId();
-		this.connectionAttributesManager.put(connectionId, connectionAttributes);
-
-		ConnectionContext connectionContext = executionContext.getCustomValue(ConnectionContext.class.getName(),
-				ConnectionContext.class);
-		populateFromConnectionAttributes(connectionContext, connectionId);
-
-		Throwable throwable = executionContext.getThrown();
-		if (throwable != null && scopeToUse != null) {
+		if (connection == null) {
 			// Handle closing the observation due to an error from getConnection().
 			// For normal case, observation is stopped when connection is closed.
 			// see "handleConnectionClose()".
-			try (Observation.Scope scope = scopeToUse) {
-				this.connectionAttributesManager.remove(connectionId);
-				stopObservation(scope.getCurrentObservation(), throwable);
+			if (scopeToUse != null) {
+				Throwable throwable = executionContext.getThrown();
+				try (Observation.Scope scope = scopeToUse) {
+					stopObservation(scope.getCurrentObservation(), throwable);
+				}
 			}
 		}
+		else {
+			ConnectionInfo connectionInfo = executionContext.getConnectionInfo();
+			ConnectionAttributes connectionAttributes = new ConnectionAttributes();
+			connectionAttributes.connectionInfo = connectionInfo;
+			connectionAttributes.scope = scopeToUse;
+			connectionAttributes.dataSource = dataSource;
 
-		// When "getConnection" was successful, a connection is acquired.
-		if (scopeToUse != null) {
-			scopeToUse.getCurrentObservation().event(JdbcEvents.CONNECTION_ACQUIRED);
+			URI connectionUrl = getConnectionUrl(connection);
+			if (connectionUrl != null) {
+				connectionAttributes.host = connectionUrl.getHost();
+				connectionAttributes.port = connectionUrl.getPort();
+			}
+
+			String connectionId = connectionInfo.getConnectionId();
+			this.connectionAttributesManager.put(connectionId, connectionAttributes);
+			ConnectionContext connectionContext = executionContext.getCustomValue(ConnectionContext.class.getName(),
+					ConnectionContext.class);
+			populateFromConnectionAttributes(connectionContext, connectionId);
+
+			// When "getConnection" was successful, a connection is acquired.
+			if (scopeToUse != null) {
+				scopeToUse.getCurrentObservation().event(JdbcEvents.CONNECTION_ACQUIRED);
+			}
 		}
 	}
 
