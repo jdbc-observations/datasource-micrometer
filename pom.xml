@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-  ~ Copyright 2022-2023 the original author or authors.
+  ~ Copyright 2022-2024 the original author or authors.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@
         <assertj.version>3.23.1</assertj.version>
 
         <!-- datasource-micrometer module -->
-        <datasource-proxy.version>1.8.1</datasource-proxy.version>
+        <datasource-proxy.version>1.10</datasource-proxy.version>
 
         <!-- datasource-micrometer-spring-boot module -->
         <spring-boot.version>3.0.13</spring-boot.version>
