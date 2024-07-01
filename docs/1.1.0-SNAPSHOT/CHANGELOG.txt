@@ -1,6 +1,11 @@
 Datasource Micrometer Changelog
 ================================
 
+1.0.4
+------------------
+* Upgrade to datasource-proxy 1.10 #42
+* Fix NPE for DataSource#getConnection failure #40
+
 1.0.3
 ------------------
 * Upgrade dependencies #32
