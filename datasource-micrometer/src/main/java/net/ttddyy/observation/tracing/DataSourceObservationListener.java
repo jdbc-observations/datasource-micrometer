@@ -246,9 +246,14 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		Connection connection = (Connection) executionContext.getResult();
 		Observation.Scope scopeToUse = executionContext.getCustomValue(Observation.Scope.class.getName(),
 				Observation.Scope.class);
+		ConnectionContext connectionContext = executionContext.getCustomValue(ConnectionContext.class.getName(),
+				ConnectionContext.class);
 
 		if (connection == null) {
-			// Handle closing the observation due to an error from getConnection().
+			// Logic when getConnection failed.
+			// Populate the context with available info. (see gh-44)
+			connectionContext.setDataSource(dataSource);
+			// Handle closing the observation.
 			// For normal case, observation is stopped when connection is closed.
 			// see "handleConnectionClose()".
 			if (scopeToUse != null) {
@@ -273,8 +278,6 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 			String connectionId = connectionInfo.getConnectionId();
 			this.connectionAttributesManager.put(connectionId, connectionAttributes);
-			ConnectionContext connectionContext = executionContext.getCustomValue(ConnectionContext.class.getName(),
-					ConnectionContext.class);
 			populateFromConnectionAttributes(connectionContext, connectionId);
 
 			// When "getConnection" was successful, a connection is acquired.
