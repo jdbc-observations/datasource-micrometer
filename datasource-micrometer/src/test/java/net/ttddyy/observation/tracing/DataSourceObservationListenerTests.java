@@ -331,6 +331,13 @@ class DataSourceObservationListenerTests {
 	@Test
 	void getConnectionFailure() throws Exception {
 		this.registry.observationConfig().observationHandler(new ConnectionTracingObservationHandler(this.tracer));
+		// gh-44: make sure datasource is available in observation filter
+		this.registry.observationConfig().observationFilter((context) -> {
+			DataSource ds = ((DataSourceBaseContext) context).getDataSource();
+			assertThat(ds).as("datasource needs to be available in observation filter").isNotNull();
+			return context;
+		});
+
 		Method getConnection = DataSource.class.getMethod("getConnection");
 		RuntimeException exception = new RuntimeException();
 
