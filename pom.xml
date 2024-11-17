@@ -22,7 +22,7 @@
     <groupId>net.ttddyy.observation</groupId>
     <artifactId>datasource-micrometer-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.6</version>
+    <version>1.0.7-SNAPSHOT</version>
     <name>datasource-micrometer-parent</name>
     <description>Micrometer observation for JDBC</description>
     <url>https://github.com/jdbc-observations/datasource-micrometer</url>
