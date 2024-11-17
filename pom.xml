@@ -39,7 +39,7 @@
         <assertj.version>3.23.1</assertj.version>
 
         <!-- datasource-micrometer module -->
-        <datasource-proxy.version>1.10</datasource-proxy.version>
+        <datasource-proxy.version>1.10.1</datasource-proxy.version>
 
         <!-- datasource-micrometer-spring-boot module -->
         <spring-boot.version>3.0.13</spring-boot.version>
