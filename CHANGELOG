@@ -1,6 +1,10 @@
 Datasource Micrometer Changelog
 ================================
 
+1.0.6
+------------------
+* Upgrade to datasource-proxy 1.10.1 (#52)
+
 1.0.5
 ------------------
 * Ensure to always populate datasource in the connection context #44
