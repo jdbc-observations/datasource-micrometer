@@ -119,6 +119,8 @@ class DataSourceObservationListenerTests {
 
 				assertThat(queries).isNotEmpty();
 				assertThat(queries.get(0)).isEqualTo("SELECT 1");
+
+				assertThat(queryContext.getDataSourceName()).isEqualTo("myDS");
 				return true;
 			}
 			return true;
@@ -218,7 +220,20 @@ class DataSourceObservationListenerTests {
 
 	@Test
 	void queryConnectionContext() throws Exception {
+		ObservationPredicate testConnectionObservationPredicate = (observationName, observationContext) -> {
+			if (observationContext instanceof ConnectionContext) {
+				ConnectionContext connectionContext = (ConnectionContext) observationContext;
+				assertThat(connectionContext.getHost()).isEqualTo("localhost");
+				assertThat(connectionContext.getPort()).isEqualTo(5555);
+				assertThat(connectionContext.getDataSourceName()).isEqualTo("myDS");
+				return true;
+			}
+			return true;
+		};
+
 		this.registry.observationConfig().observationHandler(new QueryTracingObservationHandler(this.tracer));
+		this.registry.observationConfig().observationPredicate(testConnectionObservationPredicate);
+
 		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 
 		ConnectionInfo connectionInfo = new ConnectionInfo();
@@ -452,7 +467,18 @@ class DataSourceObservationListenerTests {
 
 	@Test
 	void resultSetObservation() throws Exception {
+		ObservationPredicate testResultSetObservationPredicate = (observationName, observationContext) -> {
+			if (observationContext instanceof ResultSetContext) {
+				ResultSetContext resultSetContext = (ResultSetContext) observationContext;
+				assertThat(resultSetContext.getDataSourceName()).isEqualTo("myDS");
+				return true;
+			}
+			return true;
+		};
+
 		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
+		this.registry.observationConfig().observationPredicate(testResultSetObservationPredicate);
+
 		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 
 		ResultSet resultSet = mock(ResultSet.class);

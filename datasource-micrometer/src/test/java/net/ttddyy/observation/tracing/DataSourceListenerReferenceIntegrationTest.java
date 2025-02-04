@@ -66,10 +66,13 @@ class DataSourceListenerReferenceIntegrationTest extends DataSourceListenerInteg
 					.hasASpanWithName("query", (spanAssert -> {
 						spanAssert
 								.hasTag("jdbc.query[0]", "SELECT name FROM emp WHERE id = ?")
-								.hasTag("jdbc.params[0]", "(20)");
+								.hasTag("jdbc.params[0]", "(20)")
+								.hasTag("name", "proxy");
 					}))
 					.hasASpanWithName("result-set", (spanAssert) -> {
-						spanAssert.hasTag("jdbc.row-count", "1");
+						spanAssert
+								.hasTag("jdbc.row-count", "1")
+								.hasTag("name", "proxy");
 					});
 			// @formatter:on
 		};

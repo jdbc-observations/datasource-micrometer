@@ -65,13 +65,15 @@ class HikariDataSourceIntegrationTests extends DataSourceListenerIntegrationTest
 			SpansAssert.assertThat(bb.getFinishedSpans())
 					.hasNumberOfSpansEqualTo(4)
 					.hasASpanWithName("connection", (spanAssert -> {
-						spanAssert.hasTag(ConnectionKeyNames.DATASOURCE_DRIVER, "org.h2.Driver");
-						spanAssert.hasTagWithKey(ConnectionKeyNames.DATASOURCE_POOL);
-						spanAssert.hasEventWithNameEqualTo("rollback");
+						spanAssert.hasTag(ConnectionKeyNames.DATASOURCE_DRIVER, "org.h2.Driver")
+							.hasTagWithKey(ConnectionKeyNames.DATASOURCE_POOL)
+								.hasEventWithNameEqualTo("rollback")
+								.hasTag("name", "proxy-ds");
 					}))
 					.hasNumberOfSpansWithNameEqualTo("query", 2)
 					.hasASpanWithName("result-set", (spanAssert) -> {
-						spanAssert.hasTag("jdbc.row-count", "2");
+						spanAssert.hasTag("jdbc.row-count", "2")
+								.hasTag("name", "proxy-ds");
 					});
 			// @formatter:on
 		};

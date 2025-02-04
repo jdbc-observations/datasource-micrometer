@@ -45,12 +45,14 @@ class DataSourceListenerUpdateIntegrationTest extends DataSourceListenerIntegrat
 					.hasASpanWithName("connection", (spanAssert -> {
 						spanAssert
 								.hasEventWithNameEqualTo("acquired")
-								.hasEventWithNameEqualTo("commit");
+								.hasEventWithNameEqualTo("commit")
+								.hasTag("name", "proxy-ds");
 					}))
 					.hasASpanWithName("query", (spanAssert -> {
 						spanAssert
 								.hasTag("jdbc.query[0]", "INSERT INTO emp VALUES (?, ?)")
-								.doesNotHaveTagWithKey("jdbc.params[0]");   // default is off
+								.doesNotHaveTagWithKey("jdbc.params[0]")
+								.hasTag("name", "proxy-ds");   // default is off
 					}));
 			// @formatter:on
 		};

@@ -22,12 +22,17 @@ import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationConvention;
 import net.ttddyy.observation.tracing.JdbcObservationDocumentation.ResultSetHighCardinalityKeyNames;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import static net.ttddyy.observation.tracing.JdbcObservationDocumentation.*;
+
 /**
  * A {@link ObservationConvention} for result-set operations.
  *
  * @author Tadaya Tsuyukubo
  */
-public interface ResultSetObservationConvention extends ObservationConvention<ResultSetContext> {
+public interface ResultSetObservationConvention extends BaseObservationConvention<ResultSetContext> {
 
 	@Override
 	default boolean supportsContext(Context context) {
@@ -38,6 +43,13 @@ public interface ResultSetObservationConvention extends ObservationConvention<Re
 	default KeyValues getHighCardinalityKeyValues(ResultSetContext context) {
 		return KeyValues.of(
 				KeyValue.of(ResultSetHighCardinalityKeyNames.ROW_COUNT.asString(), String.valueOf(context.getCount())));
+	}
+
+	@Override
+	default KeyValues getLowCardinalityKeyValues(ResultSetContext context) {
+		Set<KeyValue> keyValues = new HashSet<>();
+		getDatasourceName(context).ifPresent(keyValues::add);
+		return KeyValues.of(keyValues);
 	}
 
 	@Override

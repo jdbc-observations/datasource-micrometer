@@ -43,7 +43,7 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 
 		@Override
 		public KeyName[] getLowCardinalityKeyNames() {
-			return ConnectionKeyNames.values();
+			return CommonLowCardinalityKeyNames.values();
 		}
 
 		@Override
@@ -81,6 +81,11 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 		}
 
 		@Override
+		public KeyName[] getLowCardinalityKeyNames() {
+			return CommonLowCardinalityKeyNames.values();
+		}
+
+		@Override
 		public String getPrefix() {
 			return "jdbc";
 		}
@@ -106,6 +111,11 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 		}
 
 		@Override
+		public KeyName[] getLowCardinalityKeyNames() {
+			return CommonLowCardinalityKeyNames.values();
+		}
+
+		@Override
 		public String getPrefix() {
 			return "jdbc";
 		}
@@ -128,6 +138,11 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 		@Override
 		public KeyName[] getHighCardinalityKeyNames() {
 			return GeneratedKeysHighCardinalityKeyNames.values();
+		}
+
+		@Override
+		public KeyName[] getLowCardinalityKeyNames() {
+			return CommonLowCardinalityKeyNames.values();
 		}
 
 		@Override
@@ -169,6 +184,20 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 				return "jdbc.row-affected";
 			}
 		}
+
+	}
+
+	public enum CommonLowCardinalityKeyNames implements KeyName {
+
+		/**
+		 * Name of the JDBC datasource.
+		 */
+		NAME {
+			@Override
+			public String asString() {
+				return "name";
+			}
+		},
 
 	}
 

@@ -16,15 +16,20 @@
 
 package net.ttddyy.observation.tracing;
 
+import io.micrometer.common.KeyValue;
+import io.micrometer.common.KeyValues;
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationConvention;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A {@link ObservationConvention} for connection.
  *
  * @author Tadaya Tsuyukubo
  */
-public interface ConnectionObservationConvention extends ObservationConvention<ConnectionContext> {
+public interface ConnectionObservationConvention extends BaseObservationConvention<ConnectionContext> {
 
 	@Override
 	default boolean supportsContext(Context context) {
@@ -34,6 +39,13 @@ public interface ConnectionObservationConvention extends ObservationConvention<C
 	@Override
 	default String getName() {
 		return "jdbc.connection";
+	}
+
+	@Override
+	default KeyValues getLowCardinalityKeyValues(ConnectionContext context) {
+		Set<KeyValue> keyValues = new HashSet<>();
+		getDatasourceName(context).ifPresent(keyValues::add);
+		return KeyValues.of(keyValues);
 	}
 
 }

@@ -59,7 +59,7 @@ class JdbcEventPublishingListenerTests {
 			});
 		});
 
-		jdbcEventHolder.set(null);  // reset
+		jdbcEventHolder.set(null); // reset
 
 		listener.afterMethod(methodContext);
 
@@ -81,7 +81,7 @@ class JdbcEventPublishingListenerTests {
 
 		Statement source = mock(Statement.class);
 		ExecutionInfo executionInfo = new ExecutionInfo();
-		executionInfo.setStatement(source);  // used as event source
+		executionInfo.setStatement(source); // used as event source
 		listener.beforeQuery(executionInfo, Collections.emptyList());
 
 		assertThat(jdbcEventHolder).hasValueSatisfying((event) -> {
@@ -107,7 +107,7 @@ class JdbcEventPublishingListenerTests {
 		});
 	}
 
-	private ApplicationContext createApplicationContextWithListener(AtomicReference<JdbcEvent> eventHolder){
+	private ApplicationContext createApplicationContextWithListener(AtomicReference<JdbcEvent> eventHolder) {
 		GenericApplicationContext context = new GenericApplicationContext();
 		context.addApplicationListener((event) -> {
 			if (event instanceof JdbcEvent) {
