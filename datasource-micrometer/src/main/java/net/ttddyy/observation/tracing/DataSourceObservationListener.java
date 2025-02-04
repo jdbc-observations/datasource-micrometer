@@ -155,6 +155,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 				context.getParams().add(params);
 			}
 		}
+		context.setDataSourceName(executionInfo.getDataSourceName());
 	}
 
 	private void populateFromConnectionAttributes(DataSourceBaseContext context, String connectionId) {
@@ -260,10 +261,20 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	private void handleGetConnectionBefore(MethodExecutionContext executionContext) {
 		ConnectionContext connectionContext = new ConnectionContext();
 		executionContext.addCustomValue(ConnectionContext.class.getName(), connectionContext);
-
+		populateConnectionContext(connectionContext, executionContext);
 		Observation observation = createAndStartObservation(JdbcObservationDocumentation.CONNECTION, connectionContext,
 				this.connectionObservationConvention);
 		executionContext.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
+	}
+
+	private static void populateConnectionContext(ConnectionContext connectionContext,
+			MethodExecutionContext executionContext) {
+		if (executionContext.getConnectionInfo() != null) {
+			connectionContext.setDataSourceName(executionContext.getConnectionInfo().getDataSourceName());
+		}
+		else if (executionContext.getProxyConfig() != null) {
+			connectionContext.setDataSourceName(executionContext.getProxyConfig().getDataSourceName());
+		}
 	}
 
 	private void handleGetConnectionAfter(MethodExecutionContext executionContext) {
@@ -418,7 +429,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		// new ResultSet observation
 		ResultSetContext resultSetContext = new ResultSetContext();
 		populateFromConnectionAttributes(resultSetContext, executionContext.getConnectionInfo().getConnectionId());
-
+		populateResultSetContext(resultSetContext, executionContext);
 		Observation observation;
 		if (isGeneratedKeys) {
 			observation = createAndStartObservation(JdbcObservationDocumentation.GENERATED_KEYS, resultSetContext,
@@ -437,6 +448,10 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		resultSetAttributes.scope = observation.openScope();
 		resultSetAttributes.context = resultSetContext;
 		return resultSetAttributes;
+	}
+
+	private void populateResultSetContext(ResultSetContext resultSetContext, MethodExecutionContext executionContext) {
+		resultSetContext.setDataSourceName(executionContext.getConnectionInfo().getDataSourceName());
 	}
 
 	/**
