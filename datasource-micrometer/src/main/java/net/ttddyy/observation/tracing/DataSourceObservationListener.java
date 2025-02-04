@@ -267,7 +267,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		executionContext.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
 	}
 
-	private static void populateConnectionContext(ConnectionContext connectionContext,
+	private void populateConnectionContext(ConnectionContext connectionContext,
 			MethodExecutionContext executionContext) {
 		if (executionContext.getConnectionInfo() != null) {
 			connectionContext.setDataSourceName(executionContext.getConnectionInfo().getDataSourceName());
