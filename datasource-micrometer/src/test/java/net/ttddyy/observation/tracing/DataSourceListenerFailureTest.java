@@ -44,7 +44,8 @@ class DataSourceListenerFailureTest extends DataSourceListenerIntegrationTestBas
 					.hasASpanWithName("connection", (spanAssert -> {
 						spanAssert
 								.hasEventWithNameEqualTo("acquired")
-								.hasEventWithNameEqualTo("rollback");
+								.hasEventWithNameEqualTo("rollback")
+								.hasTag("name", "proxy-ds");
 					}))
 					.hasASpanWithName("query");
 			// @formatter:on

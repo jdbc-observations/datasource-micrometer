@@ -25,12 +25,14 @@ import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationConvention;
 import net.ttddyy.observation.tracing.JdbcObservationDocumentation.QueryHighCardinalityKeyNames;
 
+import static net.ttddyy.observation.tracing.JdbcObservationDocumentation.*;
+
 /**
  * A {@link ObservationConvention} for query.
  *
  * @author Tadaya Tsuyukubo
  */
-public interface QueryObservationConvention extends ObservationConvention<QueryContext> {
+public interface QueryObservationConvention extends BaseObservationConvention<QueryContext> {
 
 	@Override
 	default boolean supportsContext(Context context) {
@@ -41,6 +43,13 @@ public interface QueryObservationConvention extends ObservationConvention<QueryC
 	default String getName() {
 		return "jdbc.query";
 	}
+
+	@Override
+	default KeyValues getLowCardinalityKeyValues(QueryContext context) {
+		Set<KeyValue> keyValues = new HashSet<>();
+		getDatasourceName(context).ifPresent(keyValues::add);
+		return KeyValues.of(keyValues);
+    }
 
 	@Override
 	default KeyValues getHighCardinalityKeyValues(QueryContext context) {
