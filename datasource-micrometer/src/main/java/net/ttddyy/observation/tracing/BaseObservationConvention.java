@@ -8,8 +8,9 @@ import java.util.Optional;
 
 public interface BaseObservationConvention<T extends DataSourceBaseContext> extends ObservationConvention<T> {
 
-    default Optional<KeyValue> getDatasourceName(DataSourceBaseContext context){
-        return Optional.ofNullable(context.getDataSourceName())
-                .map(name -> KeyValue.of(CommonLowCardinalityKeyNames.NAME, name));
-    }
+	default Optional<KeyValue> getDatasourceName(DataSourceBaseContext context) {
+		return Optional.ofNullable(context.getDataSourceName())
+				.map(name -> KeyValue.of(CommonLowCardinalityKeyNames.NAME, name));
+	}
+
 }

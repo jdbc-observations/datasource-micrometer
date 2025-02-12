@@ -49,7 +49,7 @@ public interface QueryObservationConvention extends BaseObservationConvention<Qu
 		Set<KeyValue> keyValues = new HashSet<>();
 		getDatasourceName(context).ifPresent(keyValues::add);
 		return KeyValues.of(keyValues);
-    }
+	}
 
 	@Override
 	default KeyValues getHighCardinalityKeyValues(QueryContext context) {

@@ -198,6 +198,7 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 				return "name";
 			}
 		},
+
 	}
 
 	public enum ResultSetHighCardinalityKeyNames implements KeyName {

@@ -24,8 +24,6 @@ import io.micrometer.observation.ObservationConvention;
 import java.util.HashSet;
 import java.util.Set;
 
-import static net.ttddyy.observation.tracing.JdbcObservationDocumentation.*;
-
 /**
  * A {@link ObservationConvention} for connection.
  *
@@ -49,4 +47,5 @@ public interface ConnectionObservationConvention extends BaseObservationConventi
 		getDatasourceName(context).ifPresent(keyValues::add);
 		return KeyValues.of(keyValues);
 	}
+
 }
