@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 the original author or authors.
+ * Copyright 2022-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
+import io.micrometer.observation.ObservationConvention;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
@@ -40,6 +41,7 @@ import net.ttddyy.observation.boot.event.JdbcEventPublishingListener;
 import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
+import net.ttddyy.observation.tracing.GeneratedKeysObservationConvention;
 import net.ttddyy.observation.tracing.HikariJdbcObservationFilter;
 import net.ttddyy.observation.tracing.JdbcObservationDocumentation;
 import net.ttddyy.observation.tracing.QueryObservationConvention;
@@ -95,10 +97,7 @@ public class DataSourceObservationAutoConfiguration {
 	@Bean
 	@Order(OBSERVATION_LISTENER_ORDER)
 	public DataSourceObservationListener dataSourceObservationListener(ObjectProvider<ObservationRegistry> registry,
-			JdbcProperties jdbcProperties,
-			ObjectProvider<ConnectionObservationConvention> connectionObservationConventions,
-			ObjectProvider<QueryObservationConvention> queryObservationConventions,
-			ObjectProvider<ResultSetObservationConvention> resultSetObservationConventions) {
+			JdbcProperties jdbcProperties, ObjectProvider<ObservationConvention<?>> observationConventions) {
 		Set<JdbcObservationDocumentation> supportedDocumentations = jdbcProperties.getIncludes()
 			.stream()
 			.map((include) -> include.supportedDocumentation)
@@ -108,9 +107,20 @@ public class DataSourceObservationAutoConfiguration {
 		DataSourceObservationListener listener = new DataSourceObservationListener(registry::getObject);
 		listener.setIncludeParameterValues(jdbcProperties.getDatasourceProxy().isIncludeParameterValues());
 		listener.setSupportedTypes(supportedDocumentations);
-		connectionObservationConventions.ifAvailable(listener::setConnectionObservationConvention);
-		queryObservationConventions.ifAvailable(listener::setQueryObservationConvention);
-		resultSetObservationConventions.ifAvailable(listener::setResultSetObservationConvention);
+		observationConventions.orderedStream().forEach((convention) -> {
+			if (convention instanceof ConnectionObservationConvention) {
+				listener.setConnectionObservationConvention((ConnectionObservationConvention) convention);
+			}
+			else if (convention instanceof QueryObservationConvention) {
+				listener.setQueryObservationConvention((QueryObservationConvention) convention);
+			}
+			else if (convention instanceof GeneratedKeysObservationConvention) {
+				listener.setGeneratedKeysObservationConvention((GeneratedKeysObservationConvention) convention);
+			}
+			else if (convention instanceof ResultSetObservationConvention) {
+				listener.setResultSetObservationConvention((ResultSetObservationConvention) convention);
+			}
+		});
 		return listener;
 	}
 

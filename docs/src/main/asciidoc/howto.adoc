@@ -181,7 +181,7 @@ public ObservationFilter observationFilter() {
 ----
 
 [[how-to-publish-application-events]]
-=== How to enable application events
+=== How to Enable Application Events
 Set the `jdbc.event.enabled` property to `true`.
 
 
@@ -203,4 +203,10 @@ ObservationPredicate myObservationPredicate() {
 ----
 
 A Kotlin-flavored implementation can be found on this https://github.com/jdbc-observations/datasource-micrometer/issues/17#issuecomment-2668657969[issue comment].
+
+
+[[how-to-use-custom-observationconvention]]
+=== How to Use Custom ObservationConvention
+Define beans for your custom observation conventions, which will then be automatically detected and applied to the listener.
+
 
