@@ -67,3 +67,30 @@ To specify a custom datasource name, see <<howto.adoc#how-to-customize-the-proxy
 Since version `1.1`, `datasource-micrometer-spring-boot` can publish Spring's application events for query executions and method invocations on proxied JDBC classes.
 This feature is disabled by default and can be enabled by setting the property `jdbc.event.enabled=true`.
 When enabled, it publishes events - `JdbcQueryExecutionEvent` and `JdbcMethodExecutionEvenet`.
+
+[[using-limitations]]
+== Limitations
+[[using-limitations-oiv]]
+=== Open In View, Open Session In View
+Unfortunately, Open In View (OIV) / Open Session In View (OSIV) are not supported.
+This is because OIV/OSIV delays closing the database connection until the HTTP response is sent.
+
+Observation orders without OIV/OSIV:
+
+. Start HTTP request observation
+. Start DB connection observation
+. (Other observations)
+. Stop DB connection observation
+. Stop HTTP request observation
+
+However, with OIV/OSIV enabled, the DB connection closing is delayed, leading to the following order:
+
+. Start HTTP request observation
+. Start DB connection observation
+. (Other observations)
+. *(SWAPPED)* Stop HTTP request observation
+. *(SWAPPED)* Stop DB connection observation
+
+Since observation scopes must be closed in the reverse order of their creation, this swapped ordering causes observation leaks.
+
+To disable OIV/OSIV, set `spring.jpa.open-in-view=false`.
