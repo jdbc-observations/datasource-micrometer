@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,12 +45,14 @@ class DataSourceListenerUpdateIntegrationTest extends DataSourceListenerIntegrat
 					.hasASpanWithName("connection", (spanAssert -> {
 						spanAssert
 								.hasEventWithNameEqualTo("acquired")
-								.hasEventWithNameEqualTo("commit");
+								.hasEventWithNameEqualTo("commit")
+								.hasTag("jdbc.datasource.name", "proxy-ds");
 					}))
 					.hasASpanWithName("query", (spanAssert -> {
 						spanAssert
 								.hasTag("jdbc.query[0]", "INSERT INTO emp VALUES (?, ?)")
-								.doesNotHaveTagWithKey("jdbc.params[0]");   // default is off
+								.doesNotHaveTagWithKey("jdbc.params[0]")
+								.hasTag("jdbc.datasource.name", "proxy-ds");   // default is off
 					}));
 			// @formatter:on
 		};

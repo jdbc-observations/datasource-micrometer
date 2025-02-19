@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,14 @@
 
 package net.ttddyy.observation.tracing;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import io.micrometer.common.KeyValue;
+import io.micrometer.common.KeyValues;
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationConvention;
+import net.ttddyy.observation.tracing.JdbcObservationDocumentation.ConnectionKeyNames;
 
 /**
  * A {@link ObservationConvention} for connection.
@@ -34,6 +40,16 @@ public interface ConnectionObservationConvention extends ObservationConvention<C
 	@Override
 	default String getName() {
 		return "jdbc.connection";
+	}
+
+	@Override
+	default KeyValues getLowCardinalityKeyValues(ConnectionContext context) {
+		Set<KeyValue> keyValues = new HashSet<>();
+		String dataSourceName = context.getDataSourceName();
+		if (dataSourceName != null) {
+			keyValues.add(KeyValue.of(ConnectionKeyNames.DATASOURCE_NAME, dataSourceName));
+		}
+		return KeyValues.of(keyValues);
 	}
 
 }

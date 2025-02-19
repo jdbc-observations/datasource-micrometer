@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 the original author or authors.
+ * Copyright 2022-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +27,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
 import io.micrometer.observation.Observation;
+import io.micrometer.observation.Observation.Context;
+import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationPredicate;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.tck.TestObservationRegistry;
@@ -44,6 +47,7 @@ import net.ttddyy.dsproxy.QueryInfo;
 import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
+import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -119,6 +123,8 @@ class DataSourceObservationListenerTests {
 
 				assertThat(queries).isNotEmpty();
 				assertThat(queries.get(0)).isEqualTo("SELECT 1");
+
+				assertThat(queryContext.getDataSourceName()).isEqualTo("myDS");
 				return true;
 			}
 			return true;
@@ -218,7 +224,20 @@ class DataSourceObservationListenerTests {
 
 	@Test
 	void queryConnectionContext() throws Exception {
+		ObservationPredicate testConnectionObservationPredicate = (observationName, observationContext) -> {
+			if (observationContext instanceof ConnectionContext) {
+				ConnectionContext connectionContext = (ConnectionContext) observationContext;
+				assertThat(connectionContext.getHost()).isEqualTo("localhost");
+				assertThat(connectionContext.getPort()).isEqualTo(5555);
+				assertThat(connectionContext.getDataSourceName()).isEqualTo("myDS");
+				return true;
+			}
+			return true;
+		};
+
 		this.registry.observationConfig().observationHandler(new QueryTracingObservationHandler(this.tracer));
+		this.registry.observationConfig().observationPredicate(testConnectionObservationPredicate);
+
 		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 
 		ConnectionInfo connectionInfo = new ConnectionInfo();
@@ -294,6 +313,8 @@ class DataSourceObservationListenerTests {
 		given(connection.getMetaData()).willReturn(metaData);
 		given(metaData.getURL()).willReturn("jdbc:mysql://localhost:5555/mydatabase");
 
+		ProxyConfig proxyConfig = new ProxyConfig.Builder().dataSourceName("myDS").build();
+
 		ConnectionInfo connectionInfo = new ConnectionInfo();
 		connectionInfo.setConnectionId("id-1");
 		connectionInfo.setDataSourceName("myDS");
@@ -303,6 +324,7 @@ class DataSourceObservationListenerTests {
 		executionContext.setMethod(getConnection);
 		executionContext.setTarget(mock(DataSource.class));
 		executionContext.setResult(connection);
+		executionContext.setProxyConfig(proxyConfig);
 
 		listener.beforeMethod(executionContext);
 		assertThat(tracer.currentSpan()).isNotNull();
@@ -341,11 +363,14 @@ class DataSourceObservationListenerTests {
 		Method getConnection = DataSource.class.getMethod("getConnection");
 		RuntimeException exception = new RuntimeException();
 
+		ProxyConfig proxyConfig = new ProxyConfig.Builder().dataSourceName("myDS").build();
+
 		// when getConnection failed, result is null and thrown has exception
 		MethodExecutionContext executionContext = new MethodExecutionContext();
 		executionContext.setMethod(getConnection);
 		executionContext.setTarget(mock(DataSource.class));
 		executionContext.setThrown(exception);
+		executionContext.setProxyConfig(proxyConfig);
 
 		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 		listener.beforeMethod(executionContext);
@@ -452,7 +477,23 @@ class DataSourceObservationListenerTests {
 
 	@Test
 	void resultSetObservation() throws Exception {
+		ObservationPredicate testResultSetObservationPredicate = (observationName, observationContext) -> {
+			if (observationContext instanceof ResultSetContext) {
+				ResultSetContext resultSetContext = (ResultSetContext) observationContext;
+				assertThat(resultSetContext.getDataSourceName()).isEqualTo("myDS");
+				return true;
+			}
+			return true;
+		};
+
+		AtomicReference<Observation.Context> contextHolder = new AtomicReference<>();
+
 		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
+		this.registry.observationConfig().observationHandler(context -> {
+			contextHolder.set(context);
+			return true;
+		});
+
 		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
 
 		ResultSet resultSet = mock(ResultSet.class);
@@ -464,6 +505,13 @@ class DataSourceObservationListenerTests {
 		connectionInfo.setDataSourceName("myDS");
 
 		createResultSetObservation(listener, connectionInfo, resultSet, true);
+
+		// verify context has datasource-name
+		assertThat(contextHolder).hasValueSatisfying((context) -> {
+			assertThat(context).isInstanceOfSatisfying(ResultSetContext.class, (rsContext) -> {
+				assertThat(rsContext.getDataSourceName()).isEqualTo("myDS");
+			});
+		});
 
 		// ResultSet#close should stop the observation
 		MethodExecutionContext closeExecutionContext = createResultSetCloseMethodExecutionContext(connectionInfo,
