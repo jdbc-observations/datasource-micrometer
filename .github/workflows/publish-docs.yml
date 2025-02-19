@@ -79,7 +79,7 @@ jobs:
           cp CHANGELOG target/deploy-documents/docs/current/CHANGELOG.txt
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: target/deploy-documents
 
