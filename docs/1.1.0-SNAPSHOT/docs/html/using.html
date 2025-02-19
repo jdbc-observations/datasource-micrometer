@@ -604,6 +604,11 @@ window.onload = function() {
 <li><a href="#using-features-application-events">2.4. Application Events</a></li>
 </ul>
 </li>
+<li><a href="#using-limitations">3. Limitations</a>
+<ul class="sectlevel2">
+<li><a href="#using-limitations-oiv">3.1. Open In View, Open Session In View</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -689,6 +694,68 @@ The name is specified when creating a proxy datasource by <a href="https://githu
 <p>Since version <code>1.1</code>, <code>datasource-micrometer-spring-boot</code> can publish Spring&#8217;s application events for query executions and method invocations on proxied JDBC classes.
 This feature is disabled by default and can be enabled by setting the property <code>jdbc.event.enabled=true</code>.
 When enabled, it publishes events - <code>JdbcQueryExecutionEvent</code> and <code>JdbcMethodExecutionEvenet</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-limitations"><a class="anchor" href="#using-limitations"></a><a class="link" href="#using-limitations">3. Limitations</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="using-limitations-oiv"><a class="anchor" href="#using-limitations-oiv"></a><a class="link" href="#using-limitations-oiv">3.1. Open In View, Open Session In View</a></h3>
+<div class="paragraph">
+<p>Unfortunately, Open In View (OIV) / Open Session In View (OSIV) are not supported.
+This is because OIV/OSIV delays closing the database connection until the HTTP response is sent.</p>
+</div>
+<div class="paragraph">
+<p>Observation orders without OIV/OSIV:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Start HTTP request observation</p>
+</li>
+<li>
+<p>Start DB connection observation</p>
+</li>
+<li>
+<p>(Other observations)</p>
+</li>
+<li>
+<p>Stop DB connection observation</p>
+</li>
+<li>
+<p>Stop HTTP request observation</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>However, with OIV/OSIV enabled, the DB connection closing is delayed, leading to the following order:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Start HTTP request observation</p>
+</li>
+<li>
+<p>Start DB connection observation</p>
+</li>
+<li>
+<p>(Other observations)</p>
+</li>
+<li>
+<p><strong>(SWAPPED)</strong> Stop HTTP request observation</p>
+</li>
+<li>
+<p><strong>(SWAPPED)</strong> Stop DB connection observation</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Since observation scopes must be closed in the reverse order of their creation, this swapped ordering causes observation leaks.</p>
+</div>
+<div class="paragraph">
+<p>To disable OIV/OSIV, set <code>spring.jpa.open-in-view=false</code>.</p>
 </div>
 </div>
 </div>
