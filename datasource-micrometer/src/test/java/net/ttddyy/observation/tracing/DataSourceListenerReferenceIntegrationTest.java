@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,12 +67,12 @@ class DataSourceListenerReferenceIntegrationTest extends DataSourceListenerInteg
 						spanAssert
 								.hasTag("jdbc.query[0]", "SELECT name FROM emp WHERE id = ?")
 								.hasTag("jdbc.params[0]", "(20)")
-								.hasTag("name", "proxy");
+								.hasTag("jdbc.datasource.name", "proxy");
 					}))
 					.hasASpanWithName("result-set", (spanAssert) -> {
 						spanAssert
 								.hasTag("jdbc.row-count", "1")
-								.hasTag("name", "proxy");
+								.hasTag("jdbc.datasource.name", "proxy");
 					});
 			// @formatter:on
 		};

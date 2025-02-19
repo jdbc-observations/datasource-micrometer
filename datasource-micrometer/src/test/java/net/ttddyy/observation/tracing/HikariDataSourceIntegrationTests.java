@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,12 +68,12 @@ class HikariDataSourceIntegrationTests extends DataSourceListenerIntegrationTest
 						spanAssert.hasTag(ConnectionKeyNames.DATASOURCE_DRIVER, "org.h2.Driver")
 							.hasTagWithKey(ConnectionKeyNames.DATASOURCE_POOL)
 								.hasEventWithNameEqualTo("rollback")
-								.hasTag("name", "proxy-ds");
+								.hasTag("jdbc.datasource.name", "proxy-ds");
 					}))
 					.hasNumberOfSpansWithNameEqualTo("query", 2)
 					.hasASpanWithName("result-set", (spanAssert) -> {
 						spanAssert.hasTag("jdbc.row-count", "2")
-								.hasTag("name", "proxy-ds");
+								.hasTag("jdbc.datasource.name", "proxy-ds");
 					});
 			// @formatter:on
 		};

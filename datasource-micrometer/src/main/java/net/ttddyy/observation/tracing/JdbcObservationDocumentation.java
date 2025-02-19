@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 the original author or authors.
+ * Copyright 2022-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 
 		@Override
 		public KeyName[] getLowCardinalityKeyNames() {
-			return CommonLowCardinalityKeyNames.values();
+			return ConnectionKeyNames.values();
 		}
 
 		@Override
@@ -82,7 +82,7 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 
 		@Override
 		public KeyName[] getLowCardinalityKeyNames() {
-			return CommonLowCardinalityKeyNames.values();
+			return QueryLowCardinalityKeyNames.values();
 		}
 
 		@Override
@@ -112,7 +112,7 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 
 		@Override
 		public KeyName[] getLowCardinalityKeyNames() {
-			return CommonLowCardinalityKeyNames.values();
+			return ResultSetLowCardinalityKeyNames.values();
 		}
 
 		@Override
@@ -142,7 +142,7 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 
 		@Override
 		public KeyName[] getLowCardinalityKeyNames() {
-			return CommonLowCardinalityKeyNames.values();
+			return GeneratedKeysLowCardinalityKeyNames.values();
 		}
 
 		@Override
@@ -187,17 +187,17 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 
 	}
 
-	public enum CommonLowCardinalityKeyNames implements KeyName {
+	public enum QueryLowCardinalityKeyNames implements KeyName {
 
 		/**
 		 * Name of the JDBC datasource.
 		 */
-		NAME {
+		DATASOURCE_NAME {
 			@Override
 			public String asString() {
-				return "name";
+				return "jdbc.datasource.name";
 			}
-		},
+		}
 
 	}
 
@@ -215,6 +215,20 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 
 	}
 
+	public enum ResultSetLowCardinalityKeyNames implements KeyName {
+
+		/**
+		 * Name of the JDBC datasource.
+		 */
+		DATASOURCE_NAME {
+			@Override
+			public String asString() {
+				return "jdbc.datasource.name";
+			}
+		},
+
+	}
+
 	public enum GeneratedKeysHighCardinalityKeyNames implements KeyName {
 
 		/**
@@ -225,7 +239,21 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 			public String asString() {
 				return "jdbc.generated-keys";
 			}
-		}
+		};
+
+	}
+
+	public enum GeneratedKeysLowCardinalityKeyNames implements KeyName {
+
+		/**
+		 * Name of the JDBC datasource.
+		 */
+		DATASOURCE_NAME {
+			@Override
+			public String asString() {
+				return "jdbc.datasource.name";
+			}
+		},
 
 	}
 
@@ -248,6 +276,16 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 			@Override
 			public String asString() {
 				return "jdbc.datasource.pool";
+			}
+		},
+
+		/**
+		 * Name of the JDBC datasource.
+		 */
+		DATASOURCE_NAME {
+			@Override
+			public String asString() {
+				return "jdbc.datasource.name";
 			}
 		},
 

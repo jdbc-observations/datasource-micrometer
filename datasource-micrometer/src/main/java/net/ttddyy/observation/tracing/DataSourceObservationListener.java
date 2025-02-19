@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 the original author or authors.
+ * Copyright 2022-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -161,9 +161,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	private void populateFromConnectionAttributes(DataSourceBaseContext context, String connectionId) {
 		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
 		if (connectionAttributes != null) {
+			String dataSourceName = connectionAttributes.connectionInfo.getDataSourceName();
 			context.setHost(connectionAttributes.host);
 			context.setPort(connectionAttributes.port);
-			context.setRemoteServiceName(connectionAttributes.connectionInfo.getDataSourceName());
+			context.setRemoteServiceName(dataSourceName);
+			context.setDataSourceName(dataSourceName);
 			context.setDataSource(connectionAttributes.dataSource);
 		}
 	}
@@ -260,21 +262,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	private void handleGetConnectionBefore(MethodExecutionContext executionContext) {
 		ConnectionContext connectionContext = new ConnectionContext();
+		connectionContext.setDataSourceName(executionContext.getProxyConfig().getDataSourceName());
 		executionContext.addCustomValue(ConnectionContext.class.getName(), connectionContext);
-		populateConnectionContext(connectionContext, executionContext);
 		Observation observation = createAndStartObservation(JdbcObservationDocumentation.CONNECTION, connectionContext,
 				this.connectionObservationConvention);
 		executionContext.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
-	}
-
-	private void populateConnectionContext(ConnectionContext connectionContext,
-			MethodExecutionContext executionContext) {
-		if (executionContext.getConnectionInfo() != null) {
-			connectionContext.setDataSourceName(executionContext.getConnectionInfo().getDataSourceName());
-		}
-		else if (executionContext.getProxyConfig() != null) {
-			connectionContext.setDataSourceName(executionContext.getProxyConfig().getDataSourceName());
-		}
 	}
 
 	private void handleGetConnectionAfter(MethodExecutionContext executionContext) {
@@ -429,7 +421,6 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		// new ResultSet observation
 		ResultSetContext resultSetContext = new ResultSetContext();
 		populateFromConnectionAttributes(resultSetContext, executionContext.getConnectionInfo().getConnectionId());
-		populateResultSetContext(resultSetContext, executionContext);
 		Observation observation;
 		if (isGeneratedKeys) {
 			observation = createAndStartObservation(JdbcObservationDocumentation.GENERATED_KEYS, resultSetContext,
@@ -448,10 +439,6 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		resultSetAttributes.scope = observation.openScope();
 		resultSetAttributes.context = resultSetContext;
 		return resultSetAttributes;
-	}
-
-	private void populateResultSetContext(ResultSetContext resultSetContext, MethodExecutionContext executionContext) {
-		resultSetContext.setDataSourceName(executionContext.getConnectionInfo().getDataSourceName());
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 the original author or authors.
+ * Copyright 2022-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ class DataSourceListenerFailureTest extends DataSourceListenerIntegrationTestBas
 						spanAssert
 								.hasEventWithNameEqualTo("acquired")
 								.hasEventWithNameEqualTo("rollback")
-								.hasTag("name", "proxy-ds");
+								.hasTag("jdbc.datasource.name", "proxy-ds");
 					}))
 					.hasASpanWithName("query");
 			// @formatter:on
