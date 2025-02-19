@@ -184,3 +184,23 @@ public ObservationFilter observationFilter() {
 === How to enable application events
 Set the `jdbc.event.enabled` property to `true`.
 
+
+[[how-to-selectively-tag-queries]]
+=== How to Selectively Tag Queries
+Instead of tagging all queries, you can define an `ObservationPredicate` bean to selectively tag queries.
+
+[source,java,indent=0]
+----
+@Bean
+ObservationPredicate myObservationPredicate() {
+	return (name, context) -> {
+		if(context instanceof QueryContext queryContext) {
+			return queryContext.getQueries().stream().noneMatch(query -> query.contains("QUERY TO IGNORE"));
+		}
+		return true;
+	};
+}
+----
+
+A Kotlin-flavored implementation can be found on this https://github.com/jdbc-observations/datasource-micrometer/issues/17#issuecomment-2668657969[issue comment].
+
