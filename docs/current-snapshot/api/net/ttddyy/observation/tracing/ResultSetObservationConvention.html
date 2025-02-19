@@ -114,18 +114,21 @@ extends io.micrometer.observation.ObservationConvention&lt;<a href="ResultSetCon
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default io.micrometer.common.KeyValues</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getHighCardinalityKeyValues(net.ttddyy.observation.tracing.ResultSetContext)" class="member-name-link">getHighCardinalityKeyValues</a><wbr>(<a href="ResultSetContext.html" title="class in net.ttddyy.observation.tracing">ResultSetContext</a>&nbsp;context)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default io.micrometer.common.KeyValues</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getLowCardinalityKeyValues(net.ttddyy.observation.tracing.ResultSetContext)" class="member-name-link">getLowCardinalityKeyValues</a><wbr>(<a href="ResultSetContext.html" title="class in net.ttddyy.observation.tracing">ResultSetContext</a>&nbsp;context)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#supportsContext(io.micrometer.observation.Observation.Context)" class="member-name-link">supportsContext</a><wbr>(io.micrometer.observation.Observation.Context&nbsp;context)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#supportsContext(io.micrometer.observation.Observation.Context)" class="member-name-link">supportsContext</a><wbr>(io.micrometer.observation.Observation.Context&nbsp;context)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-io.micrometer.observation.ObservationConvention">Methods inherited from interface&nbsp;io.micrometer.observation.ObservationConvention</h3>
-<code>getContextualName, getLowCardinalityKeyValues</code></div>
+<code>getContextualName</code></div>
 </section>
 </li>
 </ul>
@@ -158,6 +161,16 @@ extends io.micrometer.observation.ObservationConvention&lt;<a href="ResultSetCon
 </section>
 </li>
 <li>
+<section class="detail" id="getLowCardinalityKeyValues(net.ttddyy.observation.tracing.ResultSetContext)">
+<h3>getLowCardinalityKeyValues</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">io.micrometer.common.KeyValues</span>&nbsp;<span class="element-name">getLowCardinalityKeyValues</span><wbr><span class="parameters">(<a href="ResultSetContext.html" title="class in net.ttddyy.observation.tracing">ResultSetContext</a>&nbsp;context)</span></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code>getLowCardinalityKeyValues</code>&nbsp;in interface&nbsp;<code>io.micrometer.observation.ObservationConvention&lt;<a href="ResultSetContext.html" title="class in net.ttddyy.observation.tracing">ResultSetContext</a>&gt;</code></dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="getName()">
 <h3>getName</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getName</span>()</div>
@@ -176,7 +189,7 @@ extends io.micrometer.observation.ObservationConvention&lt;<a href="ResultSetCon
 </main>
 <footer role="contentinfo">
 <hr>
-<p class="legal-copy"><small>Copyright &#169; 2024. All rights reserved.</small></p>
+<p class="legal-copy"><small>Copyright &#169; 2025. All rights reserved.</small></p>
 </footer>
 </div>
 </div>
