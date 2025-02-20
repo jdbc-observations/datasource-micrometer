@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 the original author or authors.
+ * Copyright 2022-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,16 @@ import javax.sql.DataSource;
 
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
+import net.ttddyy.observation.boot.autoconfigure.JdbcProperties.DataSourceType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import org.springframework.beans.factory.ObjectProvider;
 
@@ -106,7 +110,7 @@ class DataSourceObservationBeanPostProcessorTests {
 
 		Object result = this.processor.postProcessAfterInitialization(dataSource, "foo");
 
-		assertThat(result).isInstanceOf(ProxyDataSource.class);
+		assertThat(result).isInstanceOf(DataSource.class).isInstanceOf(ProxyJdbcObject.class);
 	}
 
 	@Test
@@ -144,11 +148,37 @@ class DataSourceObservationBeanPostProcessorTests {
 		DataSource dataSource = mock(DataSource.class);
 		Object result = this.processor.postProcessAfterInitialization(dataSource, "foo");
 
-		assertThat(result).isInstanceOfSatisfying(ProxyDataSource.class, (proxy) -> {
+		assertThat(result).isInstanceOfSatisfying(ProxyJdbcObject.class, (proxy) -> {
 			assertThat(proxy.getProxyConfig().getDataSourceName()).isEqualTo("customized-ds");
 		});
 
 		verify(dataSourceNameResolver).resolve(any(), any());
+	}
+
+	@ParameterizedTest
+	@EnumSource(DataSourceType.class)
+	void dataSourceType(DataSourceType type) {
+		JdbcProperties jdbcProperties = new JdbcProperties();
+		jdbcProperties.getDatasourceProxy().setType(type);
+		given(this.jdbcPropertiesProvider.getObject()).willReturn(jdbcProperties);
+
+		DataSourceNameResolver dataSourceNameResolver = mock(DataSourceNameResolver.class);
+		given(dataSourceNameResolver.resolve(any(String.class), any(DataSource.class))).willReturn("my-ds");
+		given(this.dataSourceNameResolverProvider.getObject()).willReturn(dataSourceNameResolver);
+
+		DataSource dataSource = mock(DataSource.class);
+		Object result = this.processor.postProcessAfterInitialization(dataSource, "foo");
+
+		if (type == DataSourceType.PROXY) {
+			assertThat(result).isInstanceOf(DataSource.class)
+				.isInstanceOf(ProxyJdbcObject.class)
+				.isNotInstanceOf(ProxyDataSource.class);
+		}
+		else {
+			assertThat(result).isInstanceOf(DataSource.class)
+				.isInstanceOf(ProxyDataSource.class)
+				.isNotInstanceOf(ProxyJdbcObject.class);
+		}
 	}
 
 }

@@ -34,6 +34,7 @@ import net.ttddyy.dsproxy.listener.CompositeMethodListener;
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import net.ttddyy.observation.boot.event.JdbcEventPublishingListener;
@@ -137,7 +138,8 @@ class DataSourceObservationAutoConfigurationTests {
 				.run((context) -> {
 					assertThat(context).hasNotFailed();
 					DataSource ds = context.getBean(DataSource.class);
-					assertThat(ds).isInstanceOfSatisfying(ProxyDataSource.class, proxy -> {
+					assertThat(ds).isNotInstanceOf(ProxyDataSource.class)
+						.isInstanceOfSatisfying(ProxyJdbcObject.class, (proxy) -> {
 						ProxyConfig proxyConfig = proxy.getProxyConfig();
 						ChainListener queryListeners = proxyConfig.getQueryListener();
 						assertThat(queryListeners.getListeners()).contains(queryListenerA, queryListenerB);
@@ -186,7 +188,7 @@ class DataSourceObservationAutoConfigurationTests {
 				.run((context) -> {
 					assertThat(context).hasNotFailed();
 					DataSource ds = context.getBean(DataSource.class);
-					assertThat(ds).isInstanceOf(ProxyDataSource.class);
+					assertThat(ds).isNotInstanceOf(ProxyDataSource.class).isInstanceOf(ProxyJdbcObject.class);
 					assertThat(callOrder).containsExactly("customizerC", "customizerA", "customizerB");
 				});
 		// @formatter:on

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 the original author or authors.
+ * Copyright 2022-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import io.micrometer.tracing.brave.bridge.BraveFinishedSpan;
 import io.micrometer.tracing.exporter.FinishedSpan;
 import io.micrometer.tracing.test.simple.SpanAssert;
 import io.micrometer.tracing.test.simple.SpansAssert;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
 import org.junit.jupiter.api.Nested;
@@ -74,10 +75,15 @@ class DataSourceObservationAutoConfigurationIntegrationTests {
 		@Test
 		void bootIntegration() {
 			// verify basic things
-			assertThat(this.dataSource).isInstanceOfSatisfying(ProxyDataSource.class, (ds) -> {
-				// check datasource-proxy listener is added
-				assertThat(ds.getProxyConfig().getMethodListener().getListeners()).contains(this.observationListener);
-				assertThat(ds.getProxyConfig().getQueryListener().getListeners()).contains(this.observationListener);
+			assertThat(this.dataSource).isInstanceOfSatisfying(DataSource.class, (ds) -> {
+				assertThat(ds).isNotInstanceOf(ProxyDataSource.class);
+				assertThat(ds).isInstanceOfSatisfying(ProxyJdbcObject.class, (proxyDs) -> {
+					// check datasource-proxy listener is added
+					assertThat(proxyDs.getProxyConfig().getMethodListener().getListeners())
+						.contains(this.observationListener);
+					assertThat(proxyDs.getProxyConfig().getQueryListener().getListeners())
+						.contains(this.observationListener);
+				});
 			});
 
 			// verify initial table/data creation

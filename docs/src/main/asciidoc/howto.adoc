@@ -210,3 +210,7 @@ A Kotlin-flavored implementation can be found on this https://github.com/jdbc-ob
 Define beans for your custom observation conventions, which will then be automatically detected and applied to the listener.
 
 
+[[how-to-switch-to-use-proxydatasource]]
+=== How to Switch to Use ProxyDataSource
+Since version `1.1`, the instrumented `DataSource` is now a pure JDK proxy.
+To revert to the previous behavior using `ProxyDataSource`, set the property: `jdbc.datasource-proxy.type=CONCRETE`

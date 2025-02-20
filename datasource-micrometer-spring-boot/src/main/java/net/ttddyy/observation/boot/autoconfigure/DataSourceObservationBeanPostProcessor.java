@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 the original author or authors.
+ * Copyright 2022-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
+import net.ttddyy.observation.boot.autoconfigure.JdbcProperties.DataSourceType;
 
 import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.BeansException;
@@ -90,7 +91,12 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 			getConfigurer().configure(builder);
 			this.proxyDataSourceBuilderCustomizers.orderedStream()
 				.forEach(customizer -> customizer.customize(builder, dataSource, beanName, dataSourceName));
-			return builder.build();
+			if (getJdbcProperties().getDatasourceProxy().getType() == DataSourceType.PROXY) {
+				return builder.buildProxy();
+			}
+			else {
+				return builder.build();
+			}
 		}
 		else {
 			return bean;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 the original author or authors.
+ * Copyright 2022-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,6 +118,11 @@ public class JdbcProperties {
 		 */
 		private boolean jsonFormat = false;
 
+		/**
+		 * Type for the generating DataSource.
+		 */
+		private DataSourceType type = DataSourceType.PROXY;
+
 		public Logging getLogging() {
 			return this.logging;
 		}
@@ -164,6 +169,14 @@ public class JdbcProperties {
 
 		public void setIncludeParameterValues(boolean includeParameterValues) {
 			this.includeParameterValues = includeParameterValues;
+		}
+
+		public DataSourceType getType() {
+			return this.type;
+		}
+
+		public void setType(DataSourceType type) {
+			this.type = type;
 		}
 
 	}
@@ -350,6 +363,20 @@ public class JdbcProperties {
 		public void setEnabled(boolean enabled) {
 			this.enabled = enabled;
 		}
+
+	}
+
+	public enum DataSourceType {
+
+		/**
+		 * Use a JDK proxy
+		 */
+		PROXY,
+
+		/**
+		 * Use ProxyDataSource from datasource-proxy
+		 */
+		CONCRETE
 
 	}
 
