@@ -655,6 +655,7 @@ window.onload = function() {
 <li><a href="#how-to-customize-the-proxydatasource-creation">4.2.6. How to Customize the ProxyDataSource Creation</a></li>
 <li><a href="#how-to-modify-the-query-in-span">4.2.7. How to Modify the Query in Span</a></li>
 <li><a href="#how-to-publish-application-events">4.2.8. How to enable application events</a></li>
+<li><a href="#how-to-selectively-tag-queries">4.2.9. How to Selectively Tag Queries</a></li>
 </ul>
 </li>
 </ul>
@@ -938,24 +939,24 @@ When enabled, it publishes events - <code>JdbcQueryExecutionEvent</code> and <co
 This is because OIV/OSIV delays closing the database connection until the HTTP response is sent.</p>
 </div>
 <div class="paragraph">
-<p>Observation orders without OIV/OSIV:</p>
+<p>Observation scope orders without OIV/OSIV:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Start HTTP request observation</p>
+<p>Open HTTP request observation scope</p>
 </li>
 <li>
-<p>Start DB connection observation</p>
+<p>Open DB connection observation scope</p>
 </li>
 <li>
-<p>(Other observations)</p>
+<p>(Other observation scopes)</p>
 </li>
 <li>
-<p>Stop DB connection observation</p>
+<p>Close DB connection observation scope</p>
 </li>
 <li>
-<p>Stop HTTP request observation</p>
+<p>Close HTTP request observation scope</p>
 </li>
 </ol>
 </div>
@@ -965,19 +966,19 @@ This is because OIV/OSIV delays closing the database connection until the HTTP r
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Start HTTP request observation</p>
+<p>Open HTTP request observation scope</p>
 </li>
 <li>
-<p>Start DB connection observation</p>
+<p>Open DB connection observation scope</p>
 </li>
 <li>
-<p>(Other observations)</p>
+<p>(Other observation scopes)</p>
 </li>
 <li>
-<p><strong>(SWAPPED)</strong> Stop HTTP request observation</p>
+<p><strong>(SWAPPED)</strong> Close HTTP request observation scope</p>
 </li>
 <li>
-<p><strong>(SWAPPED)</strong> Stop DB connection observation</p>
+<p><strong>(SWAPPED)</strong> Close DB connection observation scope</p>
 </li>
 </ol>
 </div>
@@ -1219,6 +1220,28 @@ public ObservationFilter observationFilter() {
 <h4 id="how-to-publish-application-events"><a class="anchor" href="#how-to-publish-application-events"></a><a class="link" href="#how-to-publish-application-events">4.2.8. How to enable application events</a></h4>
 <div class="paragraph">
 <p>Set the <code>jdbc.event.enabled</code> property to <code>true</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="how-to-selectively-tag-queries"><a class="anchor" href="#how-to-selectively-tag-queries"></a><a class="link" href="#how-to-selectively-tag-queries">4.2.9. How to Selectively Tag Queries</a></h4>
+<div class="paragraph">
+<p>Instead of tagging all queries, you can define an <code>ObservationPredicate</code> bean to selectively tag queries.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Bean
+ObservationPredicate myObservationPredicate() {
+    return (name, context) -&gt; {
+        if(context instanceof QueryContext queryContext) {
+            return queryContext.getQueries().stream().noneMatch(query -&gt; query.contains("QUERY TO IGNORE"));
+        }
+        return true;
+    };
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A Kotlin-flavored implementation can be found on this <a href="https://github.com/jdbc-observations/datasource-micrometer/issues/17#issuecomment-2668657969">issue comment</a>.</p>
 </div>
 </div>
 </div>

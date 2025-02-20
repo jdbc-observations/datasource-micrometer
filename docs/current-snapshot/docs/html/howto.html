@@ -614,6 +614,7 @@ window.onload = function() {
 <li><a href="#how-to-customize-the-proxydatasource-creation">2.6. How to Customize the ProxyDataSource Creation</a></li>
 <li><a href="#how-to-modify-the-query-in-span">2.7. How to Modify the Query in Span</a></li>
 <li><a href="#how-to-publish-application-events">2.8. How to enable application events</a></li>
+<li><a href="#how-to-selectively-tag-queries">2.9. How to Selectively Tag Queries</a></li>
 </ul>
 </li>
 </ul>
@@ -852,6 +853,28 @@ public ObservationFilter observationFilter() {
 <h3 id="how-to-publish-application-events"><a class="anchor" href="#how-to-publish-application-events"></a><a class="link" href="#how-to-publish-application-events">2.8. How to enable application events</a></h3>
 <div class="paragraph">
 <p>Set the <code>jdbc.event.enabled</code> property to <code>true</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-selectively-tag-queries"><a class="anchor" href="#how-to-selectively-tag-queries"></a><a class="link" href="#how-to-selectively-tag-queries">2.9. How to Selectively Tag Queries</a></h3>
+<div class="paragraph">
+<p>Instead of tagging all queries, you can define an <code>ObservationPredicate</code> bean to selectively tag queries.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@Bean
+ObservationPredicate myObservationPredicate() {
+    return (name, context) -&gt; {
+        if(context instanceof QueryContext queryContext) {
+            return queryContext.getQueries().stream().noneMatch(query -&gt; query.contains("QUERY TO IGNORE"));
+        }
+        return true;
+    };
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A Kotlin-flavored implementation can be found on this <a href="https://github.com/jdbc-observations/datasource-micrometer/issues/17#issuecomment-2668657969">issue comment</a>.</p>
 </div>
 </div>
 </div>
