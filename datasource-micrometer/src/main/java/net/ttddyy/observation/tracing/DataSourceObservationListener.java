@@ -141,7 +141,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			DataSourceBaseContext context, ObservationConvention<? extends Context> observationConvention) {
 		if (this.supportedTypes.contains(observationType)) {
 			return observationType.observation(this.observationRegistrySupplier.get(), () -> context)
-					.observationConvention(observationConvention).start();
+				.observationConvention(observationConvention)
+				.start();
 		}
 		return Observation.NOOP;
 	}
@@ -380,7 +381,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 		ResultSet resultSet = (ResultSet) executionContext.getTarget();
 		ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager
-				.getByResultSet(resultSet);
+			.getByResultSet(resultSet);
 		if (resultSetAttributes == null) {
 			boolean isGeneratedKey = connectionAttributes.resultSetAttributesManager.isGeneratedKeys(resultSet);
 			resultSetAttributes = createResultSetAttributesAndStartObservation(executionContext, isGeneratedKey);
@@ -474,7 +475,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		// get stopped.
 		Statement statement = (Statement) executionContext.getTarget();
 		Set<ResultSetAttributes> resultSetAttributes = connectionAttributes.resultSetAttributesManager
-				.removeByStatement(statement);
+			.removeByStatement(statement);
 		for (ResultSetAttributes resultSetAttribute : resultSetAttributes) {
 			stopResultSetObservation(resultSetAttribute.scope, executionContext.getThrown());
 		}

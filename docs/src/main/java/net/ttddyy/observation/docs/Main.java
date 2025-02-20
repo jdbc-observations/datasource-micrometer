@@ -88,11 +88,10 @@ public class Main {
 					System.out.println("Will not update the table, since no configuration properties were found!");
 					return;
 				}
-				Files.write(new File(outputFile).toPath(),
-						("|===\n"
-								+ "|Name | Default | Description\n\n" + names.stream()
-										.map(it -> descriptions.get(it).toString()).collect(Collectors.joining("\n"))
-								+ "\n\n" + "|===").getBytes());
+				Files.write(new File(outputFile).toPath(), ("|===\n" + "|Name | Default | Description\n\n"
+						+ names.stream().map(it -> descriptions.get(it).toString()).collect(Collectors.joining("\n"))
+						+ "\n\n" + "|===")
+					.getBytes());
 				System.out.println("Successfully stored the output file");
 			}
 			catch (IOException e) {
@@ -102,7 +101,7 @@ public class Main {
 
 		protected Resource[] getResources() throws IOException {
 			return new PathMatchingResourcePatternResolver()
-					.getResources("classpath*:/META-INF/spring-configuration-metadata.json");
+				.getResources("classpath*:/META-INF/spring-configuration-metadata.json");
 		}
 
 	}

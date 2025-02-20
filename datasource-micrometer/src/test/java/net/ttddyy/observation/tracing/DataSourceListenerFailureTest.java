@@ -50,11 +50,15 @@ class DataSourceListenerFailureTest extends DataSourceListenerIntegrationTestBas
 					.hasASpanWithName("query");
 			// @formatter:on
 
-			FinishedSpan querySpan = bb.getFinishedSpans().stream().filter(span -> "query".equals(span.getName()))
-					.findFirst().orElseThrow(IllegalStateException::new);
+			FinishedSpan querySpan = bb.getFinishedSpans()
+				.stream()
+				.filter(span -> "query".equals(span.getName()))
+				.findFirst()
+				.orElseThrow(IllegalStateException::new);
 
-			SpanAssert.assertThat(querySpan).assertThatThrowable()
-					.hasMessageContaining("SELECT * FROM not-existing-table");
+			SpanAssert.assertThat(querySpan)
+				.assertThatThrowable()
+				.hasMessageContaining("SELECT * FROM not-existing-table");
 		};
 	}
 

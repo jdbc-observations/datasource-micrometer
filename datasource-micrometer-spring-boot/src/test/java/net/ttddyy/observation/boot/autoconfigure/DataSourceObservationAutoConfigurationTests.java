@@ -73,39 +73,43 @@ class DataSourceObservationAutoConfigurationTests {
 	@Test
 	void defaultEnabled() {
 		new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
-				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class)).run((context) -> {
-					assertThat(context).hasSingleBean(DataSourceObservationAutoConfiguration.class);
-				});
+			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+			.withBean(ObservationRegistry.class, ObservationRegistry::create)
+			.withBean(Tracer.class, () -> mock(Tracer.class))
+			.run((context) -> {
+				assertThat(context).hasSingleBean(DataSourceObservationAutoConfiguration.class);
+			});
 	}
 
 	@Test
 	void disabled() {
 		new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
-				.withPropertyValues("jdbc.datasource-proxy.enabled=false").run((context) -> {
-					assertThat(context).doesNotHaveBean(DataSourceObservationAutoConfiguration.class);
-				});
+			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+			.withPropertyValues("jdbc.datasource-proxy.enabled=false")
+			.run((context) -> {
+				assertThat(context).doesNotHaveBean(DataSourceObservationAutoConfiguration.class);
+			});
 	}
 
 	@Test
 	void customObservationConventions() {
 		new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
-				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class)).withBean(CustomConnectionObservationConvention.class)
-				.withBean(CustomQueryObservationConvention.class).withBean(CustomResultSetObservationConvention.class)
-				.run((context) -> {
-					assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
-						assertThat(listener).extracting("connectionObservationConvention")
-								.isInstanceOf(CustomConnectionObservationConvention.class);
-						assertThat(listener).extracting("queryObservationConvention")
-								.isInstanceOf(CustomQueryObservationConvention.class);
-						assertThat(listener).extracting("resultSetObservationConvention")
-								.isInstanceOf(CustomResultSetObservationConvention.class);
-					});
+			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+			.withBean(ObservationRegistry.class, ObservationRegistry::create)
+			.withBean(Tracer.class, () -> mock(Tracer.class))
+			.withBean(CustomConnectionObservationConvention.class)
+			.withBean(CustomQueryObservationConvention.class)
+			.withBean(CustomResultSetObservationConvention.class)
+			.run((context) -> {
+				assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
+					assertThat(listener).extracting("connectionObservationConvention")
+						.isInstanceOf(CustomConnectionObservationConvention.class);
+					assertThat(listener).extracting("queryObservationConvention")
+						.isInstanceOf(CustomQueryObservationConvention.class);
+					assertThat(listener).extracting("resultSetObservationConvention")
+						.isInstanceOf(CustomResultSetObservationConvention.class);
 				});
+			});
 	}
 
 	@Test
@@ -199,9 +203,10 @@ class DataSourceObservationAutoConfigurationTests {
 	@Test
 	void hikari() {
 		ApplicationContextRunner runner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
-				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class)).withBean(CustomConnectionObservationConvention.class);
+			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+			.withBean(ObservationRegistry.class, ObservationRegistry::create)
+			.withBean(Tracer.class, () -> mock(Tracer.class))
+			.withBean(CustomConnectionObservationConvention.class);
 
 		// hikari is available in classpath
 		runner.run((context) -> {
@@ -218,34 +223,36 @@ class DataSourceObservationAutoConfigurationTests {
 	@Test
 	void observationHandler() {
 		new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
-				.withPropertyValues("management.tracing.enabled=true")
-				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class)).run((context) -> {
-					assertThat(context).getBean(ConnectionTracingObservationHandler.class);
-					assertThat(context).getBean(QueryTracingObservationHandler.class);
-					assertThat(context).getBean(ResultSetTracingObservationHandler.class);
-				});
+			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+			.withPropertyValues("management.tracing.enabled=true")
+			.withBean(ObservationRegistry.class, ObservationRegistry::create)
+			.withBean(Tracer.class, () -> mock(Tracer.class))
+			.run((context) -> {
+				assertThat(context).getBean(ConnectionTracingObservationHandler.class);
+				assertThat(context).getBean(QueryTracingObservationHandler.class);
+				assertThat(context).getBean(ResultSetTracingObservationHandler.class);
+			});
 	}
 
 	@Test
 	void includeNotSpecified() {
 		new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
-				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class)).run((context) -> {
-					assertThat(context).hasSingleBean(ConnectionTracingObservationHandler.class)
-							.hasSingleBean(QueryTracingObservationHandler.class)
-							.hasSingleBean(ResultSetTracingObservationHandler.class);
-				});
+			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+			.withBean(ObservationRegistry.class, ObservationRegistry::create)
+			.withBean(Tracer.class, () -> mock(Tracer.class))
+			.run((context) -> {
+				assertThat(context).hasSingleBean(ConnectionTracingObservationHandler.class)
+					.hasSingleBean(QueryTracingObservationHandler.class)
+					.hasSingleBean(ResultSetTracingObservationHandler.class);
+			});
 	}
 
 	@Test
 	void event() {
 		ApplicationContextRunner runner = new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
-				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class));
+			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+			.withBean(ObservationRegistry.class, ObservationRegistry::create)
+			.withBean(Tracer.class, () -> mock(Tracer.class));
 		runner.run((context) -> {
 			assertThat(context).doesNotHaveBean(JdbcEventPublishingListener.class);
 		});
@@ -259,22 +266,22 @@ class DataSourceObservationAutoConfigurationTests {
 	void includeTypes(String property, Set<Class<? extends DataSourceBaseObservationHandler>> handlers,
 			Set<JdbcObservationDocumentation> expectedSupportedTypes) {
 		new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
-				.withPropertyValues("management.tracing.enabled=true").withPropertyValues(property)
-				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class)).run((context) -> {
-					assertThat(context).getBeans(ObservationHandler.class).extracting(Map::values)
-							.satisfies((beans) -> {
-								assertThat(beans).extracting(Object::getClass).allMatch(handlers::contains);
-							});
-					assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
-						assertThat(ReflectionTestUtils.getField(listener, "supportedTypes"))
-								.isInstanceOfSatisfying(Set.class, (supportedTypes) -> {
-									assertThat(supportedTypes)
-											.containsExactlyInAnyOrderElementsOf(expectedSupportedTypes);
-								});
-					});
+			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+			.withPropertyValues("management.tracing.enabled=true")
+			.withPropertyValues(property)
+			.withBean(ObservationRegistry.class, ObservationRegistry::create)
+			.withBean(Tracer.class, () -> mock(Tracer.class))
+			.run((context) -> {
+				assertThat(context).getBeans(ObservationHandler.class).extracting(Map::values).satisfies((beans) -> {
+					assertThat(beans).extracting(Object::getClass).allMatch(handlers::contains);
 				});
+				assertThat(context).getBean(DataSourceObservationListener.class).satisfies((listener) -> {
+					assertThat(ReflectionTestUtils.getField(listener, "supportedTypes"))
+						.isInstanceOfSatisfying(Set.class, (supportedTypes) -> {
+							assertThat(supportedTypes).containsExactlyInAnyOrderElementsOf(expectedSupportedTypes);
+						});
+				});
+			});
 	}
 
 	static Stream<Arguments> includeTypes() {

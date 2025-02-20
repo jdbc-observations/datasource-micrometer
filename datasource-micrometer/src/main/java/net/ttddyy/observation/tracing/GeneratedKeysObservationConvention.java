@@ -33,10 +33,14 @@ public interface GeneratedKeysObservationConvention extends ResultSetObservation
 
 	@Override
 	default KeyValues getHighCardinalityKeyValues(ResultSetContext context) {
-		String keys = context.getOperations().stream().filter(ResultSetOperation::isDataRetrievalOperation)
-				.map(ResultSetOperation::getResult).map(Object::toString).collect(Collectors.joining(","));
+		String keys = context.getOperations()
+			.stream()
+			.filter(ResultSetOperation::isDataRetrievalOperation)
+			.map(ResultSetOperation::getResult)
+			.map(Object::toString)
+			.collect(Collectors.joining(","));
 		return ResultSetObservationConvention.super.getHighCardinalityKeyValues(context)
-				.and(KeyValue.of(GeneratedKeysHighCardinalityKeyNames.KEYS.asString(), keys));
+			.and(KeyValue.of(GeneratedKeysHighCardinalityKeyNames.KEYS.asString(), keys));
 	}
 
 }

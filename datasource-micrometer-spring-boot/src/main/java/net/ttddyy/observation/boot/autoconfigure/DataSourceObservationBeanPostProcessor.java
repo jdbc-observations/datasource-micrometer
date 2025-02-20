@@ -89,7 +89,7 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 			ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSourceName, dataSource);
 			getConfigurer().configure(builder);
 			this.proxyDataSourceBuilderCustomizers.orderedStream()
-					.forEach(customizer -> customizer.customize(builder, dataSource, beanName, dataSourceName));
+				.forEach(customizer -> customizer.customize(builder, dataSource, beanName, dataSourceName));
 			return builder.build();
 		}
 		else {

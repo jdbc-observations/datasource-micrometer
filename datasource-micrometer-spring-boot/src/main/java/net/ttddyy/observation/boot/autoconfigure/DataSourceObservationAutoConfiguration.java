@@ -99,8 +99,10 @@ public class DataSourceObservationAutoConfiguration {
 			ObjectProvider<ConnectionObservationConvention> connectionObservationConventions,
 			ObjectProvider<QueryObservationConvention> queryObservationConventions,
 			ObjectProvider<ResultSetObservationConvention> resultSetObservationConventions) {
-		Set<JdbcObservationDocumentation> supportedDocumentations = jdbcProperties.getIncludes().stream()
-				.map((include) -> include.supportedDocumentation).collect(Collectors.toSet());
+		Set<JdbcObservationDocumentation> supportedDocumentations = jdbcProperties.getIncludes()
+			.stream()
+			.map((include) -> include.supportedDocumentation)
+			.collect(Collectors.toSet());
 		// to avoid circular reference due to MeterBinder creation at MeterRegistry,
 		// use supplier to lazily reference observation registry.
 		DataSourceObservationListener listener = new DataSourceObservationListener(registry::getObject);
@@ -224,8 +226,8 @@ public class DataSourceObservationAutoConfiguration {
 			details.append("=");
 			if (environment.containsProperty(INCLUDES_PROP_KEY)) {
 				try {
-					traceTypes = Binder.get(environment).bindOrCreate(INCLUDES_PROP_KEY,
-							Bindable.setOf(TraceType.class));
+					traceTypes = Binder.get(environment)
+						.bindOrCreate(INCLUDES_PROP_KEY, Bindable.setOf(TraceType.class));
 					details.append(environment.getProperty(INCLUDES_PROP_KEY));
 				}
 				catch (BindException ex) {

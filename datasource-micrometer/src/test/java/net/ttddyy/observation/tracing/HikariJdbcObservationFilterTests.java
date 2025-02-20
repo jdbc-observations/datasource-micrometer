@@ -111,8 +111,8 @@ class HikariJdbcObservationFilterTests {
 
 	private static void assertObservationHasHikariKeys(Context result) {
 		ObservationContextAssert.assertThat(result)
-				.hasLowCardinalityKeyValue(ConnectionKeyNames.DATASOURCE_DRIVER.asString(), DRIVER)
-				.hasLowCardinalityKeyValue(ConnectionKeyNames.DATASOURCE_POOL.asString(), POOL);
+			.hasLowCardinalityKeyValue(ConnectionKeyNames.DATASOURCE_DRIVER.asString(), DRIVER)
+			.hasLowCardinalityKeyValue(ConnectionKeyNames.DATASOURCE_POOL.asString(), POOL);
 	}
 
 	private static DataSource givenHikariDataSource() throws SQLException {
@@ -128,8 +128,8 @@ class HikariJdbcObservationFilterTests {
 	private void assertNotApplicableContext(Context original, Context result) {
 		assertThat(result).isSameAs(original);
 		ObservationContextAssert.assertThat(result)
-				.doesNotHaveLowCardinalityKeyValueWithKey(ConnectionKeyNames.DATASOURCE_DRIVER.name())
-				.doesNotHaveLowCardinalityKeyValueWithKey(ConnectionKeyNames.DATASOURCE_POOL.name());
+			.doesNotHaveLowCardinalityKeyValueWithKey(ConnectionKeyNames.DATASOURCE_DRIVER.name())
+			.doesNotHaveLowCardinalityKeyValueWithKey(ConnectionKeyNames.DATASOURCE_POOL.name());
 	}
 
 }

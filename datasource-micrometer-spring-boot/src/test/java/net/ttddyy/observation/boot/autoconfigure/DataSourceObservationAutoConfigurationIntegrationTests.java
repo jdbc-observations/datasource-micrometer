@@ -81,13 +81,16 @@ class DataSourceObservationAutoConfigurationIntegrationTests {
 			});
 
 			// verify initial table/data creation
-			SpansAssert.assertThat(getFinishedSpans()).hasNumberOfSpansWithNameEqualTo("query", 3)
-					.assertThatASpanWithNameEqualTo("query").hasTagWithKey("jdbc.query[0]");
+			SpansAssert.assertThat(getFinishedSpans())
+				.hasNumberOfSpansWithNameEqualTo("query", 3)
+				.assertThatASpanWithNameEqualTo("query")
+				.hasTagWithKey("jdbc.query[0]");
 
-			List<FinishedSpan> querySpans = getFinishedSpans().stream().filter((span) -> "query".equals(span.getName()))
-					.toList();
-			SpanAssert.assertThat(querySpans.get(0)).hasTag("jdbc.query[0]",
-					"CREATE TABLE emp(id INT, name VARCHAR(20))");
+			List<FinishedSpan> querySpans = getFinishedSpans().stream()
+				.filter((span) -> "query".equals(span.getName()))
+				.toList();
+			SpanAssert.assertThat(querySpans.get(0))
+				.hasTag("jdbc.query[0]", "CREATE TABLE emp(id INT, name VARCHAR(20))");
 			SpansAssert.assertThat(querySpans.subList(1, 3)).allSatisfy((span) -> {
 				SpanAssert.assertThat(span).hasTagWithKey("jdbc.query[0]");
 			});
@@ -98,20 +101,20 @@ class DataSourceObservationAutoConfigurationIntegrationTests {
 
 			// verify the add operation
 			SpansAssert.assertThat(getFinishedSpans())
-					.hasASpanWithName("query",
-							(spanAssert) -> spanAssert.hasTag("jdbc.query[0]", "INSERT INTO emp VALUES (?, ?)")
-									.doesNotHaveTagWithKey("jdbc.param[0]"))
-					.hasASpanWithName("connection", (spanAssert -> spanAssert.hasEventWithNameEqualTo("commit")));
+				.hasASpanWithName("query",
+						(spanAssert) -> spanAssert.hasTag("jdbc.query[0]", "INSERT INTO emp VALUES (?, ?)")
+							.doesNotHaveTagWithKey("jdbc.param[0]"))
+				.hasASpanWithName("connection", (spanAssert -> spanAssert.hasEventWithNameEqualTo("commit")));
 			this.testSpanHandler.clear();
 
 			// perform count and verify
 			int count = this.myService.count();
 			assertThat(count).isEqualTo(3);
 			SpansAssert.assertThat(getFinishedSpans())
-					.hasASpanWithName("query",
-							(spanAssert) -> spanAssert.hasTag("jdbc.query[0]", "SELECT COUNT(*) FROM emp"))
-					.hasASpanWithName("result-set", (spanAssert) -> spanAssert.hasTag("jdbc.row-count", "1"))
-					.hasASpanWithName("connection");
+				.hasASpanWithName("query",
+						(spanAssert) -> spanAssert.hasTag("jdbc.query[0]", "SELECT COUNT(*) FROM emp"))
+				.hasASpanWithName("result-set", (spanAssert) -> spanAssert.hasTag("jdbc.row-count", "1"))
+				.hasASpanWithName("connection");
 		}
 
 	}

@@ -110,8 +110,11 @@ class DataSourceObservationListenerTests {
 		listener.afterQuery(executionInfo, queryInfos);
 		assertThat(tracer.currentSpan()).isNull();
 
-		assertThat(tracer).onlySpan().hasNameEqualTo("query").hasTag("jdbc.query[0]", "SELECT 1")
-				.doesNotHaveTagWithKey("jdbc.row-affected").doesNotHaveTagWithKey("jdbc.params[0]");
+		assertThat(tracer).onlySpan()
+			.hasNameEqualTo("query")
+			.hasTag("jdbc.query[0]", "SELECT 1")
+			.doesNotHaveTagWithKey("jdbc.row-affected")
+			.doesNotHaveTagWithKey("jdbc.params[0]");
 	}
 
 	@Test
@@ -218,8 +221,9 @@ class DataSourceObservationListenerTests {
 		listener.beforeQuery(executionInfo, queryInfos);
 		listener.afterQuery(executionInfo, queryInfos);
 
-		assertThat(tracer).onlySpan().hasNameEqualTo("query").hasTag("jdbc.params[0]",
-				"(id=100,name=foo),(id=200,name=bar)");
+		assertThat(tracer).onlySpan()
+			.hasNameEqualTo("query")
+			.hasTag("jdbc.params[0]", "(id=100,name=foo),(id=200,name=bar)");
 	}
 
 	@Test
@@ -262,8 +266,10 @@ class DataSourceObservationListenerTests {
 		listener.beforeQuery(executionInfo, queryInfos);
 		listener.afterQuery(executionInfo, queryInfos);
 
-		assertThat(tracer).onlySpan().hasRemoteServiceNameEqualTo("myDS").hasIpEqualTo("localhost")
-				.hasPortEqualTo(5555);
+		assertThat(tracer).onlySpan()
+			.hasRemoteServiceNameEqualTo("myDS")
+			.hasIpEqualTo("localhost")
+			.hasPortEqualTo(5555);
 	}
 
 	@ParameterizedTest
@@ -346,8 +352,12 @@ class DataSourceObservationListenerTests {
 		listener.afterMethod(secondExecutionContext);
 		assertThat(tracer.currentSpan()).isNull();
 
-		assertThat(this.tracer).onlySpan().hasNameEqualTo("connection").hasRemoteServiceNameEqualTo("myDS")
-				.hasIpEqualTo("localhost").hasPortEqualTo(5555).hasEventWithNameEqualTo("acquired");
+		assertThat(this.tracer).onlySpan()
+			.hasNameEqualTo("connection")
+			.hasRemoteServiceNameEqualTo("myDS")
+			.hasIpEqualTo("localhost")
+			.hasPortEqualTo(5555)
+			.hasEventWithNameEqualTo("acquired");
 	}
 
 	@Test

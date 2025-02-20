@@ -110,8 +110,10 @@ class DataSourceListenerIncludeTypesIntegrationTests {
 			DataSourceObservationListener listener = new DataSourceObservationListener(registry);
 			listener.setSupportedTypes(new HashSet<>(supportedTypeLists));
 
-			ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource).listener(listener)
-					.name("proxy-ds").methodListener(listener);
+			ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource)
+				.listener(listener)
+				.name("proxy-ds")
+				.methodListener(listener);
 			builder.proxyResultSet(); // enable ResultSet observation
 			builder.proxyGeneratedKeys(); // enable Generated Keys observation
 			builder.name("proxy"); // translates to the service name
@@ -120,9 +122,10 @@ class DataSourceListenerIncludeTypesIntegrationTests {
 
 		protected void verifySpanNames(List<JdbcObservationDocumentation> supportedTypeLists) {
 			Set<String> expectedSpanNames = supportedTypeLists.stream()
-					.map(JdbcObservationDocumentation::getContextualName).collect(Collectors.toSet());
+				.map(JdbcObservationDocumentation::getContextualName)
+				.collect(Collectors.toSet());
 			assertThat(this.tracer.getSpans()).extracting(SimpleSpan::getName)
-					.containsExactlyInAnyOrderElementsOf(expectedSpanNames);
+				.containsExactlyInAnyOrderElementsOf(expectedSpanNames);
 		}
 
 		protected int countTable() throws SQLException {

@@ -114,8 +114,10 @@ public interface ConnectionAttributesManager {
 				}
 			}
 			this.generatedKeys.removeAll(resultSets);
-			return resultSets.stream().map(this.byResultSet::remove).filter(Objects::nonNull)
-					.collect(Collectors.toSet());
+			return resultSets.stream()
+				.map(this.byResultSet::remove)
+				.filter(Objects::nonNull)
+				.collect(Collectors.toSet());
 		}
 
 		Set<ResultSetAttributes> removeAll() {

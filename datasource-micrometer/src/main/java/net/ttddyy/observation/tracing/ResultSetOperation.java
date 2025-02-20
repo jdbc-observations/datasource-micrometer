@@ -43,8 +43,8 @@ public class ResultSetOperation {
 	static {
 		// start with "get" but not data retrieval
 		NON_DATA_RETRIEVAL_METHODS
-				.addAll(Arrays.asList("getConcurrency", "getCursorName", "getMetaData", "getFetchDirection",
-						"getFetchSize", "getHoldability", "getRow", "getStatement", "getType", "getWarnings"));
+			.addAll(Arrays.asList("getConcurrency", "getCursorName", "getMetaData", "getFetchDirection", "getFetchSize",
+					"getHoldability", "getRow", "getStatement", "getType", "getWarnings"));
 	}
 
 	public static boolean isDataRetrievalOperation(ResultSetOperation op) {

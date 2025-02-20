@@ -40,8 +40,8 @@ public interface ResultSetObservationConvention extends ObservationConvention<Re
 
 	@Override
 	default KeyValues getHighCardinalityKeyValues(ResultSetContext context) {
-		return KeyValues.of(
-				KeyValue.of(ResultSetHighCardinalityKeyNames.ROW_COUNT.asString(), String.valueOf(context.getCount())));
+		return KeyValues
+			.of(KeyValue.of(ResultSetHighCardinalityKeyNames.ROW_COUNT.asString(), String.valueOf(context.getCount())));
 	}
 
 	@Override
