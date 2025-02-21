@@ -83,6 +83,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Log using Commons.</div>
 </dd>
+<dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceType.html#CONCRETE" class="member-name-link">CONCRETE</a> - Enum constant in enum class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceType.html" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.DataSourceType</a></dt>
+<dd>
+<div class="block">Use ProxyDataSource from datasource-proxy</div>
+</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/DataSourceProxyBuilderConfigurer.html#configure(net.ttddyy.dsproxy.support.ProxyDataSourceBuilder)" class="member-name-link">configure(ProxyDataSourceBuilder)</a> - Method in class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DataSourceProxyBuilderConfigurer.html" title="class in net.ttddyy.observation.boot.autoconfigure">DataSourceProxyBuilderConfigurer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.TraceType.html#CONNECTION" class="member-name-link">CONNECTION</a> - Enum constant in enum class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.TraceType.html" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.TraceType</a></dt>
@@ -201,7 +205,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/DataSourceObservationBeanPostProcessor.html#%3Cinit%3E(org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider)" class="member-name-link">DataSourceObservationBeanPostProcessor(ObjectProvider&lt;JdbcProperties&gt;, ObjectProvider&lt;DataSourceNameResolver&gt;, ObjectProvider&lt;QueryExecutionListener&gt;, ObjectProvider&lt;MethodExecutionListener&gt;, ObjectProvider&lt;ParameterTransformer&gt;, ObjectProvider&lt;QueryTransformer&gt;, ObjectProvider&lt;ResultSetProxyLogicFactory&gt;, ObjectProvider&lt;ResultSetProxyLogicFactory&gt;, ObjectProvider&lt;DataSourceProxyConnectionIdManagerProvider&gt;, ObjectProvider&lt;ProxyDataSourceBuilderCustomizer&gt;)</a> - Constructor for class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DataSourceObservationBeanPostProcessor.html" title="class in net.ttddyy.observation.boot.autoconfigure">DataSourceObservationBeanPostProcessor</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/ttddyy/observation/boot/autoconfigure/DataSourceObservationAutoConfiguration.html#dataSourceObservationListener(org.springframework.beans.factory.ObjectProvider,net.ttddyy.observation.boot.autoconfigure.JdbcProperties,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider)" class="member-name-link">dataSourceObservationListener(ObjectProvider&lt;ObservationRegistry&gt;, JdbcProperties, ObjectProvider&lt;ConnectionObservationConvention&gt;, ObjectProvider&lt;QueryObservationConvention&gt;, ObjectProvider&lt;ResultSetObservationConvention&gt;)</a> - Method in class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DataSourceObservationAutoConfiguration.html" title="class in net.ttddyy.observation.boot.autoconfigure">DataSourceObservationAutoConfiguration</a></dt>
+<dt><a href="net/ttddyy/observation/boot/autoconfigure/DataSourceObservationAutoConfiguration.html#dataSourceObservationListener(org.springframework.beans.factory.ObjectProvider,net.ttddyy.observation.boot.autoconfigure.JdbcProperties,org.springframework.beans.factory.ObjectProvider)" class="member-name-link">dataSourceObservationListener(ObjectProvider&lt;ObservationRegistry&gt;, JdbcProperties, ObjectProvider&lt;ObservationConvention&lt;?&gt;&gt;)</a> - Method in class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DataSourceObservationAutoConfiguration.html" title="class in net.ttddyy.observation.boot.autoconfigure">DataSourceObservationAutoConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/tracing/DataSourceObservationListener.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">DataSourceObservationListener</a> - Class in <a href="net/ttddyy/observation/tracing/package-summary.html">net.ttddyy.observation.tracing</a></dt>
 <dd>
@@ -346,6 +350,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.SlowQuery.html#getThreshold()" class="member-name-link">getThreshold()</a> - Method in class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.SlowQuery.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.SlowQuery</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceProxy.html#getType()" class="member-name-link">getType()</a> - Method in class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceProxy.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.DataSourceProxy</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:H">H</h2>
 <dl class="index">
@@ -439,6 +445,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceProxy.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.DataSourceProxy</a> - Class in <a href="net/ttddyy/observation/boot/autoconfigure/package-summary.html">net.ttddyy.observation.boot.autoconfigure</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceType.html" class="type-name-link" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.DataSourceType</a> - Enum Class in <a href="net/ttddyy/observation/boot/autoconfigure/package-summary.html">net.ttddyy.observation.boot.autoconfigure</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Event.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.Event</a> - Class in <a href="net/ttddyy/observation/boot/autoconfigure/package-summary.html">net.ttddyy.observation.boot.autoconfigure</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Logging.html" class="type-name-link" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.Logging</a> - Enum Class in <a href="net/ttddyy/observation/boot/autoconfigure/package-summary.html">net.ttddyy.observation.boot.autoconfigure</a></dt>
@@ -512,6 +520,10 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/DataSourceObservationBeanPostProcessor.html#postProcessAfterInitialization(java.lang.Object,java.lang.String)" class="member-name-link">postProcessAfterInitialization(Object, String)</a> - Method in class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DataSourceObservationBeanPostProcessor.html" title="class in net.ttddyy.observation.boot.autoconfigure">DataSourceObservationBeanPostProcessor</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceType.html#PROXY" class="member-name-link">PROXY</a> - Enum constant in enum class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceType.html" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.DataSourceType</a></dt>
+<dd>
+<div class="block">Use a JDK proxy</div>
+</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/ProxyDataSourceBuilderCustomizer.html" class="type-name-link" title="interface in net.ttddyy.observation.boot.autoconfigure">ProxyDataSourceBuilderCustomizer</a> - Interface in <a href="net/ttddyy/observation/boot/autoconfigure/package-summary.html">net.ttddyy.observation.boot.autoconfigure</a></dt>
 <dd>
 <div class="block">A customizer for <code>ProxyDataSourceBuilder</code>.</div>
@@ -682,6 +694,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.SlowQuery.html#setThreshold(long)" class="member-name-link">setThreshold(long)</a> - Method in class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.SlowQuery.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.SlowQuery</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceProxy.html#setType(net.ttddyy.observation.boot.autoconfigure.JdbcProperties.DataSourceType)" class="member-name-link">setType(JdbcProperties.DataSourceType)</a> - Method in class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceProxy.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.DataSourceProxy</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Logging.html#SLF4J" class="member-name-link">SLF4J</a> - Enum constant in enum class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Logging.html" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.Logging</a></dt>
 <dd>
 <div class="block">Log using SLF4J.</div>
@@ -707,6 +721,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:V">V</h2>
 <dl class="index">
+<dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceType.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceType.html" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.DataSourceType</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Logging.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Logging.html" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.Logging</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
@@ -750,6 +768,11 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/ttddyy/observation/tracing/JdbcObservationDocumentation.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/JdbcObservationDocumentation.html" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
+<dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceType.html#values()" class="member-name-link">values()</a> - Static method in enum class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceType.html" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.DataSourceType</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Logging.html#values()" class="member-name-link">values()</a> - Static method in enum class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Logging.html" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.Logging</a></dt>
 <dd>

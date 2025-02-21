@@ -613,8 +613,10 @@ window.onload = function() {
 <li><a href="#how-to-customize-the-proxydatasource-name">2.5. How to Customize the ProxyDataSource Name</a></li>
 <li><a href="#how-to-customize-the-proxydatasource-creation">2.6. How to Customize the ProxyDataSource Creation</a></li>
 <li><a href="#how-to-modify-the-query-in-span">2.7. How to Modify the Query in Span</a></li>
-<li><a href="#how-to-publish-application-events">2.8. How to enable application events</a></li>
+<li><a href="#how-to-publish-application-events">2.8. How to Enable Application Events</a></li>
 <li><a href="#how-to-selectively-tag-queries">2.9. How to Selectively Tag Queries</a></li>
+<li><a href="#how-to-use-custom-observationconvention">2.10. How to Use Custom ObservationConvention</a></li>
+<li><a href="#how-to-switch-to-use-proxydatasource">2.11. How to Switch to Use ProxyDataSource</a></li>
 </ul>
 </li>
 </ul>
@@ -850,7 +852,7 @@ public ObservationFilter observationFilter() {
 </div>
 </div>
 <div class="sect2">
-<h3 id="how-to-publish-application-events"><a class="anchor" href="#how-to-publish-application-events"></a><a class="link" href="#how-to-publish-application-events">2.8. How to enable application events</a></h3>
+<h3 id="how-to-publish-application-events"><a class="anchor" href="#how-to-publish-application-events"></a><a class="link" href="#how-to-publish-application-events">2.8. How to Enable Application Events</a></h3>
 <div class="paragraph">
 <p>Set the <code>jdbc.event.enabled</code> property to <code>true</code>.</p>
 </div>
@@ -875,6 +877,19 @@ ObservationPredicate myObservationPredicate() {
 </div>
 <div class="paragraph">
 <p>A Kotlin-flavored implementation can be found on this <a href="https://github.com/jdbc-observations/datasource-micrometer/issues/17#issuecomment-2668657969">issue comment</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-use-custom-observationconvention"><a class="anchor" href="#how-to-use-custom-observationconvention"></a><a class="link" href="#how-to-use-custom-observationconvention">2.10. How to Use Custom ObservationConvention</a></h3>
+<div class="paragraph">
+<p>Define beans for your custom observation conventions, which will then be automatically detected and applied to the listener.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-switch-to-use-proxydatasource"><a class="anchor" href="#how-to-switch-to-use-proxydatasource"></a><a class="link" href="#how-to-switch-to-use-proxydatasource">2.11. How to Switch to Use ProxyDataSource</a></h3>
+<div class="paragraph">
+<p>Since version <code>1.1</code>, the instrumented <code>DataSource</code> is now a pure JDK proxy.
+To revert to the previous behavior using <code>ProxyDataSource</code>, set the property: <code>jdbc.datasource-proxy.type=CONCRETE</code></p>
 </div>
 </div>
 </div>

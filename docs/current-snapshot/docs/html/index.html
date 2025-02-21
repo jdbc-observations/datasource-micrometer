@@ -629,7 +629,7 @@ window.onload = function() {
 </li>
 <li><a href="#using-limitations">3.3. Limitations</a>
 <ul class="sectlevel3">
-<li><a href="#using-limitations-oiv">3.3.1. Open In View, Open Session In View</a></li>
+<li><a href="#using-limitations-open-session-in-view">3.3.1. Open Session In View</a></li>
 </ul>
 </li>
 </ul>
@@ -654,8 +654,10 @@ window.onload = function() {
 <li><a href="#how-to-customize-the-proxydatasource-name">4.2.5. How to Customize the ProxyDataSource Name</a></li>
 <li><a href="#how-to-customize-the-proxydatasource-creation">4.2.6. How to Customize the ProxyDataSource Creation</a></li>
 <li><a href="#how-to-modify-the-query-in-span">4.2.7. How to Modify the Query in Span</a></li>
-<li><a href="#how-to-publish-application-events">4.2.8. How to enable application events</a></li>
+<li><a href="#how-to-publish-application-events">4.2.8. How to Enable Application Events</a></li>
 <li><a href="#how-to-selectively-tag-queries">4.2.9. How to Selectively Tag Queries</a></li>
+<li><a href="#how-to-use-custom-observationconvention">4.2.10. How to Use Custom ObservationConvention</a></li>
+<li><a href="#how-to-switch-to-use-proxydatasource">4.2.11. How to Switch to Use ProxyDataSource</a></li>
 </ul>
 </li>
 </ul>
@@ -933,13 +935,13 @@ When enabled, it publishes events - <code>JdbcQueryExecutionEvent</code> and <co
 <div class="sect2">
 <h3 id="using-limitations"><a class="anchor" href="#using-limitations"></a><a class="link" href="#using-limitations">3.3. Limitations</a></h3>
 <div class="sect3">
-<h4 id="using-limitations-oiv"><a class="anchor" href="#using-limitations-oiv"></a><a class="link" href="#using-limitations-oiv">3.3.1. Open In View, Open Session In View</a></h4>
+<h4 id="using-limitations-open-session-in-view"><a class="anchor" href="#using-limitations-open-session-in-view"></a><a class="link" href="#using-limitations-open-session-in-view">3.3.1. Open Session In View</a></h4>
 <div class="paragraph">
-<p>Unfortunately, Open In View (OIV) / Open Session In View (OSIV) are not supported.
-This is because OIV/OSIV delays closing the database connection until the HTTP response is sent.</p>
+<p>Unfortunately, Open Session In View (OSIV) is not supported.
+This is because OSIV delays closing the database connection until the HTTP response is sent.</p>
 </div>
 <div class="paragraph">
-<p>Observation scope orders without OIV/OSIV:</p>
+<p>Observation scope orders without OSIV:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -961,7 +963,7 @@ This is because OIV/OSIV delays closing the database connection until the HTTP r
 </ol>
 </div>
 <div class="paragraph">
-<p>However, with OIV/OSIV enabled, the DB connection closing is delayed, leading to the following order:</p>
+<p>However, with OSIV enabled, the DB connection closing is delayed, leading to the following order:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -986,7 +988,7 @@ This is because OIV/OSIV delays closing the database connection until the HTTP r
 <p>Since observation scopes must be closed in the reverse order of their creation, this swapped ordering causes observation leaks.</p>
 </div>
 <div class="paragraph">
-<p>To disable OIV/OSIV, set <code>spring.jpa.open-in-view=false</code>.</p>
+<p>To disable OSIV, set <code>spring.jpa.open-in-view=false</code>.</p>
 </div>
 </div>
 </div>
@@ -1217,7 +1219,7 @@ public ObservationFilter observationFilter() {
 </div>
 </div>
 <div class="sect3">
-<h4 id="how-to-publish-application-events"><a class="anchor" href="#how-to-publish-application-events"></a><a class="link" href="#how-to-publish-application-events">4.2.8. How to enable application events</a></h4>
+<h4 id="how-to-publish-application-events"><a class="anchor" href="#how-to-publish-application-events"></a><a class="link" href="#how-to-publish-application-events">4.2.8. How to Enable Application Events</a></h4>
 <div class="paragraph">
 <p>Set the <code>jdbc.event.enabled</code> property to <code>true</code>.</p>
 </div>
@@ -1242,6 +1244,19 @@ ObservationPredicate myObservationPredicate() {
 </div>
 <div class="paragraph">
 <p>A Kotlin-flavored implementation can be found on this <a href="https://github.com/jdbc-observations/datasource-micrometer/issues/17#issuecomment-2668657969">issue comment</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="how-to-use-custom-observationconvention"><a class="anchor" href="#how-to-use-custom-observationconvention"></a><a class="link" href="#how-to-use-custom-observationconvention">4.2.10. How to Use Custom ObservationConvention</a></h4>
+<div class="paragraph">
+<p>Define beans for your custom observation conventions, which will then be automatically detected and applied to the listener.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="how-to-switch-to-use-proxydatasource"><a class="anchor" href="#how-to-switch-to-use-proxydatasource"></a><a class="link" href="#how-to-switch-to-use-proxydatasource">4.2.11. How to Switch to Use ProxyDataSource</a></h4>
+<div class="paragraph">
+<p>Since version <code>1.1</code>, the instrumented <code>DataSource</code> is now a pure JDK proxy.
+To revert to the previous behavior using <code>ProxyDataSource</code>, set the property: <code>jdbc.datasource-proxy.type=CONCRETE</code></p>
 </div>
 </div>
 </div>
@@ -1300,7 +1315,7 @@ Also, you can define your own properties.
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.datasource-proxy.logging</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>slf4j</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Logging to use for logging queries.</p></td>
 </tr>
 <tr>
@@ -1342,6 +1357,11 @@ Also, you can define your own properties.
 <td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.datasource-proxy.slow-query.threshold</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>300</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Number of seconds to consider query as slow.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.datasource-proxy.type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>proxy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type for the generating DataSource.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.event.enabled</p></td>
@@ -1620,31 +1640,6 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </tr>
 </tbody>
 </table>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. High cardinality Keys</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Name</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Description</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>jdbc.generated-keys</code> <em>(required)</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Generated keys.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
 </div>
 <div class="sect4">
 <h5 id="observability-metrics-query"><a class="anchor" href="#observability-metrics-query"></a><a class="link" href="#observability-metrics-query">Query</a></h5>
@@ -1660,6 +1655,86 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </div>
 <div class="paragraph">
 <p><strong>Metric name</strong> <code>jdbc.query.active</code>. <strong>Type</strong> <code>long task timer</code>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+KeyValues that are added after starting the Observation might be missing from the *.active metrics.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Micrometer internally uses <code>nanoseconds</code> for the baseunit. However, each backend determines the actual baseunit. (i.e. Prometheus uses seconds)
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Fully qualified name of the enclosing class <code>net.ttddyy.observation.tracing.JdbcObservationDocumentation</code>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+All tags must be prefixed with <code>jdbc</code> prefix!
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. Low cardinality Keys</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Description</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>jdbc.datasource.name</code> <em>(required)</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Name of the JDBC datasource.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="observability-metrics-result-set"><a class="anchor" href="#observability-metrics-result-set"></a><a class="link" href="#observability-metrics-result-set">Result Set</a></h5>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Span created when working with JDBC result set.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p><strong>Metric name</strong> <code>jdbc.result-set</code>. <strong>Type</strong> <code>timer</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Metric name</strong> <code>jdbc.result-set.active</code>. <strong>Type</strong> <code>long task timer</code>.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -1725,152 +1800,6 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </tr>
 </tbody>
 </table>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 6. High cardinality Keys</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Name</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Description</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>jdbc.params[%s]</code> <em>(required)</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JDBC query parameter values. (since the name contains <code>%s</code> the final value will be resolved at runtime)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>jdbc.query[%s]</code> <em>(required)</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Name of the JDBC query. (since the name contains <code>%s</code> the final value will be resolved at runtime)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>jdbc.row-affected</code> <em>(required)</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Result of "executeUpdate()", "executeLargeUpdate()", "executeBatch()", or "executeLargeBatch()" on "Statement". For batch operations, the value is represented as array.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect4">
-<h5 id="observability-metrics-result-set"><a class="anchor" href="#observability-metrics-result-set"></a><a class="link" href="#observability-metrics-result-set">Result Set</a></h5>
-<div class="quoteblock">
-<blockquote>
-<div class="paragraph">
-<p>Span created when working with JDBC result set.</p>
-</div>
-</blockquote>
-</div>
-<div class="paragraph">
-<p><strong>Metric name</strong> <code>jdbc.result-set</code>. <strong>Type</strong> <code>timer</code>.</p>
-</div>
-<div class="paragraph">
-<p><strong>Metric name</strong> <code>jdbc.result-set.active</code>. <strong>Type</strong> <code>long task timer</code>.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-KeyValues that are added after starting the Observation might be missing from the *.active metrics.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-Micrometer internally uses <code>nanoseconds</code> for the baseunit. However, each backend determines the actual baseunit. (i.e. Prometheus uses seconds)
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Fully qualified name of the enclosing class <code>net.ttddyy.observation.tracing.JdbcObservationDocumentation</code>.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-All tags must be prefixed with <code>jdbc</code> prefix!
-</td>
-</tr>
-</table>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 7. Low cardinality Keys</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Name</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Description</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>jdbc.datasource.name</code> <em>(required)</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Name of the JDBC datasource.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 8. High cardinality Keys</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Name</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Description</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>jdbc.row-count</code> <em>(required)</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Number of SQL rows.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 <div class="sect3">
@@ -1906,7 +1835,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 9. Tag Keys</caption>
+<caption class="title">Table 6. Tag Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1931,7 +1860,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 10. Event Values</caption>
+<caption class="title">Table 7. Event Values</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1984,7 +1913,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 11. Tag Keys</caption>
+<caption class="title">Table 8. Tag Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -2033,7 +1962,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 12. Tag Keys</caption>
+<caption class="title">Table 9. Tag Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -2090,7 +2019,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 </table>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 13. Tag Keys</caption>
+<caption class="title">Table 10. Tag Keys</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">

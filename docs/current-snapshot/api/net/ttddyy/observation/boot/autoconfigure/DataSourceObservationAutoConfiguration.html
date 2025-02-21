@@ -152,11 +152,9 @@ loadScripts(document, 'script');</script>
  org.springframework.beans.factory.ObjectProvider&lt;<a href="ProxyDataSourceBuilderCustomizer.html" title="interface in net.ttddyy.observation.boot.autoconfigure">ProxyDataSourceBuilderCustomizer</a>&gt;&nbsp;proxyDataSourceBuilderCustomizers)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../tracing/DataSourceObservationListener.html" title="class in net.ttddyy.observation.tracing">DataSourceObservationListener</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataSourceObservationListener(org.springframework.beans.factory.ObjectProvider,net.ttddyy.observation.boot.autoconfigure.JdbcProperties,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider)" class="member-name-link">dataSourceObservationListener</a><wbr>(org.springframework.beans.factory.ObjectProvider&lt;io.micrometer.observation.ObservationRegistry&gt;&nbsp;registry,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataSourceObservationListener(org.springframework.beans.factory.ObjectProvider,net.ttddyy.observation.boot.autoconfigure.JdbcProperties,org.springframework.beans.factory.ObjectProvider)" class="member-name-link">dataSourceObservationListener</a><wbr>(org.springframework.beans.factory.ObjectProvider&lt;io.micrometer.observation.ObservationRegistry&gt;&nbsp;registry,
  <a href="JdbcProperties.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties</a>&nbsp;jdbcProperties,
- org.springframework.beans.factory.ObjectProvider&lt;<a href="../../tracing/ConnectionObservationConvention.html" title="interface in net.ttddyy.observation.tracing">ConnectionObservationConvention</a>&gt;&nbsp;connectionObservationConventions,
- org.springframework.beans.factory.ObjectProvider&lt;<a href="../../tracing/QueryObservationConvention.html" title="interface in net.ttddyy.observation.tracing">QueryObservationConvention</a>&gt;&nbsp;queryObservationConventions,
- org.springframework.beans.factory.ObjectProvider&lt;<a href="../../tracing/ResultSetObservationConvention.html" title="interface in net.ttddyy.observation.tracing">ResultSetObservationConvention</a>&gt;&nbsp;resultSetObservationConventions)</code></div>
+ org.springframework.beans.factory.ObjectProvider&lt;io.micrometer.observation.ObservationConvention&lt;?&gt;&gt;&nbsp;observationConventions)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DataSourceProxyConnectionIdManagerProvider.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceProxyConnectionIdManagerProvider</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#observationConnectionIdManagerProvider()" class="member-name-link">observationConnectionIdManagerProvider</a>()</code></div>
@@ -229,15 +227,13 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="dataSourceObservationListener(org.springframework.beans.factory.ObjectProvider,net.ttddyy.observation.boot.autoconfigure.JdbcProperties,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider)">
+<section class="detail" id="dataSourceObservationListener(org.springframework.beans.factory.ObjectProvider,net.ttddyy.observation.boot.autoconfigure.JdbcProperties,org.springframework.beans.factory.ObjectProvider)">
 <h3>dataSourceObservationListener</h3>
 <div class="member-signature"><span class="annotations">@Bean
 @Order(1000)
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../tracing/DataSourceObservationListener.html" title="class in net.ttddyy.observation.tracing">DataSourceObservationListener</a></span>&nbsp;<span class="element-name">dataSourceObservationListener</span><wbr><span class="parameters">(org.springframework.beans.factory.ObjectProvider&lt;io.micrometer.observation.ObservationRegistry&gt;&nbsp;registry,
  <a href="JdbcProperties.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties</a>&nbsp;jdbcProperties,
- org.springframework.beans.factory.ObjectProvider&lt;<a href="../../tracing/ConnectionObservationConvention.html" title="interface in net.ttddyy.observation.tracing">ConnectionObservationConvention</a>&gt;&nbsp;connectionObservationConventions,
- org.springframework.beans.factory.ObjectProvider&lt;<a href="../../tracing/QueryObservationConvention.html" title="interface in net.ttddyy.observation.tracing">QueryObservationConvention</a>&gt;&nbsp;queryObservationConventions,
- org.springframework.beans.factory.ObjectProvider&lt;<a href="../../tracing/ResultSetObservationConvention.html" title="interface in net.ttddyy.observation.tracing">ResultSetObservationConvention</a>&gt;&nbsp;resultSetObservationConventions)</span></div>
+ org.springframework.beans.factory.ObjectProvider&lt;io.micrometer.observation.ObservationConvention&lt;?&gt;&gt;&nbsp;observationConventions)</span></div>
 </section>
 </li>
 <li>
