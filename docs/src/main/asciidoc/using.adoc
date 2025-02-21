@@ -70,12 +70,12 @@ When enabled, it publishes events - `JdbcQueryExecutionEvent` and `JdbcMethodExe
 
 [[using-limitations]]
 == Limitations
-[[using-limitations-oiv]]
-=== Open In View, Open Session In View
-Unfortunately, Open In View (OIV) / Open Session In View (OSIV) are not supported.
-This is because OIV/OSIV delays closing the database connection until the HTTP response is sent.
+[[using-limitations-open-session-in-view]]
+=== Open Session In View
+Unfortunately, Open Session In View (OSIV) is not supported.
+This is because OSIV delays closing the database connection until the HTTP response is sent.
 
-Observation scope orders without OIV/OSIV:
+Observation scope orders without OSIV:
 
 . Open HTTP request observation scope
 . Open DB connection observation scope
@@ -83,7 +83,7 @@ Observation scope orders without OIV/OSIV:
 . Close DB connection observation scope
 . Close HTTP request observation scope
 
-However, with OIV/OSIV enabled, the DB connection closing is delayed, leading to the following order:
+However, with OSIV enabled, the DB connection closing is delayed, leading to the following order:
 
 . Open HTTP request observation scope
 . Open DB connection observation scope
@@ -93,4 +93,4 @@ However, with OIV/OSIV enabled, the DB connection closing is delayed, leading to
 
 Since observation scopes must be closed in the reverse order of their creation, this swapped ordering causes observation leaks.
 
-To disable OIV/OSIV, set `spring.jpa.open-in-view=false`.
+To disable OSIV, set `spring.jpa.open-in-view=false`.
