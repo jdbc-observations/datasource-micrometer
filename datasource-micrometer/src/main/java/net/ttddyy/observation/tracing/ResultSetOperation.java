@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 the original author or authors.
+ * Copyright 2024-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,11 +32,17 @@ public class ResultSetOperation {
 
 	private final Method method;
 
+	private final Object[] args;
+
 	private final Object result;
 
-	public ResultSetOperation(Method method, Object result) {
+	private final Throwable thrown;
+
+	public ResultSetOperation(Method method, Object[] args, Object result, Throwable thrown) {
 		this.method = method;
+		this.args = args;
 		this.result = result;
+		this.thrown = thrown;
 	}
 
 	private static final Set<String> NON_DATA_RETRIEVAL_METHODS = new HashSet<>();
@@ -56,8 +62,16 @@ public class ResultSetOperation {
 		return this.method;
 	}
 
+	public Object[] getArgs() {
+		return this.args;
+	}
+
 	public Object getResult() {
 		return this.result;
+	}
+
+	public Throwable getThrown() {
+		return this.thrown;
 	}
 
 }

@@ -401,7 +401,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		}
 
 		ResultSetOperation operation = new ResultSetOperation(executionContext.getMethod(),
-				executionContext.getResult());
+				executionContext.getMethodArgs(), executionContext.getResult(), executionContext.getThrown());
 		resultSetAttributes.context.addOperation(operation);
 
 		String methodName = executionContext.getMethod().getName();
