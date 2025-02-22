@@ -1,6 +1,15 @@
 Datasource Micrometer Changelog
 ================================
 
+1.1.0
+------------------
+* Record ResultSet interactions (#35)
+* Observation for generated keys (#36)
+* Publish spring events for query and proxy-method executions (#37)
+* Use a pure "DataSource" proxy instead of "ProxyDataSource" (#51)
+* Having datasource name in low cardinality keys (#58)
+* Upgrade dependencies (#63)
+
 1.0.6
 ------------------
 * Upgrade to datasource-proxy 1.10.1 (#52)
