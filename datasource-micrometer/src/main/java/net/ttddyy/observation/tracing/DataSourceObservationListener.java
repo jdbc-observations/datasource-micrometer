@@ -379,10 +379,17 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			return;
 		}
 
+		String methodName = executionContext.getMethod().getName();
+		boolean isClose = "close".equals(methodName);
+
 		ResultSet resultSet = (ResultSet) executionContext.getTarget();
 		ResultSetAttributes resultSetAttributes = connectionAttributes.resultSetAttributesManager
 			.getByResultSet(resultSet);
-		if (resultSetAttributes == null) {
+
+		// "close" could be called multiple times. When this is a second close, do not
+		// start ob.
+		boolean createResultSetAttributes = (resultSetAttributes == null) && !isClose;
+		if (createResultSetAttributes) {
 			boolean isGeneratedKey = connectionAttributes.resultSetAttributesManager.isGeneratedKeys(resultSet);
 			resultSetAttributes = createResultSetAttributesAndStartObservation(executionContext, isGeneratedKey);
 
@@ -400,14 +407,17 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			connectionAttributes.resultSetAttributesManager.add(resultSet, statement, resultSetAttributes);
 		}
 
-		ResultSetOperation operation = new ResultSetOperation(executionContext.getMethod(),
-				executionContext.getMethodArgs(), executionContext.getResult(), executionContext.getThrown());
-		resultSetAttributes.context.addOperation(operation);
+		if (resultSetAttributes != null) {
+			ResultSetOperation operation = new ResultSetOperation(executionContext.getMethod(),
+					executionContext.getMethodArgs(), executionContext.getResult(), executionContext.getThrown());
+			resultSetAttributes.context.addOperation(operation);
+		}
 
-		String methodName = executionContext.getMethod().getName();
-		if ("close".equals(methodName)) {
+		if (isClose) {
 			connectionAttributes.resultSetAttributesManager.removeByResultSet(resultSet);
-			stopResultSetObservation(resultSetAttributes.scope, executionContext.getThrown());
+			if (resultSetAttributes != null) {
+				stopResultSetObservation(resultSetAttributes.scope, executionContext.getThrown());
+			}
 		}
 		else if ("next".equals(methodName)) {
 			boolean hasNext = Boolean.TRUE.equals(executionContext.getResult());
