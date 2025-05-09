@@ -51,6 +51,11 @@ Non-spring applications can directly use this module.
 
 This module provides an auto-configuration for the Spring Boot 3 applications.
 
+*datasource-micrometer-bom*
+
+This module provides a Bill of Materials (BOM) for dependency management.
+
+
 [[getting-started-installation]]
 == Installation
 
@@ -96,6 +101,34 @@ dependencies {
 ----
 dependencies {
     implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:{project-version}"
+}
+----
+====
+
+*datasource-micrometer-bom*
+
+====
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>net.ttddyy.observation</groupId>
+				<artifactId>datasource-micrometer-bom</artifactId>
+				<version>{project-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+dependencies {
+    implementation platform("net.ttddyy.observation:datasource-micrometer-bom:{project-version}")
 }
 ----
 ====
