@@ -65,6 +65,7 @@
     <modules>
         <module>datasource-micrometer</module>
         <module>datasource-micrometer-spring-boot</module>
+        <module>datasource-micrometer-bom</module>
         <module>docs</module>
     </modules>
 
