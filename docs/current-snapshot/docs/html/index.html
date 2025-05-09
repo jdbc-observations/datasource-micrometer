@@ -749,6 +749,12 @@ Non-spring applications can directly use this module.</p>
 <div class="paragraph">
 <p>This module provides an auto-configuration for the Spring Boot 3 applications.</p>
 </div>
+<div class="paragraph">
+<p><strong>datasource-micrometer-bom</strong></p>
+</div>
+<div class="paragraph">
+<p>This module provides a Bill of Materials (BOM) for dependency management.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -800,6 +806,37 @@ Non-spring applications can directly use this module.</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencies {
     implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:1.2.0-SNAPSHOT"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>datasource-micrometer-bom</strong></p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;net.ttddyy.observation&lt;/groupId&gt;
+            &lt;artifactId&gt;datasource-micrometer-bom&lt;/artifactId&gt;
+            &lt;version&gt;1.2.0-SNAPSHOT&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencies {
+    implementation platform("net.ttddyy.observation:datasource-micrometer-bom:1.2.0-SNAPSHOT")
 }</code></pre>
 </div>
 </div>
