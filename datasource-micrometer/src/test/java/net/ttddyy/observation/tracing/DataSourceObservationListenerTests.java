@@ -675,4 +675,29 @@ class DataSourceObservationListenerTests {
 		TracerAssert.assertThat(this.tracer).reportedSpans().hasSize(1);
 	}
 
+	@Test
+	void resultSetObservationWithMultipleClose() throws Exception {
+		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
+
+		ResultSet resultSet = mock(ResultSet.class);
+
+		ConnectionInfo connectionInfo = new ConnectionInfo();
+		connectionInfo.setConnectionId("id-1");
+		connectionInfo.setDataSourceName("myDS");
+
+		Statement statement = mock(Statement.class);
+		given(resultSet.getStatement()).willReturn(statement);
+
+		createResultSetObservation(listener, connectionInfo, resultSet, true);
+
+		// call "close"
+		listener.afterMethod(createResultSetCloseMethodExecutionContext(connectionInfo, resultSet));
+
+		// call "close" again
+		listener.afterMethod(createResultSetCloseMethodExecutionContext(connectionInfo, resultSet));
+
+		TracerAssert.assertThat(this.tracer).reportedSpans().hasSize(1);
+	}
+
 }
