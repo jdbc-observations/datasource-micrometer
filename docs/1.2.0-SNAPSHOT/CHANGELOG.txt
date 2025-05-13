@@ -1,6 +1,12 @@
 Datasource Micrometer Changelog
 ================================
 
+1.1.1
+------------------
+* Provide BOM (#66)
+* Fix multiple calls to "ResultSet#close" (#67)
+* Upgrade dependencies (#70)
+
 1.1.0
 ------------------
 * Record ResultSet interactions (#35)
