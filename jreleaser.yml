@@ -10,12 +10,20 @@ signing:
 
 deploy:
   maven:
+    mavenCentral:
+      release-deploy:
+        active: RELEASE
+        url: https://central.sonatype.com/api/v1/publisher
+        stagingRepositories:
+          - target/staging-deploy
     nexus2:
-      maven-central:
-        active: ALWAYS
-        url: https://oss.sonatype.org/service/local
-        snapshotUrl: https://oss.sonatype.org/content/repositories/snapshots
+      snapshot-deploy:
+        active: SNAPSHOT
+        url: https://central.sonatype.com/repository/maven-snapshots
+        snapshotUrl: https://central.sonatype.com/repository/maven-snapshots
+        applyMavenCentralRules: true
+        snapshotSupported: true
         closeRepository: true
-        releaseRepository: false
+        releaseRepository: true
         stagingRepositories:
           - target/staging-deploy
