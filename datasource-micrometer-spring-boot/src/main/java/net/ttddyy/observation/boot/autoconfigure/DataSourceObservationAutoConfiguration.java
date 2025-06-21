@@ -107,6 +107,7 @@ public class DataSourceObservationAutoConfiguration {
 		DataSourceObservationListener listener = new DataSourceObservationListener(registry::getObject);
 		listener.setIncludeParameterValues(jdbcProperties.getDatasourceProxy().isIncludeParameterValues());
 		listener.setSupportedTypes(supportedDocumentations);
+		listener.setIncludeResultSetOperations(jdbcProperties.getResultsetOperations().isEnabled());
 		observationConventions.orderedStream().forEach((convention) -> {
 			if (convention instanceof ConnectionObservationConvention) {
 				listener.setConnectionObservationConvention((ConnectionObservationConvention) convention);

@@ -50,6 +50,8 @@ public class JdbcProperties {
 	 */
 	private Event event = new Event();
 
+	private ResultsetOperations resultsetOperations = new ResultsetOperations();
+
 	public Set<TraceType> getIncludes() {
 		return this.includes;
 	}
@@ -80,6 +82,14 @@ public class JdbcProperties {
 
 	public void setEvent(Event event) {
 		this.event = event;
+	}
+
+	public ResultsetOperations getResultsetOperations() {
+		return this.resultsetOperations;
+	}
+
+	public void setResultsetOperations(ResultsetOperations resultsetOperations) {
+		this.resultsetOperations = resultsetOperations;
 	}
 
 	public static class DataSourceProxy {
@@ -377,6 +387,23 @@ public class JdbcProperties {
 		 * Use ProxyDataSource from datasource-proxy
 		 */
 		CONCRETE
+
+	}
+
+	public static class ResultsetOperations {
+
+		/**
+		 * Enable recording operations on ResultSet.
+		 */
+		private boolean enabled = true;
+
+		public boolean isEnabled() {
+			return this.enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
 
 	}
 

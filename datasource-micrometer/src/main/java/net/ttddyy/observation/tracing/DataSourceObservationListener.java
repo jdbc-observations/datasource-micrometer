@@ -88,6 +88,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	private boolean includeParameterValues;
 
 	/**
+	 * Whether to record ResultSet operations.
+	 */
+	private boolean includeResultSetOperations = true;
+
+	/**
 	 * A set of {@link JdbcObservationDocumentation} to observe by this listener. For
 	 * non-matched {@link JdbcObservationDocumentation}, no-op {@link Observation} will be
 	 * used.
@@ -407,7 +412,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			connectionAttributes.resultSetAttributesManager.add(resultSet, statement, resultSetAttributes);
 		}
 
-		if (resultSetAttributes != null) {
+		if (resultSetAttributes != null && this.includeResultSetOperations) {
 			ResultSetOperation operation = new ResultSetOperation(executionContext.getMethod(),
 					executionContext.getMethodArgs(), executionContext.getResult(), executionContext.getThrown());
 			resultSetAttributes.context.addOperation(operation);
@@ -531,6 +536,10 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	public void setSupportedTypes(Set<JdbcObservationDocumentation> supportedTypes) {
 		this.supportedTypes = supportedTypes;
+	}
+
+	public void setIncludeResultSetOperations(boolean includeResultSetOperations) {
+		this.includeResultSetOperations = includeResultSetOperations;
 	}
 
 }
