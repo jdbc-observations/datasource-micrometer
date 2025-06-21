@@ -538,6 +538,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		this.supportedTypes = supportedTypes;
 	}
 
+	/**
+	 * Whether to populate {@link ResultSetOperation}.
+	 * @param includeResultSetOperations set {@code false} not to record them.
+	 * @since 1.1.2
+	 */
 	public void setIncludeResultSetOperations(boolean includeResultSetOperations) {
 		this.includeResultSetOperations = includeResultSetOperations;
 	}

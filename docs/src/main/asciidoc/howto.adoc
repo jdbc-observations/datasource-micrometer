@@ -233,6 +233,6 @@ To disable this tracking:
 * Call `DataSourceObservationListener#setIncludeResultSetOperations(false)`, or
 * In Spring Boot, set the property `jdbc.resultset-operations.enabled=false`.
 
-This configuration option was introduced in version `1.1.1`.
+This configuration option was introduced in version `1.1.2`.
 
 NOTE: Disabling this will also make an empty value on the `jdbc.generated-keys` tag from the Generated Keys span, as the generated key value will no longer be recorded.
