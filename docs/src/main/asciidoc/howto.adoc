@@ -56,8 +56,11 @@ Then, `ResultSet` get instrumented automatically.
 
 [source,java,indent=0]
 ----
-ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource).listener(listener).methodListener(listener);
-builder.proxyResultSet();  // enable ResultSet proxy creation
+ProxyDataSourceBuilder builder =
+    ProxyDataSourceBuilder.create(dataSource)
+        .listener(listener)
+        .methodListener(listener)
+        .proxyResultSet();  // enable ResultSet proxy creation
 DataSource instrumented = builder.build();
 ----
 
@@ -69,10 +72,15 @@ You need to explicitly enable the generated-keys proxy creation.
 
 [source,java,indent=0]
 ----
-ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource).listener(listener).methodListener(listener);
-builder.proxyGeneratedKeys();  // enable Generated-Keys proxy creation
+ProxyDataSourceBuilder builder =
+    ProxyDataSourceBuilder.create(dataSource)
+        .listener(listener)
+        .methodListener(listener)
+        .proxyGeneratedKeys();  // enable Generated-Keys proxy creation
 DataSource instrumented = builder.build();
 ----
+
+NOTE: When tracking of `ResultSet` operations is disabled (see <<how-to-disable-tracking-of-resultset-operations>>), the `jdbc.genearted-keys` tag shows an empty value.
 
 [[how-to-include-bind-parameter-values]]
 === How to Include Bind Parameter Values
@@ -214,3 +222,17 @@ Define beans for your custom observation conventions, which will then be automat
 === How to Switch to Use ProxyDataSource
 Since version `1.1`, the instrumented `DataSource` is now a pure JDK proxy.
 To revert to the previous behavior using `ProxyDataSource`, set the property: `jdbc.datasource-proxy.type=CONCRETE`
+
+[[how-to-disable-tracking-of-resultset-operations]]
+=== How to Disable Tracking of ResultSet Operations
+Starting from version `1.1`, interactions with a `ResultSet` are tracked and made available through `ResultSetContext`.
+However, in rare cases - such as a `ResultSet` is kept open for a long time and heavily interact with - this may lead to memory pressure.
+
+To disable this tracking:
+
+* Call `DataSourceObservationListener#setIncludeResultSetOperations(false)`, or
+* In Spring Boot, set the property `jdbc.resultset-operations.enabled=false`.
+
+This configuration option was introduced in version `1.1.1`.
+
+NOTE: Disabling this will also make an empty value on the `jdbc.generated-keys` tag from the Generated Keys span, as the generated key value will no longer be recorded.

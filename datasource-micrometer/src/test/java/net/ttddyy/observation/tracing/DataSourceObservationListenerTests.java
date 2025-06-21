@@ -487,15 +487,6 @@ class DataSourceObservationListenerTests {
 
 	@Test
 	void resultSetObservation() throws Exception {
-		ObservationPredicate testResultSetObservationPredicate = (observationName, observationContext) -> {
-			if (observationContext instanceof ResultSetContext) {
-				ResultSetContext resultSetContext = (ResultSetContext) observationContext;
-				assertThat(resultSetContext.getDataSourceName()).isEqualTo("myDS");
-				return true;
-			}
-			return true;
-		};
-
 		AtomicReference<Observation.Context> contextHolder = new AtomicReference<>();
 
 		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
@@ -520,6 +511,11 @@ class DataSourceObservationListenerTests {
 		assertThat(contextHolder).hasValueSatisfying((context) -> {
 			assertThat(context).isInstanceOfSatisfying(ResultSetContext.class, (rsContext) -> {
 				assertThat(rsContext.getDataSourceName()).isEqualTo("myDS");
+				assertThat(rsContext.getOperations()).hasSize(1)
+					.first()
+					.extracting(ResultSetOperation::getMethod)
+					.extracting(Method::getName)
+					.isEqualTo("next");
 			});
 		});
 
@@ -698,6 +694,40 @@ class DataSourceObservationListenerTests {
 		listener.afterMethod(createResultSetCloseMethodExecutionContext(connectionInfo, resultSet));
 
 		TracerAssert.assertThat(this.tracer).reportedSpans().hasSize(1);
+	}
+
+	@Test
+	void resultSetObservationWithIncludeResultSetOperationsFalse() throws Exception {
+		AtomicReference<Observation.Context> contextHolder = new AtomicReference<>();
+		this.registry.observationConfig().observationHandler(new ResultSetTracingObservationHandler(this.tracer));
+		this.registry.observationConfig().observationHandler(context -> {
+			contextHolder.set(context);
+			return true;
+		});
+
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
+		listener.setIncludeResultSetOperations(false);
+
+		ResultSet resultSet = mock(ResultSet.class);
+
+		ConnectionInfo connectionInfo = new ConnectionInfo();
+		connectionInfo.setConnectionId("id-1");
+		connectionInfo.setDataSourceName("myDS");
+
+		Statement statement = mock(Statement.class);
+		given(resultSet.getStatement()).willReturn(statement);
+
+		createResultSetObservation(listener, connectionInfo, resultSet, true);
+
+		// verify context has datasource-name
+		assertThat(contextHolder).hasValueSatisfying((context) -> {
+			assertThat(context).isInstanceOfSatisfying(ResultSetContext.class, (rsContext) -> {
+				assertThat(rsContext.getOperations()).hasSize(0);
+			});
+		});
+
+		// call "close"
+		listener.afterMethod(createResultSetCloseMethodExecutionContext(connectionInfo, resultSet));
 	}
 
 }
