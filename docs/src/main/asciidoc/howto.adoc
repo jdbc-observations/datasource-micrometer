@@ -56,8 +56,11 @@ Then, `ResultSet` get instrumented automatically.
 
 [source,java,indent=0]
 ----
-ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource).listener(listener).methodListener(listener);
-builder.proxyResultSet();  // enable ResultSet proxy creation
+ProxyDataSourceBuilder builder =
+    ProxyDataSourceBuilder.create(dataSource)
+        .listener(listener)
+        .methodListener(listener)
+        .proxyResultSet();  // enable ResultSet proxy creation
 DataSource instrumented = builder.build();
 ----
 
@@ -69,8 +72,11 @@ You need to explicitly enable the generated-keys proxy creation.
 
 [source,java,indent=0]
 ----
-ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSource).listener(listener).methodListener(listener);
-builder.proxyGeneratedKeys();  // enable Generated-Keys proxy creation
+ProxyDataSourceBuilder builder =
+    ProxyDataSourceBuilder.create(dataSource)
+        .listener(listener)
+        .methodListener(listener)
+        .proxyGeneratedKeys();  // enable Generated-Keys proxy creation
 DataSource instrumented = builder.build();
 ----
 
