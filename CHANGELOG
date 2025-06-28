@@ -1,6 +1,11 @@
 Datasource Micrometer Changelog
 ================================
 
+1.1.2
+------------------
+* Add `jdbc.resultset-operations.enabled` property. (#72)
+* Upgrade dependencies (#74)
+
 1.1.1
 ------------------
 * Provide BOM (#66)
