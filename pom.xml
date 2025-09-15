@@ -42,7 +42,7 @@
         <datasource-proxy.version>1.10.1</datasource-proxy.version>
 
         <!-- datasource-micrometer-spring-boot module -->
-        <spring-boot.version>3.4.7</spring-boot.version>
+        <spring-boot.version>4.0.0-M2</spring-boot.version>
 
         <!-- Docs -->
         <micrometer-docs-generator.version>1.0.4</micrometer-docs-generator.version>
@@ -186,8 +186,10 @@
                             </github-raw>
                             <github-code>https://github.com/jdbc-observations/datasource-micrometer/tree/${git.branch}@
                             </github-code>
-                            <github-issues>https://github.com/jdbc-observations/datasource-micrometer/issues/@</github-issues>
-                            <github-pulls>https://github.com/jdbc-observations/datasource-micrometer/pulls/@</github-pulls>
+                            <github-issues>https://github.com/jdbc-observations/datasource-micrometer/issues/@
+                            </github-issues>
+                            <github-pulls>https://github.com/jdbc-observations/datasource-micrometer/pulls/@
+                            </github-pulls>
                             <github-wiki>https://github.com/jdbc-observations/datasource-micrometer/wiki@</github-wiki>
                             <github-master-code>https://github.com/jdbc-observations/datasource-micrometer/tree/main@
                             </github-master-code>
@@ -306,14 +308,6 @@
 
     <repositories>
         <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>spring-snapshots</id>
             <name>Spring Snapshots</name>
             <url>https://repo.spring.io/snapshot</url>
@@ -322,5 +316,15 @@
             </releases>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>
