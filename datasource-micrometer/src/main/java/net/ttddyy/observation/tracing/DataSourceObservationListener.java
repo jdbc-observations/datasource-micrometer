@@ -186,8 +186,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		if (scopeToUse == null) {
 			return;
 		}
+		Observation observation = scopeToUse.getCurrentObservation();
 		try (Observation.Scope scope = scopeToUse) {
-			Observation observation = scope.getCurrentObservation();
 			if (logger.isDebugEnabled()) {
 				logger.debug("Continued the child observation in after query [" + observation + "]");
 			}
@@ -207,6 +207,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 						QueryContext.class);
 				queryContext.setAffectedRowCount(affectedRowCount);
 			}
+		}
+		finally {
 			stopObservation(observation, executionInfo.getThrowable());
 		}
 	}
@@ -291,9 +293,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			// For normal case, observation is stopped when connection is closed.
 			// see "handleConnectionClose()".
 			if (scopeToUse != null) {
-				Throwable throwable = executionContext.getThrown();
-				try (Observation.Scope scope = scopeToUse) {
-					stopObservation(scope.getCurrentObservation(), throwable);
+				try {
+					scopeToUse.close();
+				}
+				finally {
+					stopObservation(scopeToUse.getCurrentObservation(), executionContext.getThrown());
 				}
 			}
 		}
@@ -339,8 +343,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		if (scopeToUse == null) {
 			return;
 		}
-		try (Observation.Scope scope = scopeToUse) {
-			stopObservation(scope.getCurrentObservation(), executionContext.getThrown());
+		try {
+			scopeToUse.close();
+		}
+		finally {
+			stopObservation(scopeToUse.getCurrentObservation(), executionContext.getThrown());
 		}
 	}
 
@@ -500,8 +507,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		if (scopeToUse == null) {
 			return;
 		}
-		try (Observation.Scope scope = scopeToUse) {
-			stopObservation(scope.getCurrentObservation(), throwable);
+		try {
+			scopeToUse.close();
+		}
+		finally {
+			stopObservation(scopeToUse.getCurrentObservation(), throwable);
 		}
 	}
 

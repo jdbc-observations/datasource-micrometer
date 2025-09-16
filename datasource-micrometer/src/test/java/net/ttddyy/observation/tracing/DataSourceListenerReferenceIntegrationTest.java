@@ -16,14 +16,15 @@
 
 package net.ttddyy.observation.tracing;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
 import io.micrometer.tracing.test.simple.SpansAssert;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import static net.ttddyy.observation.tracing.RecordingObservationHandler.OperationType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -75,6 +76,22 @@ class DataSourceListenerReferenceIntegrationTest extends DataSourceListenerInteg
 								.hasTag("jdbc.datasource.name", "proxy");
 					});
 			// @formatter:on
+
+			// verify observation interactions
+			RecordingObservationHandler recordings = this.recordingObservationHandler;
+			recordings.verify(0, OB_START, "jdbc.connection", null);
+			recordings.verify(1, SCOPE_OPENED, "jdbc.connection", null);
+			recordings.verify(2, OB_EVENT, "jdbc.connection", null);
+			recordings.verify(3, OB_START, "jdbc.query", "jdbc.connection");
+			recordings.verify(4, SCOPE_OPENED, "jdbc.query", "jdbc.connection");
+			recordings.verify(5, SCOPE_CLOSED, "jdbc.query", "jdbc.connection");
+			recordings.verify(6, OB_STOP, "jdbc.query", "jdbc.connection");
+			recordings.verify(7, OB_START, "jdbc.result-set", "jdbc.connection");
+			recordings.verify(8, SCOPE_OPENED, "jdbc.result-set", "jdbc.connection");
+			recordings.verify(9, SCOPE_CLOSED, "jdbc.result-set", "jdbc.connection");
+			recordings.verify(10, OB_STOP, "jdbc.result-set", "jdbc.connection");
+			recordings.verify(11, SCOPE_CLOSED, "jdbc.connection", null);
+			recordings.verify(12, OB_STOP, "jdbc.connection", null);
 		};
 	}
 

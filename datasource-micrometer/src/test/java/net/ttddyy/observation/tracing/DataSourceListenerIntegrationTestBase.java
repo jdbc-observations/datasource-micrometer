@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Deque;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import javax.sql.DataSource;
@@ -46,6 +47,8 @@ abstract class DataSourceListenerIntegrationTestBase extends SampleTestRunner {
 	protected static JdbcDataSource dataSource;
 
 	protected DataSource proxyDataSource;
+
+	protected RecordingObservationHandler recordingObservationHandler;
 
 	public DataSourceListenerIntegrationTestBase() {
 		super(SampleRunnerConfig.builder().build());
@@ -97,6 +100,11 @@ abstract class DataSourceListenerIntegrationTestBase extends SampleTestRunner {
 		proxyDataSource = builder.build();
 	}
 
+	@BeforeEach
+	void createRecordingObservationHandler() {
+		this.recordingObservationHandler = new RecordingObservationHandler();
+	}
+
 	protected void customizeListener(DataSourceObservationListener listener) {
 
 	}
@@ -122,9 +130,14 @@ abstract class DataSourceListenerIntegrationTestBase extends SampleTestRunner {
 	@Override
 	public BiConsumer<BuildingBlocks, Deque<ObservationHandler<? extends Context>>> customizeObservationHandlers() {
 		return (bb, handlers) -> {
-			handlers.addFirst(new ConnectionTracingObservationHandler(bb.getTracer()));
-			handlers.addFirst(new QueryTracingObservationHandler(bb.getTracer()));
-			handlers.addFirst(new ResultSetTracingObservationHandler(bb.getTracer()));
+			handlers.addFirst(new ObservationHandler.AllMatchingCompositeObservationHandler(
+			// @formatter:off
+					new ConnectionTracingObservationHandler(bb.getTracer()),
+					new QueryTracingObservationHandler(bb.getTracer()),
+					new ResultSetTracingObservationHandler(bb.getTracer()),
+					this.recordingObservationHandler  // for testing
+			// @formatter:on
+			));
 		};
 	}
 
