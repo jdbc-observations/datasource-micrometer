@@ -975,58 +975,76 @@ When enabled, it publishes events - <code>JdbcQueryExecutionEvent</code> and <co
 <div class="sect3">
 <h4 id="using-limitations-open-session-in-view"><a class="anchor" href="#using-limitations-open-session-in-view"></a><a class="link" href="#using-limitations-open-session-in-view">3.3.1. Open Session In View</a></h4>
 <div class="paragraph">
-<p>Unfortunately, Open Session In View (OSIV) is not supported.
-This is because OSIV delays closing the database connection until the HTTP response is sent.</p>
+<p>When working with Open-In-View (Open Session In View (OSIV) or Open EntityManager In View (OEIV)), special care is required.
+This is because OIV delays closing the database connection, which can affect the boundaries of observations.</p>
 </div>
 <div class="paragraph">
-<p>Observation scope orders without OSIV:</p>
+<p>For example, consider the following code:</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Open HTTP request observation scope</p>
-</li>
-<li>
-<p>Open DB connection observation scope</p>
-</li>
-<li>
-<p>(Other observation scopes)</p>
-</li>
-<li>
-<p>Close DB connection observation scope</p>
-</li>
-<li>
-<p>Close HTTP request observation scope</p>
-</li>
-</ol>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@GetMapping("/")
+List&lt;Car&gt; cars() {
+  return Observation.createNotStarted("my.observation", registry).observe(() -&gt; {
+    return repository.findAll();  // DB access
+  });
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>However, with OSIV enabled, the DB connection closing is delayed, leading to the following order:</p>
+<p>With OIV <strong>disabled</strong>, the observation interaction looks like this:</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Open HTTP request observation scope</p>
-</li>
-<li>
-<p>Open DB connection observation scope</p>
-</li>
-<li>
-<p>(Other observation scopes)</p>
-</li>
-<li>
-<p><strong>(SWAPPED)</strong> Close HTTP request observation scope</p>
-</li>
-<li>
-<p><strong>(SWAPPED)</strong> Close DB connection observation scope</p>
-</li>
-</ol>
+<div class="listingblock">
+<div class="content">
+<pre>Action                | Name
+----------------------|--------------------
+START Observation     | "http.server.requests"
+OPEN Scope            | "http.server.requests"
+START Observation     | "my.observation"
+OPEN Scope            | "my.observation"
+START Observation     | "jdbc.connection"
+OPEN Scope            | "jdbc.connection"
+...                   | ...
+CLOSE Scope           | "jdbc.connection"
+STOP Observation      | "jdbc.connection"
+CLOSE Scope           | "my.observation"
+STOP Observation      | "my.observation"
+CLOSE Scope           | "http.server.requests"
+STOP Observation      | "http.server.requests"</pre>
 </div>
-<div class="paragraph">
-<p>Since observation scopes must be closed in the reverse order of their creation, this swapped ordering causes observation leaks.</p>
 </div>
 <div class="paragraph">
-<p>To disable OSIV, set <code>spring.jpa.open-in-view=false</code>.</p>
+<p>With OIV <strong>enabled</strong>, the order changes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Action                | Name
+----------------------|--------------------
+START Observation     | "http.server.requests"
+OPEN Scope            | "http.server.requests"
+START Observation     | "my.observation"
+OPEN Scope            | "my.observation"
+START Observation     | "jdbc.connection"
+OPEN Scope            | "jdbc.connection"
+...                   | ...
+CLOSE Scope           | "my.observation"      &lt;==
+STOP Observation      | "my.observation"      &lt;==
+CLOSE Scope           | "jdbc.connection"     &lt;==
+STOP Observation      | "jdbc.connection"     &lt;==
+CLOSE Scope           | "http.server.requests"
+STOP Observation      | "http.server.requests"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see, when OIV is enabled, the <code>jdbc.connection</code> observation/scope is closed <strong>after</strong> the <code>my.observation</code> observation/scope.
+Since scopes must be closed in the reverse order of their opening, this swapped order can cause leaks in thread-local bound values (such as spans), because opening and closing scopes trigger thread-local operations.</p>
+</div>
+<div class="paragraph">
+<p>The example above uses an explicitly created observation, but the same applies if you use the <code>@Observed</code> annotation or another instrumentation library.
+Therefore, when OIV is enabled, pay careful attention to observation boundaries — especially if the observation includes database access.</p>
+</div>
+<div class="paragraph">
+<p>In upcoming versions, we plan to narrow the scope of connection observations to better support the OIV pattern.</p>
 </div>
 </div>
 </div>
