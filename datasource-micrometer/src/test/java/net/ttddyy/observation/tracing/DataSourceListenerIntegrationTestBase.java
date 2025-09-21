@@ -16,15 +16,6 @@
 
 package net.ttddyy.observation.tracing;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.Deque;
-import java.util.List;
-import java.util.function.BiConsumer;
-
-import javax.sql.DataSource;
-
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
@@ -36,6 +27,15 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * Base class for {@link DataSourceObservationListener} integration tests.
@@ -130,14 +130,15 @@ abstract class DataSourceListenerIntegrationTestBase extends SampleTestRunner {
 	@Override
 	public BiConsumer<BuildingBlocks, Deque<ObservationHandler<? extends Context>>> customizeObservationHandlers() {
 		return (bb, handlers) -> {
-			handlers.addFirst(new ObservationHandler.AllMatchingCompositeObservationHandler(
-			// @formatter:off
-					new ConnectionTracingObservationHandler(bb.getTracer()),
-					new QueryTracingObservationHandler(bb.getTracer()),
-					new ResultSetTracingObservationHandler(bb.getTracer()),
-					this.recordingObservationHandler  // for testing
-			// @formatter:on
-			));
+			List<ObservationHandler<?>> newHandlers = new ArrayList<>();
+			newHandlers.addAll(handlers);
+			newHandlers.add(new ConnectionTracingObservationHandler(bb.getTracer()));
+			newHandlers.add(new QueryTracingObservationHandler(bb.getTracer()));
+			newHandlers.add(new ResultSetTracingObservationHandler(bb.getTracer()));
+			newHandlers.add(this.recordingObservationHandler); // for testing;
+
+			handlers.clear();
+			handlers.add(new ObservationHandler.AllMatchingCompositeObservationHandler(newHandlers));
 		};
 	}
 

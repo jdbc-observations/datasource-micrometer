@@ -335,11 +335,14 @@ class DataSourceObservationListenerTests {
 		listener.beforeMethod(executionContext);
 		assertThat(tracer.currentSpan()).isNotNull();
 		listener.afterMethod(executionContext);
-		assertThat(tracer.currentSpan()).isNotNull();
+		// SimpleTracer#currentSpan() takes a span from currentScope.
+		// Since scope has closed, there will be no span.
+		assertThat(tracer.currentSpan()).isNull();
+		assertThat(tracer.lastSpan()).isNotNull();
+		assertThat(tracer.getSpans()).hasSize(1);
 
 		// "getConnection" starts a span but it will not end until "Connection#close".
-		assertThat(tracer.currentSpan()).isNotEnded();
-		assertThat(tracer.getSpans()).hasSize(1);
+		assertThat(tracer.lastSpan()).isNotEnded();
 
 		// "Connection#close()" will close the span
 		MethodExecutionContext secondExecutionContext = new MethodExecutionContext();
@@ -348,9 +351,9 @@ class DataSourceObservationListenerTests {
 		secondExecutionContext.setTarget(mock(Connection.class));
 
 		listener.beforeMethod(secondExecutionContext);
-		assertThat(tracer.currentSpan()).isNotNull();
+		assertThat(tracer.lastSpan()).isNotEnded();
 		listener.afterMethod(secondExecutionContext);
-		assertThat(tracer.currentSpan()).isNull();
+		assertThat(tracer.lastSpan()).isEnded();
 
 		assertThat(this.tracer).onlySpan()
 			.hasNameEqualTo("connection")
@@ -410,9 +413,10 @@ class DataSourceObservationListenerTests {
 		Method rollbackMethod = Connection.class.getMethod("rollback");
 
 		Observation observation = Observation.start("test", ConnectionContext::new, this.registry);
+		Observation.Scope scope = observation.openScope(); // make currentSpan available
 
 		ConnectionAttributes connectionAttributes = new ConnectionAttributes();
-		connectionAttributes.scope = observation.openScope();
+		connectionAttributes.observation = observation;
 
 		ConnectionAttributesManager connectionAttributesManager = new DefaultConnectionAttributesManager();
 		connectionAttributesManager.put("id-1", connectionAttributes);

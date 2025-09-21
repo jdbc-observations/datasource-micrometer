@@ -16,7 +16,7 @@
 
 package net.ttddyy.observation.tracing;
 
-import io.micrometer.tracing.test.simple.SpansAssert;
+import io.micrometer.observation.Observation;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static net.ttddyy.observation.tracing.RecordingObservationHandler.OperationType.*;
@@ -35,18 +36,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Tadaya Tsuyukubo
  */
-class DataSourceListenerReferenceIntegrationTest extends DataSourceListenerIntegrationTestBase {
+class DataSourceListenerOpenInViewIntegrationTest extends DataSourceListenerIntegrationTestBase {
 
 	@BeforeEach
 	void addData() throws Exception {
 		executeQuery(dataSource, "INSERT INTO emp VALUES (10, 'Foo')");
 		executeQuery(dataSource, "INSERT INTO emp VALUES (20, 'Bar')");
 		executeQuery(dataSource, "INSERT INTO emp VALUES (30, 'Baz')");
-	}
-
-	@Override
-	protected void customizeListener(DataSourceObservationListener listener) {
-		listener.setIncludeParameterValues(true); // enable "jdbc.params[]" tag in query
 	}
 
 	@Override
@@ -61,34 +57,18 @@ class DataSourceListenerReferenceIntegrationTest extends DataSourceListenerInteg
 			String result = doLogic();
 			assertThat(result).isEqualTo("Bar");
 
-			// @formatter:off
-			SpansAssert.assertThat(bb.getFinishedSpans())
-					.hasASpanWithRemoteServiceName("proxy")
-					.hasNumberOfSpansEqualTo(3)
-					.hasASpanWithName("connection")
-					.hasASpanWithName("query", (spanAssert -> {
-						spanAssert
-								.hasTag("jdbc.query[0]", "SELECT name FROM emp WHERE id = ?")
-								.hasTag("jdbc.params[0]", "(20)")
-								.hasTag("jdbc.datasource.name", "proxy");
-					}))
-					.hasASpanWithName("result-set", (spanAssert) -> {
-						spanAssert
-								.hasTag("jdbc.row-count", "1")
-								.hasTag("jdbc.datasource.name", "proxy");
-					});
-			// @formatter:on
-
+			// verify observation interactions
 			List<RecordingObservationHandler.ObservationOperation> operations = this.recordingObservationHandler.operations
 				.stream()
-				.filter(operation -> operation.context instanceof DataSourceBaseContext)
+				.filter(operation -> operation.context.getName().equals("my.observation")
+						|| operation.context instanceof DataSourceBaseContext)
 				.collect(Collectors.toList());
-
-			// verify observation interactions
-			assertThat(operations).satisfiesExactly(o -> o.verify(OB_START, "jdbc.connection", null),
-					o -> o.verify(SCOPE_OPENED, "jdbc.connection", null),
-					o -> o.verify(OB_EVENT, "jdbc.connection", null),
-					o -> o.verify(SCOPE_CLOSED, "jdbc.connection", null),
+			assertThat(operations).satisfiesExactly(o -> o.verify(OB_START, "my.observation", null),
+					o -> o.verify(SCOPE_OPENED, "my.observation", null),
+					o -> o.verify(OB_START, "jdbc.connection", "my.observation"),
+					o -> o.verify(SCOPE_OPENED, "jdbc.connection", "my.observation"),
+					o -> o.verify(OB_EVENT, "jdbc.connection", "my.observation"),
+					o -> o.verify(SCOPE_CLOSED, "jdbc.connection", "my.observation"),
 					o -> o.verify(OB_START, "jdbc.query", "jdbc.connection"),
 					o -> o.verify(SCOPE_OPENED, "jdbc.query", "jdbc.connection"),
 					o -> o.verify(SCOPE_CLOSED, "jdbc.query", "jdbc.connection"),
@@ -97,20 +77,33 @@ class DataSourceListenerReferenceIntegrationTest extends DataSourceListenerInteg
 					o -> o.verify(SCOPE_OPENED, "jdbc.result-set", "jdbc.connection"),
 					o -> o.verify(SCOPE_CLOSED, "jdbc.result-set", "jdbc.connection"),
 					o -> o.verify(OB_STOP, "jdbc.result-set", "jdbc.connection"),
-					o -> o.verify(OB_STOP, "jdbc.connection", null));
+					o -> o.verify(SCOPE_CLOSED, "my.observation", null), o -> o.verify(OB_STOP, "my.observation", null),
+					o -> o.verify(OB_STOP, "jdbc.connection", "my.observation"));
 		};
 	}
 
 	private String doLogic() throws Exception {
-		try (Connection conn = this.proxyDataSource.getConnection()) {
+		// Simulate Open-In-View behavior: Close the DB connection after custom
+		// observation is stopped.
+		AtomicReference<Connection> connectionHolder = new AtomicReference<>();
+		AtomicReference<String> resultHolder = new AtomicReference<>();
+
+		Observation.createNotStarted("my.observation", getObservationRegistry()).observeChecked(() -> {
+			Connection conn = this.proxyDataSource.getConnection();
+			connectionHolder.set(conn);
 			try (PreparedStatement stmt = conn.prepareStatement("SELECT name FROM emp WHERE id = ?")) {
 				stmt.setInt(1, 20);
 				try (ResultSet rs = stmt.executeQuery()) {
 					rs.next();
-					return rs.getString(1);
+					resultHolder.set(rs.getString(1));
 				}
 			}
-		}
+		});
+
+		// close the connection outside of custom observation
+		connectionHolder.get().close();
+
+		return resultHolder.get();
 	}
 
 }

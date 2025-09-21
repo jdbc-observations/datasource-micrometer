@@ -4,7 +4,6 @@ import io.micrometer.common.lang.Nullable;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationView;
-import org.assertj.core.data.Index;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,7 @@ class RecordingObservationHandler implements ObservationHandler<Observation.Cont
 
 	@Override
 	public boolean supportsContext(Observation.Context context) {
-		return context instanceof DataSourceBaseContext;
+		return true;
 	}
 
 	@Override
@@ -69,19 +68,6 @@ class RecordingObservationHandler implements ObservationHandler<Observation.Cont
 
 	}
 
-	void verify(int index, OperationType operationType, String operationName, @Nullable String parentName) {
-		assertThat(this.operations).satisfies((operation) -> {
-			assertThat(operation.getOperationType()).isEqualTo(operationType);
-			assertThat(operation.getContext().getName()).isEqualTo(operationName);
-			if (parentName != null) {
-				assertThat(operation.getContext().getParentObservation()).extracting(ObservationView::getContextView)
-					.extracting(Observation.ContextView::getName)
-					.isEqualTo(parentName);
-			}
-		}, Index.atIndex(index));
-
-	}
-
 	static class ObservationOperation {
 
 		OperationType operationType;
@@ -107,6 +93,16 @@ class RecordingObservationHandler implements ObservationHandler<Observation.Cont
 
 		public void setContext(Observation.Context context) {
 			this.context = context;
+		}
+
+		void verify(OperationType operationType, String operationName, @Nullable String parentName) {
+			assertThat(this.operationType).isEqualTo(operationType);
+			assertThat(this.context.getName()).isEqualTo(operationName);
+			if (parentName != null) {
+				assertThat(this.context.getParentObservation()).extracting(ObservationView::getContextView)
+					.extracting(Observation.ContextView::getName)
+					.isEqualTo(parentName);
+			}
 		}
 
 	}

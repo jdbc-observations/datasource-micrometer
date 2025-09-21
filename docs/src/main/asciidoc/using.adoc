@@ -72,6 +72,12 @@ When enabled, it publishes events - `JdbcQueryExecutionEvent` and `JdbcMethodExe
 == Limitations
 [[using-limitations-open-session-in-view]]
 === Open Session In View
+
+NOTE: The following limitation applies only to versions prior to `v1.2`.
+Starting with `v1.2`, the duration of the connection observation scope has been shortened, and OIV is handled correctly.
+For more details, see issue https://github.com/jdbc-observations/datasource-micrometer/issues/82[gh-82].
+
+
 When working with Open-In-View (Open Session In View (OSIV) or Open EntityManager In View (OEIV)), special care is required.
 This is because OIV delays closing the database connection, which can affect the boundaries of observations.
 
@@ -134,3 +140,27 @@ The example above uses an explicitly created observation, but the same applies i
 Therefore, when OIV is enabled, pay careful attention to observation boundaries — especially if the observation includes database access.
 
 In upcoming versions, we plan to narrow the scope of connection observations to better support the OIV pattern.
+
+[[using-limitations-open-session-in-view-post-v1.2-behavior]]
+==== Post-v1.2 Behavior
+Starting with `v1.2`, the scope of the connection observation has been shortened, so OIV now works correctly. +
+The observation order looks like this:
+
+----
+Action                | Name
+----------------------|--------------------
+START Observation     | "http.server.requests"
+OPEN Scope            | "http.server.requests"
+START Observation     | "my.observation"
+OPEN Scope            | "my.observation"
+START Observation     | "jdbc.connection"
+OPEN Scope            | "jdbc.connection"
+CLOSE Scope           | "jdbc.connection"  <== Immediately after acquiring a connection
+...                   | ...
+CLOSE Scope           | "my.observation"
+STOP Observation      | "my.observation"
+STOP Observation      | "jdbc.connection"  <==
+CLOSE Scope           | "http.server.requests"
+STOP Observation      | "http.server.requests"
+----
+
