@@ -29,8 +29,8 @@
 
     <properties>
         <java.version>17</java.version>
-        <micrometer-bom.version>1.14.8</micrometer-bom.version>
-        <micrometer-tracing-bom.version>1.4.7</micrometer-tracing-bom.version>
+        <micrometer-bom.version>1.16.0-M3</micrometer-bom.version>
+        <micrometer-tracing-bom.version>1.6.0-M3</micrometer-tracing-bom.version>
         <spring-javaformat.version>0.0.43</spring-javaformat.version>
 
         <!-- Tests  -->
