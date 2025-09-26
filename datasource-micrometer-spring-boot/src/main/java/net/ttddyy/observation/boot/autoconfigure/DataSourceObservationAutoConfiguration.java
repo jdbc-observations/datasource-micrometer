@@ -65,7 +65,7 @@ import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 import org.springframework.boot.micrometer.observation.autoconfigure.ObservationAutoConfiguration;
 import org.springframework.boot.micrometer.observation.autoconfigure.ObservationRegistryCustomizer;
-import org.springframework.boot.micrometer.tracing.autoconfigure.ConditionalOnEnabledTracing;
+import org.springframework.boot.micrometer.tracing.autoconfigure.ConditionalOnEnabledTracingExport;
 import org.springframework.boot.micrometer.tracing.autoconfigure.MicrometerTracingAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
@@ -180,7 +180,7 @@ public class DataSourceObservationAutoConfiguration {
 	}
 
 	@Configuration(proxyBeanMethods = false)
-	@ConditionalOnEnabledTracing
+	@ConditionalOnEnabledTracingExport
 	static class DataSourceTracing {
 
 		private static final int ORDER = MicrometerTracingAutoConfiguration.DEFAULT_TRACING_OBSERVATION_HANDLER_ORDER
