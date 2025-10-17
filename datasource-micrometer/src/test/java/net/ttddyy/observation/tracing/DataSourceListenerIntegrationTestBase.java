@@ -16,14 +16,6 @@
 
 package net.ttddyy.observation.tracing;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.Deque;
-import java.util.function.BiConsumer;
-
-import javax.sql.DataSource;
-
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
@@ -36,6 +28,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+import java.util.function.BiConsumer;
+
 /**
  * Base class for {@link DataSourceObservationListener} integration tests.
  *
@@ -46,6 +47,8 @@ abstract class DataSourceListenerIntegrationTestBase extends SampleTestRunner {
 	protected static JdbcDataSource dataSource;
 
 	protected DataSource proxyDataSource;
+
+	protected RecordingObservationHandler recordingObservationHandler;
 
 	public DataSourceListenerIntegrationTestBase() {
 		super(SampleRunnerConfig.builder().build());
@@ -97,6 +100,11 @@ abstract class DataSourceListenerIntegrationTestBase extends SampleTestRunner {
 		proxyDataSource = builder.build();
 	}
 
+	@BeforeEach
+	void createRecordingObservationHandler() {
+		this.recordingObservationHandler = new RecordingObservationHandler();
+	}
+
 	protected void customizeListener(DataSourceObservationListener listener) {
 
 	}
@@ -122,9 +130,15 @@ abstract class DataSourceListenerIntegrationTestBase extends SampleTestRunner {
 	@Override
 	public BiConsumer<BuildingBlocks, Deque<ObservationHandler<? extends Context>>> customizeObservationHandlers() {
 		return (bb, handlers) -> {
-			handlers.addFirst(new ConnectionTracingObservationHandler(bb.getTracer()));
-			handlers.addFirst(new QueryTracingObservationHandler(bb.getTracer()));
-			handlers.addFirst(new ResultSetTracingObservationHandler(bb.getTracer()));
+			List<ObservationHandler<?>> newHandlers = new ArrayList<>();
+			newHandlers.addAll(handlers);
+			newHandlers.add(new ConnectionTracingObservationHandler(bb.getTracer()));
+			newHandlers.add(new QueryTracingObservationHandler(bb.getTracer()));
+			newHandlers.add(new ResultSetTracingObservationHandler(bb.getTracer()));
+			newHandlers.add(this.recordingObservationHandler); // for testing;
+
+			handlers.clear();
+			handlers.add(new ObservationHandler.AllMatchingCompositeObservationHandler(newHandlers));
 		};
 	}
 

@@ -22,21 +22,24 @@
     <groupId>net.ttddyy.observation</groupId>
     <artifactId>datasource-micrometer-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.1-SNAPSHOT</version>
     <name>datasource-micrometer-parent</name>
     <description>Micrometer observation for JDBC</description>
     <url>https://github.com/jdbc-observations/datasource-micrometer</url>
 
     <properties>
         <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
         <micrometer-bom.version>1.16.0-M3</micrometer-bom.version>
         <micrometer-tracing-bom.version>1.6.0-M3</micrometer-tracing-bom.version>
         <spring-javaformat.version>0.0.47</spring-javaformat.version>
 
         <!-- Tests  -->
         <junit.version>5.13.4</junit.version>
-        <mockito.version>5.19.0</mockito.version>
-        <assertj.version>3.27.4</assertj.version>
+        <mockito.version>5.20.0</mockito.version>
+        <assertj.version>3.27.6</assertj.version>
 
         <!-- datasource-micrometer module -->
         <datasource-proxy.version>1.11.0</datasource-proxy.version>

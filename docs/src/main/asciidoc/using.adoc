@@ -72,25 +72,95 @@ When enabled, it publishes events - `JdbcQueryExecutionEvent` and `JdbcMethodExe
 == Limitations
 [[using-limitations-open-session-in-view]]
 === Open Session In View
-Unfortunately, Open Session In View (OSIV) is not supported.
-This is because OSIV delays closing the database connection until the HTTP response is sent.
 
-Observation scope orders without OSIV:
+NOTE: The following limitation applies only to versions prior to `v1.2`.
+Starting with `v1.2`, the duration of the connection observation scope has been shortened, and OIV is handled correctly.
+For more details, see issue https://github.com/jdbc-observations/datasource-micrometer/issues/82[gh-82].
 
-. Open HTTP request observation scope
-. Open DB connection observation scope
-. (Other observation scopes)
-. Close DB connection observation scope
-. Close HTTP request observation scope
 
-However, with OSIV enabled, the DB connection closing is delayed, leading to the following order:
+When working with Open-In-View (Open Session In View (OSIV) or Open EntityManager In View (OEIV)), special care is required.
+This is because OIV delays closing the database connection, which can affect the boundaries of observations.
 
-. Open HTTP request observation scope
-. Open DB connection observation scope
-. (Other observation scopes)
-. *(SWAPPED)* Close HTTP request observation scope
-. *(SWAPPED)* Close DB connection observation scope
+For example, consider the following code:
 
-Since observation scopes must be closed in the reverse order of their creation, this swapped ordering causes observation leaks.
+[source,java]
+----
+@GetMapping("/")
+List<Car> cars() {
+  return Observation.createNotStarted("my.observation", registry).observe(() -> {
+    return repository.findAll();  // DB access
+  });
+}
+----
 
-To disable OSIV, set `spring.jpa.open-in-view=false`.
+With OIV *disabled*, the observation interaction looks like this:
+
+----
+Action                | Name
+----------------------|--------------------
+START Observation     | "http.server.requests"
+OPEN Scope            | "http.server.requests"
+START Observation     | "my.observation"
+OPEN Scope            | "my.observation"
+START Observation     | "jdbc.connection"
+OPEN Scope            | "jdbc.connection"
+...                   | ...
+CLOSE Scope           | "jdbc.connection"
+STOP Observation      | "jdbc.connection"
+CLOSE Scope           | "my.observation"
+STOP Observation      | "my.observation"
+CLOSE Scope           | "http.server.requests"
+STOP Observation      | "http.server.requests"
+----
+
+With OIV *enabled*, the order changes:
+
+----
+Action                | Name
+----------------------|--------------------
+START Observation     | "http.server.requests"
+OPEN Scope            | "http.server.requests"
+START Observation     | "my.observation"
+OPEN Scope            | "my.observation"
+START Observation     | "jdbc.connection"
+OPEN Scope            | "jdbc.connection"
+...                   | ...
+CLOSE Scope           | "my.observation"      <==
+STOP Observation      | "my.observation"      <==
+CLOSE Scope           | "jdbc.connection"     <==
+STOP Observation      | "jdbc.connection"     <==
+CLOSE Scope           | "http.server.requests"
+STOP Observation      | "http.server.requests"
+----
+
+As you can see, when OIV is enabled, the `jdbc.connection` observation/scope is closed *after* the `my.observation` observation/scope.
+Since scopes must be closed in the reverse order of their opening, this swapped order can cause leaks in thread-local bound values (such as spans), because opening and closing scopes trigger thread-local operations.
+
+The example above uses an explicitly created observation, but the same applies if you use the `@Observed` annotation or another instrumentation library.
+Therefore, when OIV is enabled, pay careful attention to observation boundaries — especially if the observation includes database access.
+
+In upcoming versions, we plan to narrow the scope of connection observations to better support the OIV pattern.
+
+[[using-limitations-open-session-in-view-post-v1.2-behavior]]
+==== Post-v1.2 Behavior
+Starting with `v1.2`, the scope of the connection observation has been shortened, so OIV now works correctly. +
+The observation order looks like this:
+
+----
+Action                | Name
+----------------------|--------------------
+START Observation     | "http.server.requests"
+OPEN Scope            | "http.server.requests"
+START Observation     | "my.observation"
+OPEN Scope            | "my.observation"
+START Observation     | "jdbc.connection"
+OPEN Scope            | "jdbc.connection"
+CLOSE Scope           | "jdbc.connection"  <== Immediately after acquiring a connection
+...                   | ...
+CLOSE Scope           | "my.observation"
+STOP Observation      | "my.observation"
+STOP Observation      | "jdbc.connection"  <==
+CLOSE Scope           | "http.server.requests"
+STOP Observation      | "http.server.requests"
+----
+

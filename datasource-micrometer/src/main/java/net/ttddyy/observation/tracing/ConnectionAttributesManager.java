@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import javax.sql.DataSource;
 
 import io.micrometer.common.lang.Nullable;
+import io.micrometer.observation.Observation;
 import io.micrometer.observation.Observation.Scope;
 import net.ttddyy.dsproxy.ConnectionInfo;
 
@@ -61,7 +62,7 @@ public interface ConnectionAttributesManager {
 		@Nullable
 		int port;
 
-		Scope scope;
+		Observation observation;
 
 		ResultSetAttributesManager resultSetAttributesManager = new ResultSetAttributesManager();
 
