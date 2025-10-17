@@ -1,6 +1,10 @@
 Datasource Micrometer Changelog
 ================================
 
+2.0.0-RC1
+------------------
+* Support Spring Boot 4.0.0-M3 (#78)
+
 1.2.0
 ------------------
 * Fix closing order of scope and observation (#79)
