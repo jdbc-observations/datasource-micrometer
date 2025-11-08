@@ -45,7 +45,7 @@
         <datasource-proxy.version>1.11.0</datasource-proxy.version>
 
         <!-- datasource-micrometer-spring-boot module -->
-        <spring-boot.version>4.0.0-RC1</spring-boot.version>
+        <spring-boot.version>4.0.0-RC2</spring-boot.version>
 
         <!-- Docs -->
         <micrometer-docs-generator.version>1.0.4</micrometer-docs-generator.version>
