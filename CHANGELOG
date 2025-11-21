@@ -1,6 +1,10 @@
 Datasource Micrometer Changelog
 ================================
 
+2.0.0
+------------------
+* Support Spring Boot 4.0.0 (#78)
+
 2.0.0-RC1
 ------------------
 * Support Spring Boot 4.0.0-M3 (#78)
