@@ -57,8 +57,6 @@
         <ant-contrib.version>1.0b3</ant-contrib.version>
         <antelopetasks.version>3.2.10</antelopetasks.version>
         <ant-nodeps.version>1.8.1</ant-nodeps.version>
-        <script-commons-logging.version>1.3.5</script-commons-logging.version>
-        <script-spring-core.version>7.0.0-M8</script-spring-core.version>
         <script-jackson-databind.version>2.20.0</script-jackson-databind.version>
         <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
 
