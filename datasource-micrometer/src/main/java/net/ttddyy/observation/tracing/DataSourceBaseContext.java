@@ -40,6 +40,10 @@ public class DataSourceBaseContext extends SenderContext<Object> {
 
 	private String dataSourceName;
 
+	@Nullable
+	private String url;
+
+	@Nullable
 	private String host;
 
 	private int port;
@@ -59,6 +63,15 @@ public class DataSourceBaseContext extends SenderContext<Object> {
 
 	public void setDataSourceName(@Nullable String dataSourceName) {
 		this.dataSourceName = dataSourceName;
+	}
+
+	@Nullable
+	public String getUrl() {
+		return this.url;
+	}
+
+	public void setUrl(@Nullable String url) {
+		this.url = url;
 	}
 
 	@Nullable

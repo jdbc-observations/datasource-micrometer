@@ -38,6 +38,11 @@
             </dependency>
             <dependency>
                 <groupId>net.ttddyy.observation</groupId>
+                <artifactId>datasource-micrometer-opentelemetry</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.ttddyy.observation</groupId>
                 <artifactId>datasource-micrometer-spring-boot</artifactId>
                 <version>1.2.2-SNAPSHOT</version>
             </dependency>

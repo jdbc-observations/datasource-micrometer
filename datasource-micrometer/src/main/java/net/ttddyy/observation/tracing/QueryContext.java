@@ -21,6 +21,8 @@ import java.util.List;
 
 import io.micrometer.common.lang.Nullable;
 import io.micrometer.observation.Observation;
+import net.ttddyy.dsproxy.ExecutionInfo;
+import net.ttddyy.dsproxy.QueryInfo;
 
 /**
  * {@link Observation.Context Context} for query execution operations.
@@ -34,6 +36,10 @@ public final class QueryContext extends DataSourceBaseContext {
 	private List<String> params = new ArrayList<>();
 
 	private String affectedRowCount;
+
+	private ExecutionInfo executionInfo;
+
+	private List<QueryInfo> queryInfoList;
 
 	public List<String> getParams() {
 		return this.params;
@@ -60,4 +66,19 @@ public final class QueryContext extends DataSourceBaseContext {
 		this.affectedRowCount = affectedRowCount;
 	}
 
+	public ExecutionInfo getExecutionInfo() {
+		return executionInfo;
+	}
+
+	public void setExecutionInfo(ExecutionInfo executionInfo) {
+		this.executionInfo = executionInfo;
+	}
+
+	public List<QueryInfo> getQueryInfoList() {
+		return queryInfoList;
+	}
+
+	public void setQueryInfoList(List<QueryInfo> queryInfoList) {
+		this.queryInfoList = queryInfoList;
+	}
 }

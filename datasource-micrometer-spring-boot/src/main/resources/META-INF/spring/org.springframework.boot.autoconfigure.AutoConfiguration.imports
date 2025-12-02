@@ -1,1 +1,2 @@
 net.ttddyy.observation.boot.autoconfigure.DataSourceObservationAutoConfiguration
+net.ttddyy.observation.boot.autoconfigure.opentelemetry.DataSourceObservationOpenTelemetryAutoConfiguration
