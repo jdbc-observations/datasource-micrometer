@@ -117,6 +117,14 @@ The produced jars support following JDK versions at runtime:
 
 ## Dependent Library Versions
 
+Spring Boot Support:
+
+| DataSource Micrometer | Spring Boot |
+|:---------------------:|:-----------:|
+|         `2.x`         |    4.0.x    |
+|         `1.x`         |     3.x     |
+
+
 | DataSource Micrometer |   Spring Boot    | Micrometer Tracing BOM | Micrometer BOM |
 |:---------------------:|:----------------:|:----------------------:|:--------------:|
 |         `2.x`         |      4.0.x       |         1.6.x          |     1.16.x     | 
