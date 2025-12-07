@@ -1,6 +1,10 @@
 Datasource Micrometer Changelog
 ================================
 
+1.2.1
+------------------
+* Fix "null" from generated-keys (#88)
+
 1.2.0
 ------------------
 * Fix closing order of scope and observation (#79)
