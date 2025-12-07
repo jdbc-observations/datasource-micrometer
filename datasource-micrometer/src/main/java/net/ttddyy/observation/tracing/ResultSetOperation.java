@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.micrometer.common.lang.Nullable;
+
 /**
  * Represent an operation(method call) performed on the proxy {@link ResultSet}.
  *
@@ -34,11 +36,13 @@ public class ResultSetOperation {
 
 	private final Object[] args;
 
+	@Nullable
 	private final Object result;
 
+	@Nullable
 	private final Throwable thrown;
 
-	public ResultSetOperation(Method method, Object[] args, Object result, Throwable thrown) {
+	public ResultSetOperation(Method method, Object[] args, @Nullable Object result, @Nullable Throwable thrown) {
 		this.method = method;
 		this.args = args;
 		this.result = result;
@@ -66,10 +70,12 @@ public class ResultSetOperation {
 		return this.args;
 	}
 
+	@Nullable
 	public Object getResult() {
 		return this.result;
 	}
 
+	@Nullable
 	public Throwable getThrown() {
 		return this.thrown;
 	}

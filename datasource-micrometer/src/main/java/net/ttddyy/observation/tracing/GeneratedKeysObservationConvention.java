@@ -37,7 +37,7 @@ public interface GeneratedKeysObservationConvention extends ResultSetObservation
 			.stream()
 			.filter(ResultSetOperation::isDataRetrievalOperation)
 			.map(ResultSetOperation::getResult)
-			.map(Object::toString)
+			.map(result -> result == null ? "null" : result.toString())
 			.collect(Collectors.joining(","));
 		return ResultSetObservationConvention.super.getHighCardinalityKeyValues(context)
 			.and(KeyValue.of(GeneratedKeysHighCardinalityKeyNames.KEYS.asString(), keys));
