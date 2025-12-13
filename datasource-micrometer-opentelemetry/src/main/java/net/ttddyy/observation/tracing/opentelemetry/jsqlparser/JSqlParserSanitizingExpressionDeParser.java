@@ -27,8 +27,11 @@ import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.TimeValue;
 import net.sf.jsqlparser.expression.TimestampValue;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
+import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.util.deparser.ExpressionDeParser;
+
+import java.util.regex.Pattern;
 
 /**
  * An {@link ExpressionDeParser} to sanitize query.
@@ -37,6 +40,9 @@ import net.sf.jsqlparser.util.deparser.ExpressionDeParser;
  * @since 1.3.0
  **/
 public class JSqlParserSanitizingExpressionDeParser extends ExpressionDeParser {
+
+	private static final ParenthesedExpressionList<StringValue> COLLAPSED_PLACEHOLDER = new ParenthesedExpressionList<>(
+			new StringValue("?"));
 
 	@Override
 	public <S> StringBuilder visit(LongValue longValue, S context) {
@@ -98,7 +104,15 @@ public class JSqlParserSanitizingExpressionDeParser extends ExpressionDeParser {
 
 	@Override
 	public <S> StringBuilder visit(InExpression inExpression, S context) {
-		// TODO: combine (?,?..) in the right expression
+		// collapse (?,?..) in the right expression
+		if (inExpression.getRightExpression() instanceof ParenthesedExpressionList) {
+			// replace the right expression while traversing, then put it back
+			ParenthesedExpressionList<?> original = (ParenthesedExpressionList<?>) inExpression.getRightExpression();
+			inExpression.setRightExpression(COLLAPSED_PLACEHOLDER);
+			StringBuilder result = super.visit(inExpression, context);
+			inExpression.setRightExpression(original);
+			return result;
+		}
 		return super.visit(inExpression, context);
 	}
 

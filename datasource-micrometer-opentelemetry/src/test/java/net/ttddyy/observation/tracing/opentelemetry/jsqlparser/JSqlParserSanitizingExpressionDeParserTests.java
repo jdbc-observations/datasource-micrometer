@@ -112,7 +112,12 @@ class JSqlParserSanitizingExpressionDeParserTests {
 
 			// whitespace normalization
 			arguments("SELECT    *    \t\r\nFROM  TABLE WHERE FIELD1 = 12344 AND FIELD2 = 5678",
-					"SELECT * FROM TABLE WHERE FIELD1 = ? AND FIELD2 = ?")
+					"SELECT * FROM TABLE WHERE FIELD1 = ? AND FIELD2 = ?"),
+
+			// in clause collapse placeholder
+			arguments("SELECT * FROM TABLE WHERE id IN (10)", "SELECT * FROM TABLE WHERE id IN (?)"),
+			arguments("SELECT * FROM TABLE WHERE id IN ()", "SELECT * FROM TABLE WHERE id IN (?)"),
+			arguments("SELECT * FROM TABLE WHERE id IN (10,20,30)", "SELECT * FROM TABLE WHERE id IN (?)")
 			//@formatter:on
 		);
 	}
