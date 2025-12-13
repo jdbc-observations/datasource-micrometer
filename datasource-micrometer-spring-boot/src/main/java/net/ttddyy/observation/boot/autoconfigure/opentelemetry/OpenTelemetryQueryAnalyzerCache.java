@@ -44,6 +44,10 @@ public class OpenTelemetryQueryAnalyzerCache implements OpenTelemetryQueryAnalyz
 		return this.cache.get(new CacheKey(query, isBatch, statementType));
 	}
 
+	public OpenTelemetryQueryAnalyzer getDelegate() {
+		return this.delegate;
+	}
+
 	record CacheKey(String query, boolean isBatch, StatementType statementType) {
 		@Override
 		public boolean equals(Object o) {
