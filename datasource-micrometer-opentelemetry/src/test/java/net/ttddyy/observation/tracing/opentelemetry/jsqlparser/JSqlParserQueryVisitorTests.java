@@ -199,7 +199,16 @@ class JSqlParserQueryVisitorTests {
 			arguments("merge into \"my target\" as t using source as s on (t.id=s.id)", "my target"),
 
 			arguments("insert into target (name) select name from source", "target"),
-			arguments("with cte (name) as (select name from source) select name from cte", "cte")
+			arguments("with cte (name) as (select name from source) select name from cte", "cte"),
+
+			arguments("CREATE TABLE `table`", "table"),
+			arguments("CREATE TABLE IF NOT EXISTS table", "table"),
+			arguments("DROP TABLE `if`", "if"),
+			arguments("ALTER TABLE table ADD CONSTRAINT c FOREIGN KEY (foreign_id) REFERENCES ref (id)", "table"),
+			arguments("CREATE INDEX types_name ON types (name)", "types"),  // different from otel
+			arguments("DROP INDEX types_name",  "types_name"),  // different from otel
+			arguments("CREATE VIEW tmp AS SELECT type FROM table WHERE id = ?",  "tmp"),  // different from otel
+			arguments("CREATE PROCEDURE p AS SELECT * FROM table GO", null)
 			// @formatter:on
 		);
 	}

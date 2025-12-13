@@ -20,7 +20,9 @@ import io.micrometer.common.lang.Nullable;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.StatementVisitorAdapter;
+import net.sf.jsqlparser.statement.alter.Alter;
 import net.sf.jsqlparser.statement.analyze.Analyze;
+import net.sf.jsqlparser.statement.create.index.CreateIndex;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.create.view.CreateView;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -54,22 +56,8 @@ public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 		@Override
 		public <S> Void visit(PlainSelect plainSelect, S context) {
 			plainSelect.getFromItem().accept(this, context);
-			visitJoins(plainSelect.getJoins(), context);
+			visitJoins(plainSelect.getJoins(), context, this);
 			return null;
-		}
-
-		private <S> void visitJoins(@Nullable List<Join> joins, S context) {
-			if (joins == null) {
-				return;
-			}
-			for (Join join : joins) {
-				join.getFromItem().accept(this, context);
-				join.getRightItem().accept(this, context);
-				// joins may duplicate the collection names. dedupe them
-				((VisitedContext) context).dedupeLastTwoEntries();
-			}
-			// for join, there is no main table
-			clearMainTable(context);
 		}
 
 		@Override
@@ -83,7 +71,7 @@ public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 			addCollection(context, table.getName());
 			// e.g:
 			// 'aa bb' => aa bb
-			// 'aa'.'bb' => `aa`.`bb`
+			// 'aa'.'bb' => 'aa'.'bb'
 			String tableName;
 			String schema = table.getSchemaName();
 			if (schema != null) {
@@ -117,7 +105,7 @@ public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 	@Override
 	public <S> Void visit(Delete delete, S context) {
 		addOperation(context, "DELETE");
-		visitJoins(delete.getJoins(), context);
+		visitJoins(delete.getJoins(), context, this.fromItemVisitor);
 		return this.fromItemVisitor.visit(delete.getTable(), context);
 	}
 
@@ -186,27 +174,23 @@ public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 	}
 
 	@Override
+	public <S> Void visit(Alter alter, S context) {
+		addOperation(context, "ALTER TABLE");
+		return this.fromItemVisitor.visit(alter.getTable(), context);
+	}
+
+	@Override
+	public <S> Void visit(CreateIndex createIndex, S context) {
+		addOperation(context, "CREATE INDEX");
+		return this.fromItemVisitor.visit(createIndex.getTable(), context);
+	}
+
+	@Override
 	public <S> Void visit(Execute execute, S context) {
 		addOperation(context, execute.getExecType().toString());
-		if (execute.getExprList() != null) {
-
-		}
 		addCollection(context, execute.getName());
 		setMainTableIfEmpty(context, execute.getName());
 		return null;
-	}
-
-	// TODO: combine
-	private <S> void visitJoins(@Nullable List<Join> joins, S context) {
-		if (joins == null) {
-			return;
-		}
-		for (Join join : joins) {
-			join.getFromItem().accept(this.fromItemVisitor, context);
-			join.getRightItem().accept(this.fromItemVisitor, context);
-			// joins may duplicate the collection names. dedupe them
-			((VisitedContext) context).dedupeLastTwoEntries();
-		}
 	}
 
 	private <S> void addOperation(S context, String operationName) {
@@ -224,7 +208,21 @@ public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 		}
 	}
 
-	private <S> void clearMainTable(S context) {
+	static private <S> void visitJoins(@Nullable List<Join> joins, S context, FromItemVisitor<Void> fromItemVisitor) {
+		if (joins == null) {
+			return;
+		}
+		for (Join join : joins) {
+			join.getFromItem().accept(fromItemVisitor, context);
+			join.getRightItem().accept(fromItemVisitor, context);
+			// joins may duplicate the collection names. dedupe them
+			((VisitedContext) context).dedupeLastTwoEntries();
+		}
+		// for join, there is no main table
+		clearMainTable(context);
+	}
+
+	static private <S> void clearMainTable(S context) {
 		((VisitedContext) context).setMainTableName(null);
 	}
 
