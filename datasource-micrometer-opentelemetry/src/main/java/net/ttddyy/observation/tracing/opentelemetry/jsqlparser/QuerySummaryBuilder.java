@@ -18,7 +18,13 @@ package net.ttddyy.observation.tracing.opentelemetry.jsqlparser;
 
 import java.util.List;
 
-public class SummaryBuilder {
+/**
+ * Construct query summary.
+ *
+ * @author Tadaya Tsuyukubo
+ * @since 1.3.0
+ */
+public class QuerySummaryBuilder {
 
 	private int max = 255;
 

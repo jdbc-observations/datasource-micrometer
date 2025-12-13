@@ -18,6 +18,12 @@ package net.ttddyy.observation.tracing.opentelemetry.jsqlparser;
 
 import java.util.Objects;
 
+/**
+ * Stores data about a query element visited by {@link JSqlParserQueryVisitor}.
+ *
+ * @author Tadaya Tsuyukubo
+ * @since 1.3.0
+ */
 public class VisitedEntry {
 
 	public enum ValueType {

@@ -24,9 +24,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for {@link SummaryBuilder}.
+ * Tests for {@link QuerySummaryBuilder}.
  */
-class SummaryBuilderTests {
+class QuerySummaryBuilderTests {
 
 	@Test
 	void summary() {
@@ -34,7 +34,7 @@ class SummaryBuilderTests {
 		list.add(VisitedEntry.operation("SELECT"));
 		list.add(VisitedEntry.collection("emp"));
 
-		SummaryBuilder builder = new SummaryBuilder();
+		QuerySummaryBuilder builder = new QuerySummaryBuilder();
 		String summary = builder.build(list);
 		assertThat(summary).isEqualTo("SELECT emp");
 	}
@@ -53,7 +53,7 @@ class SummaryBuilderTests {
 		}
 		String expected = String.join(" ", list); // 252 char
 
-		SummaryBuilder builder = new SummaryBuilder();
+		QuerySummaryBuilder builder = new QuerySummaryBuilder();
 		String summary = builder.build(entries);
 		assertThat(summary).isEqualTo(expected);
 	}

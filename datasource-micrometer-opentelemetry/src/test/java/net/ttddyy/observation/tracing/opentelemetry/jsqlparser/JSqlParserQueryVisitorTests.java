@@ -25,7 +25,7 @@ class JSqlParserQueryVisitorTests {
 		Statement statement = CCJSqlParserUtil.parse(query);
 
 		JSqlParserQueryVisitor visitor = new JSqlParserQueryVisitor();
-		JSqlParserQueryVisitor.VisitedContext visited = visitor.visit(statement);
+		JSqlParserQueryVisitedContext visited = visitor.visit(statement);
 		List<VisitedEntry> entries = visited.getEntries();
 		String mainTableName = visited.getMainTableName();
 
@@ -39,7 +39,7 @@ class JSqlParserQueryVisitorTests {
 		Statement statement = CCJSqlParserUtil.parse(query);
 
 		JSqlParserQueryVisitor visitor = new JSqlParserQueryVisitor();
-		JSqlParserQueryVisitor.VisitedContext visited = visitor.visit(statement);
+		JSqlParserQueryVisitedContext visited = visitor.visit(statement);
 		List<VisitedEntry> entries = visited.getEntries();
 		String mainTableName = visited.getMainTableName();
 
@@ -55,7 +55,7 @@ class JSqlParserQueryVisitorTests {
 		Statement statement = CCJSqlParserUtil.parse(query);
 
 		JSqlParserQueryVisitor visitor = new JSqlParserQueryVisitor();
-		JSqlParserQueryVisitor.VisitedContext visited = visitor.visit(statement);
+		JSqlParserQueryVisitedContext visited = visitor.visit(statement);
 		List<VisitedEntry> entries = visited.getEntries();
 		String mainTableName = visited.getMainTableName();
 
@@ -71,7 +71,7 @@ class JSqlParserQueryVisitorTests {
 		Statement statement = CCJSqlParserUtil.parse(query);
 
 		JSqlParserQueryVisitor visitor = new JSqlParserQueryVisitor();
-		JSqlParserQueryVisitor.VisitedContext visited = visitor.visit(statement);
+		JSqlParserQueryVisitedContext visited = visitor.visit(statement);
 		List<VisitedEntry> entries = visited.getEntries();
 		String mainTableName = visited.getMainTableName();
 
@@ -86,7 +86,7 @@ class JSqlParserQueryVisitorTests {
 		Statement statement = CCJSqlParserUtil.parse(query);
 
 		JSqlParserQueryVisitor visitor = new JSqlParserQueryVisitor();
-		JSqlParserQueryVisitor.VisitedContext visited = visitor.visit(statement);
+		JSqlParserQueryVisitedContext visited = visitor.visit(statement);
 		List<VisitedEntry> entries = visited.getEntries();
 		String mainTableName = visited.getMainTableName();
 
@@ -101,7 +101,7 @@ class JSqlParserQueryVisitorTests {
 		Statement statement = CCJSqlParserUtil.parse(query);
 
 		JSqlParserQueryVisitor visitor = new JSqlParserQueryVisitor();
-		JSqlParserQueryVisitor.VisitedContext visited = visitor.visit(statement);
+		JSqlParserQueryVisitedContext visited = visitor.visit(statement);
 		List<VisitedEntry> entries = visited.getEntries();
 		String mainTableName = visited.getMainTableName();
 
@@ -116,7 +116,7 @@ class JSqlParserQueryVisitorTests {
 		Statement statement = CCJSqlParserUtil.parse(query);
 
 		JSqlParserQueryVisitor visitor = new JSqlParserQueryVisitor();
-		JSqlParserQueryVisitor.VisitedContext visited = visitor.visit(statement);
+		JSqlParserQueryVisitedContext visited = visitor.visit(statement);
 		List<VisitedEntry> entries = visited.getEntries();
 		String mainTableName = visited.getMainTableName();
 
@@ -130,7 +130,7 @@ class JSqlParserQueryVisitorTests {
 		Statement statement = CCJSqlParserUtil.parse(query);
 
 		JSqlParserQueryVisitor visitor = new JSqlParserQueryVisitor();
-		JSqlParserQueryVisitor.VisitedContext visited = visitor.visit(statement);
+		JSqlParserQueryVisitedContext visited = visitor.visit(statement);
 
 		String mainTableName = visited.getMainTableName();
 		assertThat(mainTableName).isEqualTo(expected);

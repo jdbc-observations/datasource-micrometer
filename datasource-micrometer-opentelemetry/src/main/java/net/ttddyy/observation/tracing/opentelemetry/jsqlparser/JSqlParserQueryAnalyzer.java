@@ -35,7 +35,6 @@ import net.sf.jsqlparser.statement.SetStatement;
 import net.sf.jsqlparser.statement.ShowColumnsStatement;
 import net.sf.jsqlparser.statement.ShowStatement;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.Statements;
 import net.sf.jsqlparser.statement.UnsupportedStatement;
 import net.sf.jsqlparser.statement.UseStatement;
 import net.sf.jsqlparser.statement.alter.Alter;
@@ -96,15 +95,15 @@ public class JSqlParserQueryAnalyzer implements OpenTelemetryQueryAnalyzer {
 	public QueryAnalysisResult analyze(String query, boolean isBatch, StatementType statementType) {
 		QueryAnalysisResult result = new QueryAnalysisResult();
 
+		if (statementType == StatementType.PREPARED) {
+			// query-text is only populated with sanitized statement or prepared.
+			// populate query-text before parsing it to include the text in result when
+			// parsing failed.
+			result.setQueryText(query);
+		}
 		if (statementType == StatementType.CALLABLE) {
 			// remove '{' and '}'
 			query = query.trim().replaceAll("^\\{|\\}$", "");
-		}
-
-		if (statementType == StatementType.PREPARED) {
-			// query-text is only populated with sanitized statement or prepared.
-			// populate query-text before parsing it to include the text in result when parsing failed.
-			result.setQueryText(query);
 		}
 
 		Statement statement;
@@ -119,21 +118,11 @@ public class JSqlParserQueryAnalyzer implements OpenTelemetryQueryAnalyzer {
 		String operationName = isBatch ? "BATCH " + operation : operation;
 		result.setOperationName(operationName);
 
-		JSqlParserQueryVisitor visitor = new JSqlParserQueryVisitor();
-		JSqlParserQueryVisitor.VisitedContext visited = visitor.visit(statement);
+		JSqlParserQueryVisitedContext visited = visitStatement(statement);
 		List<VisitedEntry> entries = visited.getEntries();
 		String mainTableName = visited.getMainTableName();
 
-		String summary = new SummaryBuilder().build(entries);
-		// String operations = entries.stream()
-		// .filter(VisitedEntry::isOperation)
-		// .map(VisitedEntry::getData)
-		// .collect(Collectors.joining(","));
-		// String collections = entries.stream()
-		// .filter(VisitedEntry::isCollection)
-		// .map(VisitedEntry::getData)
-		// .collect(Collectors.joining(","));
-		// get collections, operations, summary
+		String summary = new QuerySummaryBuilder().build(entries);
 		result.setQuerySummary(summary);
 
 		if (statementType == StatementType.STATEMENT) {
@@ -151,6 +140,11 @@ public class JSqlParserQueryAnalyzer implements OpenTelemetryQueryAnalyzer {
 		return result;
 	}
 
+	protected JSqlParserQueryVisitedContext visitStatement(Statement statement) {
+		JSqlParserQueryVisitor visitor = new JSqlParserQueryVisitor();
+		return visitor.visit(statement);
+	}
+
 	protected String getSanitizedQuery(Statement statement) {
 		StringBuilder sb = new StringBuilder();
 		StatementDeParser deParser = new StatementDeParser(new JSqlParserSanitizingExpressionDeParser(),
@@ -161,7 +155,7 @@ public class JSqlParserQueryAnalyzer implements OpenTelemetryQueryAnalyzer {
 		return sb.toString();
 	}
 
-	private String getOperation(Statement stmt) {
+	protected String getOperation(Statement stmt) {
 		// parent class first
 		if (stmt instanceof Select) {
 			return "SELECT";

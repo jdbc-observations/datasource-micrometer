@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Tests for {@link JSqlParserQueryAnalyzer}.
  *
  * @author Tadaya Tsuyukubo
- **/
+ */
 class JSqlParserQueryAnalyzerTests {
 
 	@Test

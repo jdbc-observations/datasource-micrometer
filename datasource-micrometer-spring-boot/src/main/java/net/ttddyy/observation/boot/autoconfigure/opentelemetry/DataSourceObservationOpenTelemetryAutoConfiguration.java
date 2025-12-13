@@ -65,7 +65,7 @@ public class DataSourceObservationOpenTelemetryAutoConfiguration {
 
 	@Bean
 	OpenTelemetryQueryAnalyzer openTelemetryQueryAnalyzer() {
-		// TODO: property for cache size
+		// TODO: property for cache size, parserConfigurer, executorService
 		JSqlParserQueryAnalyzer analayzer = new JSqlParserQueryAnalyzer();
 		return new OpenTelemetryQueryAnalyzerCache(analayzer, 1000);
 	}

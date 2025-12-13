@@ -33,7 +33,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  * Tests for {@link JSqlParserSanitizingExpressionDeParser}.
  *
  * @author Tadaya Tsuyukubo
- **/
+ */
 class JSqlParserSanitizingExpressionDeParserTests {
 
 	@ParameterizedTest

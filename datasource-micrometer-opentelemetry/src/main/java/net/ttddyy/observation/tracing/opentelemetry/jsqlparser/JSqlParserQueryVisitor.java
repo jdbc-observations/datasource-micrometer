@@ -90,8 +90,8 @@ public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 	 * @param statement parsed statement
 	 * @return list of visited entries
 	 */
-	public VisitedContext visit(Statement statement) {
-		VisitedContext context = new VisitedContext();
+	public JSqlParserQueryVisitedContext visit(Statement statement) {
+		JSqlParserQueryVisitedContext context = new JSqlParserQueryVisitedContext();
 		statement.accept(this, context);
 		return context;
 	}
@@ -194,15 +194,15 @@ public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 	}
 
 	private <S> void addOperation(S context, String operationName) {
-		((VisitedContext) context).addOperation(operationName);
+		((JSqlParserQueryVisitedContext) context).addOperation(operationName);
 	}
 
 	private <S> void addCollection(S context, String collectionName) {
-		((VisitedContext) context).addCollection(collectionName);
+		((JSqlParserQueryVisitedContext) context).addCollection(collectionName);
 	}
 
 	private <S> void setMainTableIfEmpty(S context, String collectionName) {
-		VisitedContext visitedContext = (VisitedContext) context;
+		JSqlParserQueryVisitedContext visitedContext = (JSqlParserQueryVisitedContext) context;
 		if (visitedContext.getMainTableName() == null) {
 			visitedContext.setMainTableName(collectionName);
 		}
@@ -216,60 +216,60 @@ public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 			join.getFromItem().accept(fromItemVisitor, context);
 			join.getRightItem().accept(fromItemVisitor, context);
 			// joins may duplicate the collection names. dedupe them
-			((VisitedContext) context).dedupeLastTwoEntries();
+			((JSqlParserQueryVisitedContext) context).dedupeLastTwoEntries();
 		}
 		// for join, there is no main table
 		clearMainTable(context);
 	}
 
 	static private <S> void clearMainTable(S context) {
-		((VisitedContext) context).setMainTableName(null);
+		((JSqlParserQueryVisitedContext) context).setMainTableName(null);
 	}
 
-	static class VisitedContext {
-
-		private final List<VisitedEntry> entries = new ArrayList<>();
-
-		@Nullable
-		private String mainTableName;
-
-		public List<VisitedEntry> getEntries() {
-			return this.entries;
-		}
-
-		public void addOperation(String operationName) {
-			this.entries.add(VisitedEntry.operation(operationName));
-		}
-
-		public void addCollection(String collectionName) {
-			this.entries.add(VisitedEntry.collection(collectionName));
-		}
-
-		public void dedupeLastTwoEntries() {
-			if (this.entries.size() < 2) {
-				return;
-			}
-			VisitedEntry last = this.entries.remove(this.entries.size() - 1);
-			VisitedEntry secondLast = this.entries.get(this.entries.size() - 1);
-			if (!last.equals(secondLast)) {
-				this.entries.add(last);
-			}
-		}
-
-		/**
-		 * Main table name for prepared statement. For callable statement, this becomes
-		 * the name of procedure.
-		 * @return name
-		 */
-		@Nullable
-		public String getMainTableName() {
-			return this.mainTableName;
-		}
-
-		public void setMainTableName(@Nullable String mainTableName) {
-			this.mainTableName = mainTableName;
-		}
-
-	}
+//	static class VisitedContext {
+//
+//		private final List<VisitedEntry> entries = new ArrayList<>();
+//
+//		@Nullable
+//		private String mainTableName;
+//
+//		public List<VisitedEntry> getEntries() {
+//			return this.entries;
+//		}
+//
+//		public void addOperation(String operationName) {
+//			this.entries.add(VisitedEntry.operation(operationName));
+//		}
+//
+//		public void addCollection(String collectionName) {
+//			this.entries.add(VisitedEntry.collection(collectionName));
+//		}
+//
+//		public void dedupeLastTwoEntries() {
+//			if (this.entries.size() < 2) {
+//				return;
+//			}
+//			VisitedEntry last = this.entries.remove(this.entries.size() - 1);
+//			VisitedEntry secondLast = this.entries.get(this.entries.size() - 1);
+//			if (!last.equals(secondLast)) {
+//				this.entries.add(last);
+//			}
+//		}
+//
+//		/**
+//		 * Main table name for prepared statement. For callable statement, this becomes
+//		 * the name of procedure.
+//		 * @return name
+//		 */
+//		@Nullable
+//		public String getMainTableName() {
+//			return this.mainTableName;
+//		}
+//
+//		public void setMainTableName(@Nullable String mainTableName) {
+//			this.mainTableName = mainTableName;
+//		}
+//
+//	}
 
 }
