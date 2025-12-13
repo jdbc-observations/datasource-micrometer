@@ -23,16 +23,13 @@ import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryQueryObservatio
 import net.ttddyy.observation.tracing.opentelemetry.SimpleDatabaseNameRetriever;
 import net.ttddyy.observation.tracing.opentelemetry.SimpleOpenTelemetryConnectionUrlParser;
 import net.ttddyy.observation.tracing.opentelemetry.SqlServerDatabaseNameRetriever;
-import net.ttddyy.observation.tracing.opentelemetry.UrlParseResult;
 import net.ttddyy.observation.tracing.opentelemetry.jsqlparser.JSqlParserQueryAnalyzer;
 import net.ttddyy.observation.tracing.opentelemetry.jsqlparser.JSqlParserSanitizingExpressionDeParser;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @AutoConfiguration()
 // @EnableConfigurationProperties(JdbcProperties.class)
@@ -68,27 +65,6 @@ public class DataSourceObservationOpenTelemetryAutoConfiguration {
 		// TODO: property for cache size, parserConfigurer, executorService
 		JSqlParserQueryAnalyzer analayzer = new JSqlParserQueryAnalyzer();
 		return new OpenTelemetryQueryAnalyzerCache(analayzer, 1000);
-	}
-
-	static class OpenTelemetryConnectionUrlParserCache implements OpenTelemetryConnectionUrlParser {
-
-		private final Map<String, UrlParseResult> cache = new ConcurrentHashMap<>();
-
-		private final OpenTelemetryConnectionUrlParser delegate;
-
-		public OpenTelemetryConnectionUrlParserCache(OpenTelemetryConnectionUrlParser delegate) {
-			this.delegate = delegate;
-		}
-
-		@Override
-		public UrlParseResult parse(String url) {
-			return this.cache.computeIfAbsent(url, (key) -> this.delegate.parse(url));
-		}
-
-		public OpenTelemetryConnectionUrlParser getDelegate() {
-			return this.delegate;
-		}
-
 	}
 
 }

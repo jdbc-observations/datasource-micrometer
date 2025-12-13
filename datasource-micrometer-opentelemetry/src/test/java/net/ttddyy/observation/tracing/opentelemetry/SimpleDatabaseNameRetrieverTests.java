@@ -5,6 +5,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Tests for {@link SimpleDatabaseNameRetriever}.
+ */
 class SimpleDatabaseNameRetrieverTests {
 
 	@ParameterizedTest

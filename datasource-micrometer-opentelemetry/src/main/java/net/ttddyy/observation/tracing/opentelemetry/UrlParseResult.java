@@ -19,6 +19,9 @@ package net.ttddyy.observation.tracing.opentelemetry;
 import io.micrometer.common.lang.Nullable;
 
 /**
+ * Result from {@link OpenTelemetryConnectionUrlParser}.
+ *
+ * @author Tadaya Tsuyukubo
  * @since 1.3.0
  */
 public class UrlParseResult {

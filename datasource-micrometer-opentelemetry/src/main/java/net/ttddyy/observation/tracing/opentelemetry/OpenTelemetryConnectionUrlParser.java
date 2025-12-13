@@ -17,6 +17,9 @@
 package net.ttddyy.observation.tracing.opentelemetry;
 
 /**
+ * Extract required information from a JDBC connection URL.
+ *
+ * @author Tadaya Tsuyukubo
  * @since 1.3.0
  */
 public interface OpenTelemetryConnectionUrlParser {

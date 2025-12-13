@@ -20,6 +20,9 @@ import io.micrometer.common.lang.Nullable;
 import net.ttddyy.observation.tracing.QueryContext;
 
 /**
+ * Holds all data required by OpenTelemetry Semantic Conventions.
+ *
+ * @author Tadaya Tsuyukubo
  * @since 1.3.0
  */
 public class OpenTelemetryAttributes {

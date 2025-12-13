@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Retrieve database name from JDBC url for Sql Server.
+ * Retrieve database name from JDBC url for SQL Server.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.3.0

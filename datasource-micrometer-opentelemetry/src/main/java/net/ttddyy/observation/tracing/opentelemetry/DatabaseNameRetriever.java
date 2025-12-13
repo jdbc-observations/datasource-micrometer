@@ -18,8 +18,17 @@ package net.ttddyy.observation.tracing.opentelemetry;
 
 import io.micrometer.common.lang.Nullable;
 
+/**
+ * @author Tadaya Tsuyukubo
+ * @since 1.3.0
+ */
 public interface DatabaseNameRetriever {
 
+	/**
+	 * Retrieve database name from JDBC url.
+	 * @param url jdbc url
+	 * @return database name
+	 */
 	@Nullable
 	String retrieve(String url);
 

@@ -41,7 +41,6 @@ import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.upsert.Upsert;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,38 +51,7 @@ import java.util.List;
  */
 public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 
-	FromItemVisitor<Void> fromItemVisitor = new FromItemVisitorAdapter<Void>() {
-		@Override
-		public <S> Void visit(PlainSelect plainSelect, S context) {
-			plainSelect.getFromItem().accept(this, context);
-			visitJoins(plainSelect.getJoins(), context, this);
-			return null;
-		}
-
-		@Override
-		public <S> Void visit(ParenthesedSelect select, S context) {
-			addOperation(context, "SELECT");
-			return select.getSelect().accept(this, context);
-		}
-
-		@Override
-		public <S> Void visit(Table table, S context) {
-			addCollection(context, table.getName());
-			// e.g:
-			// 'aa bb' => aa bb
-			// 'aa'.'bb' => 'aa'.'bb'
-			String tableName;
-			String schema = table.getSchemaName();
-			if (schema != null) {
-				tableName = schema + "." + table.getName();
-			}
-			else {
-				tableName = table.getUnquotedName();
-			}
-			setMainTableIfEmpty(context, tableName);
-			return null;
-		}
-	};
+	protected FromItemVisitor<Void> fromItemVisitor = new JSqlParserQueryFromItemVisitor();
 
 	/**
 	 * Entry point to this visitor.
@@ -193,22 +161,22 @@ public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 		return null;
 	}
 
-	private <S> void addOperation(S context, String operationName) {
+	private static <S> void addOperation(S context, String operationName) {
 		((JSqlParserQueryVisitedContext) context).addOperation(operationName);
 	}
 
-	private <S> void addCollection(S context, String collectionName) {
+	private static <S> void addCollection(S context, String collectionName) {
 		((JSqlParserQueryVisitedContext) context).addCollection(collectionName);
 	}
 
-	private <S> void setMainTableIfEmpty(S context, String collectionName) {
+	private static <S> void setMainTableIfEmpty(S context, String collectionName) {
 		JSqlParserQueryVisitedContext visitedContext = (JSqlParserQueryVisitedContext) context;
 		if (visitedContext.getMainTableName() == null) {
 			visitedContext.setMainTableName(collectionName);
 		}
 	}
 
-	static private <S> void visitJoins(@Nullable List<Join> joins, S context, FromItemVisitor<Void> fromItemVisitor) {
+	private static <S> void visitJoins(@Nullable List<Join> joins, S context, FromItemVisitor<Void> fromItemVisitor) {
 		if (joins == null) {
 			return;
 		}
@@ -222,54 +190,43 @@ public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 		clearMainTable(context);
 	}
 
-	static private <S> void clearMainTable(S context) {
+	private static <S> void clearMainTable(S context) {
 		((JSqlParserQueryVisitedContext) context).setMainTableName(null);
 	}
 
-//	static class VisitedContext {
-//
-//		private final List<VisitedEntry> entries = new ArrayList<>();
-//
-//		@Nullable
-//		private String mainTableName;
-//
-//		public List<VisitedEntry> getEntries() {
-//			return this.entries;
-//		}
-//
-//		public void addOperation(String operationName) {
-//			this.entries.add(VisitedEntry.operation(operationName));
-//		}
-//
-//		public void addCollection(String collectionName) {
-//			this.entries.add(VisitedEntry.collection(collectionName));
-//		}
-//
-//		public void dedupeLastTwoEntries() {
-//			if (this.entries.size() < 2) {
-//				return;
-//			}
-//			VisitedEntry last = this.entries.remove(this.entries.size() - 1);
-//			VisitedEntry secondLast = this.entries.get(this.entries.size() - 1);
-//			if (!last.equals(secondLast)) {
-//				this.entries.add(last);
-//			}
-//		}
-//
-//		/**
-//		 * Main table name for prepared statement. For callable statement, this becomes
-//		 * the name of procedure.
-//		 * @return name
-//		 */
-//		@Nullable
-//		public String getMainTableName() {
-//			return this.mainTableName;
-//		}
-//
-//		public void setMainTableName(@Nullable String mainTableName) {
-//			this.mainTableName = mainTableName;
-//		}
-//
-//	}
+	protected static class JSqlParserQueryFromItemVisitor extends FromItemVisitorAdapter<Void> {
+
+		@Override
+		public <S> Void visit(PlainSelect plainSelect, S context) {
+			plainSelect.getFromItem().accept(this, context);
+			visitJoins(plainSelect.getJoins(), context, this);
+			return null;
+		}
+
+		@Override
+		public <S> Void visit(ParenthesedSelect select, S context) {
+			addOperation(context, "SELECT");
+			return select.getSelect().accept(this, context);
+		}
+
+		@Override
+		public <S> Void visit(Table table, S context) {
+			addCollection(context, table.getName());
+			// e.g:
+			// 'aa bb' => aa bb
+			// 'aa'.'bb' => 'aa'.'bb'
+			String tableName;
+			String schema = table.getSchemaName();
+			if (schema != null) {
+				tableName = schema + "." + table.getName();
+			}
+			else {
+				tableName = table.getUnquotedName();
+			}
+			setMainTableIfEmpty(context, tableName);
+			return null;
+		}
+
+	}
 
 }

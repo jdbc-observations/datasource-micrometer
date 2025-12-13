@@ -23,6 +23,9 @@ import net.ttddyy.observation.tracing.QueryContext;
 import java.sql.SQLException;
 
 /**
+ * Responsible for converting {@link OpenTelemetryAttributes} from {@link QueryContext}.
+ *
+ * @author Tadaya Tsuyukubo
  * @since 1.3.0
  */
 public class OpenTelemetryAttributesManager {
