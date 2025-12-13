@@ -35,6 +35,7 @@ import net.sf.jsqlparser.statement.SetStatement;
 import net.sf.jsqlparser.statement.ShowColumnsStatement;
 import net.sf.jsqlparser.statement.ShowStatement;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.Statements;
 import net.sf.jsqlparser.statement.UnsupportedStatement;
 import net.sf.jsqlparser.statement.UseStatement;
 import net.sf.jsqlparser.statement.alter.Alter;
@@ -100,6 +101,12 @@ public class JSqlParserQueryAnalyzer implements OpenTelemetryQueryAnalyzer {
 			query = query.trim().replaceAll("^\\{|\\}$", "");
 		}
 
+		if (statementType == StatementType.PREPARED) {
+			// query-text is only populated with sanitized statement or prepared.
+			// populate query-text before parsing it to include the text in result when parsing failed.
+			result.setQueryText(query);
+		}
+
 		Statement statement;
 		try {
 			statement = CCJSqlParserUtil.parse(query, this.executorService, this.parserConfigurer);
@@ -132,10 +139,6 @@ public class JSqlParserQueryAnalyzer implements OpenTelemetryQueryAnalyzer {
 		if (statementType == StatementType.STATEMENT) {
 			String sanitizedQuery = getSanitizedQuery(statement);
 			result.setQueryText(sanitizedQuery);
-		}
-		if (statementType == StatementType.PREPARED) {
-			// query text is only populated with sanitized statement or prepared.
-			result.setQueryText(query);
 		}
 
 		if (statementType == StatementType.CALLABLE) {
