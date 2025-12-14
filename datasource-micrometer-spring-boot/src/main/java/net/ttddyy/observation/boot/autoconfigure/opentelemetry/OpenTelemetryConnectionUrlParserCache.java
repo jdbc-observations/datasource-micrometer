@@ -23,8 +23,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Cache {@link UrlParseResult} from {@link OpenTelemetryConnectionUrlParser}.
+ *
  * @author Tadaya Tsuyukubo
- * @since
+ * @since 1.3.0
  */
 public class OpenTelemetryConnectionUrlParserCache implements OpenTelemetryConnectionUrlParser {
 
