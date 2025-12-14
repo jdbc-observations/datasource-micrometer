@@ -91,6 +91,10 @@ public class JSqlParserQueryAnalyzer implements OpenTelemetryQueryAnalyzer {
 
 	private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
+	private boolean sanitizeEnabled = true;
+
+	private boolean summaryEnabled = true;
+
 	@Override
 	public QueryAnalysisResult analyze(String query, boolean isBatch, StatementType statementType) {
 		QueryAnalysisResult result = new QueryAnalysisResult();
@@ -122,10 +126,12 @@ public class JSqlParserQueryAnalyzer implements OpenTelemetryQueryAnalyzer {
 		List<VisitedEntry> entries = visited.getEntries();
 		String mainTableName = visited.getMainTableName();
 
-		String summary = new QuerySummaryBuilder().build(entries);
-		result.setQuerySummary(summary);
+		if (this.summaryEnabled) {
+			String summary = new QuerySummaryBuilder().build(entries);
+			result.setQuerySummary(summary);
+		}
 
-		if (statementType == StatementType.STATEMENT) {
+		if (statementType == StatementType.STATEMENT && this.sanitizeEnabled) {
 			String sanitizedQuery = getSanitizedQuery(statement);
 			result.setQueryText(sanitizedQuery);
 		}
@@ -304,4 +310,11 @@ public class JSqlParserQueryAnalyzer implements OpenTelemetryQueryAnalyzer {
 		this.executorService = executorService;
 	}
 
+	public void setSanitizeEnabled(boolean sanitizeEnabled) {
+		this.sanitizeEnabled = sanitizeEnabled;
+	}
+
+	public void setSummaryEnabled(boolean summaryEnabled) {
+		this.summaryEnabled = summaryEnabled;
+	}
 }

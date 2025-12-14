@@ -27,30 +27,41 @@ import net.ttddyy.observation.tracing.opentelemetry.jsqlparser.JSqlParserQueryAn
 import net.ttddyy.observation.tracing.opentelemetry.jsqlparser.JSqlParserSanitizingExpressionDeParser;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Map;
 
 @AutoConfiguration()
-// @EnableConfigurationProperties(JdbcProperties.class)
- @ConditionalOnClass({ JSqlParserQueryAnalyzer.class, JSqlParserSanitizingExpressionDeParser.class })
-// @ConditionalOnProperty(prefix = "jdbc.datasource-proxy", name = "enabled", havingValue
-// = "true", matchIfMissing = true)
+@EnableConfigurationProperties(JdbcOpenTelemetryProperties.class)
+@ConditionalOnClass({ JSqlParserQueryAnalyzer.class, JSqlParserSanitizingExpressionDeParser.class })
+@ConditionalOnProperty(prefix = "jdbc.opentelemetry", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class DataSourceObservationOpenTelemetryAutoConfiguration {
 
 	@Bean
+	@ConditionalOnMissingBean
 	OpenTelemetryQueryObservationConvention openTelemetryQueryObservationConvention(
-			OpenTelemetryAttributesManager attributesManager) {
-		return new OpenTelemetryQueryObservationConvention(attributesManager);
+			JdbcOpenTelemetryProperties properties, OpenTelemetryAttributesManager attributesManager) {
+		OpenTelemetryQueryObservationConvention convention = new OpenTelemetryQueryObservationConvention(
+				attributesManager);
+		Map<String, String> overrides = properties.getAttributes().getOverrides();
+		if (!overrides.isEmpty()) {
+			convention.setAttributesOverrides(overrides);
+		}
+		return convention;
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	OpenTelemetryAttributesManager openTelemetryAttributesManager(OpenTelemetryConnectionUrlParser connectionUrlParser,
 			OpenTelemetryQueryAnalyzer queryAnalyzer) {
 		return new OpenTelemetryAttributesManager(connectionUrlParser, queryAnalyzer);
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	OpenTelemetryConnectionUrlParser openTelemetryConnectionUrlParser() {
 		SimpleDatabaseNameRetriever simpleRetriever = new SimpleDatabaseNameRetriever();
 		SqlServerDatabaseNameRetriever sqlServerRetriever = new SqlServerDatabaseNameRetriever();
@@ -61,10 +72,26 @@ public class DataSourceObservationOpenTelemetryAutoConfiguration {
 	}
 
 	@Bean
-	OpenTelemetryQueryAnalyzer openTelemetryQueryAnalyzer() {
-		// TODO: property for cache size, parserConfigurer, executorService
-		JSqlParserQueryAnalyzer analayzer = new JSqlParserQueryAnalyzer();
-		return new OpenTelemetryQueryAnalyzerCache(analayzer, 1000);
+	@ConditionalOnMissingBean
+	OpenTelemetryQueryAnalyzer openTelemetryQueryAnalyzer(JdbcOpenTelemetryProperties properties) {
+		JdbcOpenTelemetryProperties.Analysis analysis = properties.getAnalysis();
+		if (!analysis.isEnabled()) {
+			return OpenTelemetryQueryAnalyzer.NOOP;
+		}
+
+		JSqlParserQueryAnalyzer analyzer = new JSqlParserQueryAnalyzer();
+		if (!analysis.getSanitize().isEnabled()) {
+			analyzer.setSanitizeEnabled(false);
+		}
+		if (!analysis.getSummary().isEnabled()) {
+			analyzer.setSummaryEnabled(false);
+		}
+		if (!analysis.getCache().isEnabled()) {
+			return analyzer;
+		}
+
+		int cacheSize = analysis.getCache().getMaxSize();
+		return new OpenTelemetryQueryAnalyzerCache(analyzer, cacheSize);
 	}
 
 }

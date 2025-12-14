@@ -26,6 +26,8 @@ import net.ttddyy.dsproxy.StatementType;
  */
 public interface OpenTelemetryQueryAnalyzer {
 
+	OpenTelemetryQueryAnalyzer NOOP = (query, isBatch, statementType) -> new QueryAnalysisResult();
+
 	QueryAnalysisResult analyze(String query, boolean isBatch, StatementType statementType);
 
 }
