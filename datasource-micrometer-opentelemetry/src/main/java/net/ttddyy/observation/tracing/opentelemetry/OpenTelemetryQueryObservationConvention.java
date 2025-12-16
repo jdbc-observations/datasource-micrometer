@@ -35,8 +35,6 @@ import java.util.Set;
  */
 public class OpenTelemetryQueryObservationConvention implements QueryObservationConvention {
 
-	private static final String KEY_ATTRIBUTES = OpenTelemetryAttributes.class.getName();
-
 	// TODO: move to documentation class
 	private static final String DB_SYSTEM_NAME = "db.system.name";
 
@@ -74,13 +72,13 @@ public class OpenTelemetryQueryObservationConvention implements QueryObservation
 
 	@Override
 	public String getContextualName(QueryContext context) {
-		OpenTelemetryAttributes attributes = getOrCreateAttributes(context);
+		OpenTelemetryAttributes attributes = this.attributesManager.getOrCreateAttributes(context);
 		return this.spanNameBuilder.build(attributes);
 	}
 
 	@Override
 	public KeyValues getLowCardinalityKeyValues(QueryContext context) {
-		OpenTelemetryAttributes attributes = getOrCreateAttributes(context);
+		OpenTelemetryAttributes attributes = this.attributesManager.getOrCreateAttributes(context);
 		Set<KeyValue> keyValues = new HashSet<>();
 		addKeyValueIfNotNull(keyValues, DB_SYSTEM_NAME, attributes.getSystemName());
 		addKeyValueIfNotNull(keyValues, DB_COLLECTION_NAME, attributes.getCollectionName());
@@ -93,7 +91,7 @@ public class OpenTelemetryQueryObservationConvention implements QueryObservation
 
 	@Override
 	public KeyValues getHighCardinalityKeyValues(QueryContext context) {
-		OpenTelemetryAttributes attributes = getOrCreateAttributes(context);
+		OpenTelemetryAttributes attributes = this.attributesManager.getOrCreateAttributes(context);
 		Set<KeyValue> keyValues = new HashSet<>();
 		addKeyValueIfNotNull(keyValues, DB_RESPONSE_STATUS_CODE, attributes.getResponseStatusCode());
 		addKeyValueIfNotNull(keyValues, ERROR_TYPE, attributes.getErrorType());
@@ -102,10 +100,6 @@ public class OpenTelemetryQueryObservationConvention implements QueryObservation
 		addKeyValueIfNotNull(keyValues, DB_QUERY_TEXT, attributes.getQueryText());
 		addKeyValueIfNotNull(keyValues, DB_STORED_PROCEDURE_NAME, attributes.getStoredProcedureName());
 		return KeyValues.of(keyValues);
-	}
-
-	private OpenTelemetryAttributes getOrCreateAttributes(QueryContext context) {
-		return context.computeIfAbsent(KEY_ATTRIBUTES, (key) -> this.attributesManager.getAttributes(context));
 	}
 
 	private void addKeyValueIfNotNull(Set<KeyValue> keyValues, String key, @Nullable String defaultValue) {

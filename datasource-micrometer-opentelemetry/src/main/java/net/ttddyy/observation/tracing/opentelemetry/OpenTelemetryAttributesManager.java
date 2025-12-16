@@ -30,6 +30,8 @@ import java.sql.SQLException;
  */
 public class OpenTelemetryAttributesManager {
 
+	private static final String CONTEXT_KEY = OpenTelemetryAttributes.class.getName();
+
 	private final OpenTelemetryConnectionUrlParser connectionUrlParser;
 
 	private final OpenTelemetryQueryAnalyzer queryAnalyzer;
@@ -38,6 +40,10 @@ public class OpenTelemetryAttributesManager {
 			OpenTelemetryQueryAnalyzer queryAnalyzer) {
 		this.connectionUrlParser = connectionUrlParser;
 		this.queryAnalyzer = queryAnalyzer;
+	}
+
+	public OpenTelemetryAttributes getOrCreateAttributes(QueryContext context) {
+		return context.computeIfAbsent(CONTEXT_KEY, (key) -> getAttributes(context));
 	}
 
 	public OpenTelemetryAttributes getAttributes(QueryContext queryContext) {
