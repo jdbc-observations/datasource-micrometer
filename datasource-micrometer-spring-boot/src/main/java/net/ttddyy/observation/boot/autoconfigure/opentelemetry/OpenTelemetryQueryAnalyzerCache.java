@@ -21,6 +21,8 @@ import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryQueryAnalyzer;
 import net.ttddyy.observation.tracing.opentelemetry.QueryAnalysisResult;
 import org.springframework.util.ConcurrentLruCache;
 
+import java.util.Objects;
+
 /**
  * Cache {@link QueryAnalysisResult} from {@link OpenTelemetryQueryAnalyzer}.
  *
@@ -55,12 +57,16 @@ public class OpenTelemetryQueryAnalyzerCache implements OpenTelemetryQueryAnalyz
 				return false;
 
 			CacheKey cacheKey = (CacheKey) o;
-			return query.equals(cacheKey.query);
+			return this.isBatch == cacheKey.isBatch && Objects.equals(this.query, cacheKey.query)
+					&& this.statementType == cacheKey.statementType;
 		}
 
 		@Override
 		public int hashCode() {
-			return query.hashCode();
+			int result = Objects.hashCode(this.query);
+			result = 31 * result + Boolean.hashCode(this.isBatch);
+			result = 31 * result + Objects.hashCode(this.statementType);
+			return result;
 		}
 	}
 
