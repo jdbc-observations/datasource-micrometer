@@ -36,29 +36,29 @@ import java.util.Set;
 public class OpenTelemetryQueryObservationConvention implements QueryObservationConvention {
 
 	// TODO: move to documentation class
-	private static final String DB_SYSTEM_NAME = "db.system.name";
+	public static final String DB_SYSTEM_NAME = "db.system.name";
 
-	private static final String DB_COLLECTION_NAME = "db.collection.name";
+	public static final String DB_COLLECTION_NAME = "db.collection.name";
 
-	private static final String DB_NAMESPACE = "db.namespace";
+	public static final String DB_NAMESPACE = "db.namespace";
 
-	private static final String DB_OPERATION_NAME = "db.operation.name";
+	public static final String DB_OPERATION_NAME = "db.operation.name";
 
-	private static final String DB_RESPONSE_STATUS_CODE = "db.response.status_code";
+	public static final String DB_RESPONSE_STATUS_CODE = "db.response.status_code";
 
-	private static final String ERROR_TYPE = "error.type";
+	public static final String ERROR_TYPE = "error.type";
 
-	private static final String SERVER_PORT = "server.port";
+	public static final String SERVER_PORT = "server.port";
 
-	private static final String DB_OPERATION_BATCH_SIZE = "db.operation.batch.size";
+	public static final String DB_OPERATION_BATCH_SIZE = "db.operation.batch.size";
 
-	private static final String DB_QUERY_SUMMARY = "db.query.summary";
+	public static final String DB_QUERY_SUMMARY = "db.query.summary";
 
-	private static final String DB_QUERY_TEXT = "db.query.text";
+	public static final String DB_QUERY_TEXT = "db.query.text";
 
-	private static final String DB_STORED_PROCEDURE_NAME = "db.stored_procedure.name";
+	public static final String DB_STORED_PROCEDURE_NAME = "db.stored_procedure.name";
 
-	private static final String SERVER_ADDRESS = "server.address";
+	public static final String SERVER_ADDRESS = "server.address";
 
 	private final OpenTelemetryAttributesManager attributesManager;
 

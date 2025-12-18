@@ -44,6 +44,10 @@
             <artifactId>jsqlparser</artifactId>
             <version>${jsqlparser.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -63,6 +67,11 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
