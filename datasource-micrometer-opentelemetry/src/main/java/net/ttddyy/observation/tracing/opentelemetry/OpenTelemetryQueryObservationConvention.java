@@ -35,7 +35,9 @@ import java.util.Set;
  */
 public class OpenTelemetryQueryObservationConvention implements QueryObservationConvention {
 
-	// TODO: move to documentation class
+	// For now, do not make ObservationDocumentation because the generated page does not
+	// clearly distinguish individual ObservationDocumentation.
+	// Keep the OTel related tags separate from regular ones.
 	public static final String DB_SYSTEM_NAME = "db.system.name";
 
 	public static final String DB_COLLECTION_NAME = "db.collection.name";
@@ -116,4 +118,5 @@ public class OpenTelemetryQueryObservationConvention implements QueryObservation
 	public void setAttributesOverrides(Map<String, String> attributesOverrides) {
 		this.attributesOverrides = attributesOverrides;
 	}
+
 }
