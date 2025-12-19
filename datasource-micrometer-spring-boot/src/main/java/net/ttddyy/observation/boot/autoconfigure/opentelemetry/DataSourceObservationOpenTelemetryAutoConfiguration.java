@@ -16,8 +16,10 @@
 
 package net.ttddyy.observation.boot.autoconfigure.opentelemetry;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryAttributesManager;
 import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryConnectionUrlParser;
+import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryMeterObservationHandler;
 import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryQueryAnalyzer;
 import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryQueryObservationConvention;
 import net.ttddyy.observation.tracing.opentelemetry.SimpleDatabaseNameRetriever;
@@ -51,6 +53,13 @@ public class DataSourceObservationOpenTelemetryAutoConfiguration {
 			convention.setAttributesOverrides(overrides);
 		}
 		return convention;
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	OpenTelemetryMeterObservationHandler openTelemetryMeterObservationHandler(
+			OpenTelemetryAttributesManager attributesManager, MeterRegistry meterRegistry) {
+		return new OpenTelemetryMeterObservationHandler(attributesManager, meterRegistry);
 	}
 
 	@Bean
