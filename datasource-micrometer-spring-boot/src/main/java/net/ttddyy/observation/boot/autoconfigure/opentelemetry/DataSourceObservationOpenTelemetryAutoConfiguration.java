@@ -29,6 +29,7 @@ import net.ttddyy.observation.tracing.opentelemetry.jsqlparser.JSqlParserQueryAn
 import net.ttddyy.observation.tracing.opentelemetry.jsqlparser.JSqlParserSanitizingExpressionDeParser;
 import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,6 +39,13 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.Map;
 
+/**
+ * {@link EnableAutoConfiguration Auto-configuration} for Micrometer Observation
+ * instrumentation providing OpenTelemetry Semantic Conventions support.
+ *
+ * @author Tadaya Tsuyukubo
+ * @since 1.3.0
+ */
 @AutoConfiguration(after = CompositeMeterRegistryAutoConfiguration.class)
 @EnableConfigurationProperties(JdbcOpenTelemetryProperties.class)
 @ConditionalOnClass({ JSqlParserQueryAnalyzer.class, JSqlParserSanitizingExpressionDeParser.class })

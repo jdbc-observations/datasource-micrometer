@@ -15,7 +15,7 @@
  */
 
 /**
- * OpenTelemetry related classes.
+ * OpenTelemetry Semantic Conventions support related classes.
  */
 @NonNullApi
 package net.ttddyy.observation.boot.autoconfigure.opentelemetry;
