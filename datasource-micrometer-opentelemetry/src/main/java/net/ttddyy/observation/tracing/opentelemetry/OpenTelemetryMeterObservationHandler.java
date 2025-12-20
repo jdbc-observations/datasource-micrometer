@@ -19,8 +19,8 @@ package net.ttddyy.observation.tracing.opentelemetry;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
-import io.micrometer.core.instrument.observation.MeterObservationHandler;
 import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationHandler;
 import net.ttddyy.observation.tracing.QueryContext;
 
 import java.time.Duration;
@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  * @author Tadaya Tsuyukubo
  * @since 1.3.0
  */
-public class OpenTelemetryMeterObservationHandler implements MeterObservationHandler<QueryContext> {
+public class OpenTelemetryMeterObservationHandler implements ObservationHandler<QueryContext> {
 
 	private static final String DURATION = "db.client.operation.duration";
 
