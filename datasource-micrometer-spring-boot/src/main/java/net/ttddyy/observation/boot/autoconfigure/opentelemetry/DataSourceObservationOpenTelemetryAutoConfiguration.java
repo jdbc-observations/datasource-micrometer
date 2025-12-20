@@ -27,7 +27,9 @@ import net.ttddyy.observation.tracing.opentelemetry.SimpleOpenTelemetryConnectio
 import net.ttddyy.observation.tracing.opentelemetry.SqlServerDatabaseNameRetriever;
 import net.ttddyy.observation.tracing.opentelemetry.jsqlparser.JSqlParserQueryAnalyzer;
 import net.ttddyy.observation.tracing.opentelemetry.jsqlparser.JSqlParserSanitizingExpressionDeParser;
+import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -36,7 +38,7 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.Map;
 
-@AutoConfiguration()
+@AutoConfiguration(after = CompositeMeterRegistryAutoConfiguration.class)
 @EnableConfigurationProperties(JdbcOpenTelemetryProperties.class)
 @ConditionalOnClass({ JSqlParserQueryAnalyzer.class, JSqlParserSanitizingExpressionDeParser.class })
 @ConditionalOnProperty(prefix = "jdbc.opentelemetry", name = "enabled", havingValue = "true", matchIfMissing = true)
@@ -44,6 +46,8 @@ public class DataSourceObservationOpenTelemetryAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
+	@ConditionalOnProperty(prefix = "jdbc.opentelemetry.spans", name = "enabled", havingValue = "true",
+			matchIfMissing = true)
 	OpenTelemetryQueryObservationConvention openTelemetryQueryObservationConvention(
 			JdbcOpenTelemetryProperties properties, OpenTelemetryAttributesManager attributesManager) {
 		OpenTelemetryQueryObservationConvention convention = new OpenTelemetryQueryObservationConvention(
@@ -57,6 +61,9 @@ public class DataSourceObservationOpenTelemetryAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
+	@ConditionalOnProperty(prefix = "jdbc.opentelemetry.metrics", name = "enabled", havingValue = "true",
+			matchIfMissing = true)
+	@ConditionalOnBean(MeterRegistry.class)
 	OpenTelemetryMeterObservationHandler openTelemetryMeterObservationHandler(
 			OpenTelemetryAttributesManager attributesManager, MeterRegistry meterRegistry) {
 		return new OpenTelemetryMeterObservationHandler(attributesManager, meterRegistry);

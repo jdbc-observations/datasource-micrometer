@@ -16,7 +16,11 @@
 
 package net.ttddyy.observation.boot.autoconfigure.opentelemetry;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryMeterObservationHandler;
 import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryQueryAnalyzer;
+import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryQueryObservationConvention;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.FilteredClassLoader;
@@ -47,6 +51,31 @@ class DataSourceObservationOpenTelemetryAutoConfigurationTests {
 		this.runner.withClassLoader(new FilteredClassLoader("net.ttddyy.observation.tracing.opentelemetry"))
 			.run((context) -> assertThat(context)
 				.doesNotHaveBean(DataSourceObservationOpenTelemetryAutoConfiguration.class));
+	}
+
+	@Test
+	void spansConditions() {
+		// default enabled
+		this.runner.run((context) -> assertThat(context).hasSingleBean(OpenTelemetryQueryObservationConvention.class));
+
+		// disabled by property
+		this.runner.withPropertyValues("jdbc.opentelemetry.spans.enabled=false")
+			.run((context) -> assertThat(context).doesNotHaveBean(OpenTelemetryQueryObservationConvention.class));
+	}
+
+	@Test
+	void metricsConditions() {
+		// default enabled
+		this.runner.withBean(MeterRegistry.class, SimpleMeterRegistry::new)
+			.run((context) -> assertThat(context).hasSingleBean(OpenTelemetryMeterObservationHandler.class));
+
+		// disabled when no MeterRegistry bean
+		this.runner.run((context) -> assertThat(context).doesNotHaveBean(OpenTelemetryMeterObservationHandler.class));
+
+		// disabled by property
+		this.runner.withBean(MeterRegistry.class, SimpleMeterRegistry::new)
+			.withPropertyValues("jdbc.opentelemetry.metrics.enabled=false")
+			.run((context) -> assertThat(context).doesNotHaveBean(OpenTelemetryMeterObservationHandler.class));
 	}
 
 	@Test
