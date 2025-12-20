@@ -317,4 +317,5 @@ public class JSqlParserQueryAnalyzer implements OpenTelemetryQueryAnalyzer {
 	public void setSummaryEnabled(boolean summaryEnabled) {
 		this.summaryEnabled = summaryEnabled;
 	}
+
 }

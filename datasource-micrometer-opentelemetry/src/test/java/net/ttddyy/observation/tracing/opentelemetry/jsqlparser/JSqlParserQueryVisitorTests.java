@@ -140,7 +140,7 @@ class JSqlParserQueryVisitorTests {
 		// many of data came from:
 		// https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/instrumentation-api-incubator/src/test/java/io/opentelemetry/instrumentation/api/incubator/semconv/db/SqlStatementSanitizerTest.java
 		return Stream.of(
-			// @formatter:off
+		// @formatter:off
 			arguments("SELECT x, y, z FROM table", "table"),
 			arguments("SELECT x, y, z FROM `table`", "table"),
 			arguments("SELECT x, y, z FROM \"table\"", "table"),
@@ -212,4 +212,5 @@ class JSqlParserQueryVisitorTests {
 			// @formatter:on
 		);
 	}
+
 }

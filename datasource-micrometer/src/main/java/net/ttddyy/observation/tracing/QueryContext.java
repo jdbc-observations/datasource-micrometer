@@ -81,4 +81,5 @@ public final class QueryContext extends DataSourceBaseContext {
 	public void setQueryInfoList(List<QueryInfo> queryInfoList) {
 		this.queryInfoList = queryInfoList;
 	}
+
 }
