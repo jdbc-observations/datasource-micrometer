@@ -35,31 +35,44 @@ import java.util.Set;
  */
 public class OpenTelemetryQueryObservationConvention implements QueryObservationConvention {
 
-	// For now, do not make ObservationDocumentation because the generated page does not
-	// clearly distinguish individual ObservationDocumentation.
-	// Keep the OTel related tags separate from regular ones.
+	// For now, avoid creating ObservationDocumentation because the generated page
+	// does not clearly distinguish individual ObservationDocumentation entries.
+	// Keep Otel-related tags separate from regular tags.
+
+	// https://github.com/open-telemetry/semantic-conventions-java/blob/v1.37.0/semconv/src/main/java/io/opentelemetry/semconv/DbAttributes.java#L149
 	public static final String DB_SYSTEM_NAME = "db.system.name";
 
+	// https://github.com/open-telemetry/semantic-conventions-java/blob/v1.37.0/semconv/src/main/java/io/opentelemetry/semconv/DbAttributes.java#L31
 	public static final String DB_COLLECTION_NAME = "db.collection.name";
 
+	// https://github.com/open-telemetry/semantic-conventions-java/blob/v1.37.0/semconv/src/main/java/io/opentelemetry/semconv/DbAttributes.java#L45
 	public static final String DB_NAMESPACE = "db.namespace";
 
+	// https://github.com/open-telemetry/semantic-conventions-java/blob/v1.37.0/semconv/src/main/java/io/opentelemetry/semconv/DbAttributes.java#L77
 	public static final String DB_OPERATION_NAME = "db.operation.name";
 
+	// https://github.com/open-telemetry/semantic-conventions-java/blob/v1.37.0/semconv/src/main/java/io/opentelemetry/semconv/DbAttributes.java#L123
 	public static final String DB_RESPONSE_STATUS_CODE = "db.response.status_code";
 
+	// https://github.com/open-telemetry/semantic-conventions-java/blob/v1.37.0/semconv/src/main/java/io/opentelemetry/semconv/ErrorAttributes.java#L45
 	public static final String ERROR_TYPE = "error.type";
 
+	// https://github.com/open-telemetry/semantic-conventions-java/blob/v1.37.0/semconv/src/main/java/io/opentelemetry/semconv/ServerAttributes.java#L38
 	public static final String SERVER_PORT = "server.port";
 
+	// https://github.com/open-telemetry/semantic-conventions-java/blob/v1.37.0/semconv/src/main/java/io/opentelemetry/semconv/DbAttributes.java#L55
 	public static final String DB_OPERATION_BATCH_SIZE = "db.operation.batch.size";
 
+	// https://github.com/open-telemetry/semantic-conventions-java/blob/v1.37.0/semconv/src/main/java/io/opentelemetry/semconv/DbAttributes.java#L93
 	public static final String DB_QUERY_SUMMARY = "db.query.summary";
 
+	// https://github.com/open-telemetry/semantic-conventions-java/blob/v1.37.0/semconv/src/main/java/io/opentelemetry/semconv/DbAttributes.java#L111
 	public static final String DB_QUERY_TEXT = "db.query.text";
 
+	// https://github.com/open-telemetry/semantic-conventions-java/blob/v1.37.0/semconv/src/main/java/io/opentelemetry/semconv/DbAttributes.java#L137
 	public static final String DB_STORED_PROCEDURE_NAME = "db.stored_procedure.name";
 
+	// https://github.com/open-telemetry/semantic-conventions-java/blob/v1.37.0/semconv/src/main/java/io/opentelemetry/semconv/ServerAttributes.java#L27
 	public static final String SERVER_ADDRESS = "server.address";
 
 	private final OpenTelemetryAttributesManager attributesManager;
