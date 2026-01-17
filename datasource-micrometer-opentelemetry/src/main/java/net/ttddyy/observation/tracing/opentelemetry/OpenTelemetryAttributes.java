@@ -59,7 +59,7 @@ public class OpenTelemetryAttributes {
 
 	public void populateFromUrlParseResult(UrlParseResult parseResult) {
 		this.systemName = parseResult.getSystemName();
-		this.namespace = parseResult.getDatabaseName();
+		this.namespace = parseResult.getNamespace();
 	}
 
 	public void populateFromQueryContext(QueryContext queryContext) {

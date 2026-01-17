@@ -18,27 +18,30 @@ package net.ttddyy.observation.tracing.opentelemetry;
 
 import io.micrometer.common.lang.Nullable;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.net.URI;
 
 /**
- * Retrieve database name from JDBC url for SQL Server.
+ * Default implementation of {@link DatabaseNamespaceRetriever}.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.3.0
  */
-public class SqlServerDatabaseNameRetriever implements DatabaseNameRetriever {
-
-	private static final Pattern PATTERN = Pattern.compile("(?<=databaseName=)[^;]+", Pattern.CASE_INSENSITIVE);
+public class SimpleDatabaseNamespaceRetriever implements DatabaseNamespaceRetriever {
 
 	@Nullable
 	@Override
 	public String retrieve(String url) {
-		Matcher matcher = PATTERN.matcher(url);
-		if (matcher.find()) {
-			return matcher.group();
+		URI uri;
+		try {
+			// strip "jdbc:", Remove all white space according to RFC 2396;
+			uri = URI.create(url.substring(5).replace(" ", ""));
 		}
-		return null;
+		catch (Exception ex) {
+			return null;
+		}
+
+		String path = uri.getPath();
+		return path.startsWith("/") ? path.substring(1) : path;
 	}
 
 }

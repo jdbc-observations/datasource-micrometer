@@ -6,9 +6,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for {@link SimpleDatabaseNameRetriever}.
+ * Tests for {@link SimpleDatabaseNamespaceRetriever}.
  */
-class SimpleDatabaseNameRetrieverTests {
+class SimpleDatabaseNamespaceRetrieverTests {
 
 	@ParameterizedTest
 	@ValueSource(strings = {
@@ -22,7 +22,7 @@ class SimpleDatabaseNameRetrieverTests {
 	//@formatter:on
 	})
 	void retrieve(String url) {
-		SimpleDatabaseNameRetriever retriever = new SimpleDatabaseNameRetriever();
+		SimpleDatabaseNamespaceRetriever retriever = new SimpleDatabaseNamespaceRetriever();
 		String actual = retriever.retrieve(url);
 		assertThat(actual).isEqualTo("myDB");
 	}

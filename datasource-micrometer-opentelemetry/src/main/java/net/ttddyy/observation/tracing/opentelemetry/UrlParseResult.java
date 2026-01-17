@@ -29,7 +29,7 @@ public class UrlParseResult {
 	private String systemName = "other_sql";
 
 	@Nullable
-	private String databaseName;
+	private String namespace;
 
 	public String getSystemName() {
 		return this.systemName;
@@ -40,12 +40,12 @@ public class UrlParseResult {
 	}
 
 	@Nullable
-	public String getDatabaseName() {
-		return this.databaseName;
+	public String getNamespace() {
+		return this.namespace;
 	}
 
-	public void setDatabaseName(@Nullable String databaseName) {
-		this.databaseName = databaseName;
+	public void setNamespace(@Nullable String namespace) {
+		this.namespace = namespace;
 	}
 
 }

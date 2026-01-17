@@ -26,19 +26,19 @@ import java.util.Map;
  **/
 public class SimpleOpenTelemetryConnectionUrlParser implements OpenTelemetryConnectionUrlParser {
 
-	private final Map<String, DatabaseNameRetriever> databaseNameRetrievers;
+	private final Map<String, DatabaseNamespaceRetriever> namespaceRetrievers;
 
-	public SimpleOpenTelemetryConnectionUrlParser(Map<String, DatabaseNameRetriever> databaseNameRetrievers) {
-		this.databaseNameRetrievers = databaseNameRetrievers;
+	public SimpleOpenTelemetryConnectionUrlParser(Map<String, DatabaseNamespaceRetriever> namespaceRetrievers) {
+		this.namespaceRetrievers = namespaceRetrievers;
 	}
 
 	public UrlParseResult parse(String url) {
 		String systemName = geDatabaseType(url);
-		String databaseName = geDatabaseName(systemName, url);
+		String namespace = getNamespace(systemName, url);
 
 		UrlParseResult result = new UrlParseResult();
 		result.setSystemName(systemName);
-		result.setDatabaseName(databaseName);
+		result.setNamespace(namespace);
 		return result;
 	}
 
@@ -60,8 +60,8 @@ public class SimpleOpenTelemetryConnectionUrlParser implements OpenTelemetryConn
 	}
 
 	@Nullable
-	private String geDatabaseName(String systemName, String url) {
-		DatabaseNameRetriever dbNameRetriever = this.databaseNameRetrievers.get(systemName);
+	private String getNamespace(String systemName, String url) {
+		DatabaseNamespaceRetriever dbNameRetriever = this.namespaceRetrievers.get(systemName);
 		if (dbNameRetriever == null) {
 			return null;
 		}

@@ -22,12 +22,12 @@ import io.micrometer.common.lang.Nullable;
  * @author Tadaya Tsuyukubo
  * @since 1.3.0
  */
-public interface DatabaseNameRetriever {
+public interface DatabaseNamespaceRetriever {
 
 	/**
-	 * Retrieve database name from JDBC url.
+	 * Retrieve database namespace from JDBC url.
 	 * @param url jdbc url
-	 * @return database name
+	 * @return database namespace
 	 */
 	@Nullable
 	String retrieve(String url);

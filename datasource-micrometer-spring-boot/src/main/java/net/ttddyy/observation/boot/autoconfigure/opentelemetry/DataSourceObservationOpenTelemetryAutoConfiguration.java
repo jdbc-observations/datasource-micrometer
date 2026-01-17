@@ -22,9 +22,9 @@ import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryConnectionUrlPa
 import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryMeterObservationHandler;
 import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryQueryAnalyzer;
 import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryQueryObservationConvention;
-import net.ttddyy.observation.tracing.opentelemetry.SimpleDatabaseNameRetriever;
+import net.ttddyy.observation.tracing.opentelemetry.SimpleDatabaseNamespaceRetriever;
 import net.ttddyy.observation.tracing.opentelemetry.SimpleOpenTelemetryConnectionUrlParser;
-import net.ttddyy.observation.tracing.opentelemetry.SqlServerDatabaseNameRetriever;
+import net.ttddyy.observation.tracing.opentelemetry.SqlServerDatabaseNamespaceRetriever;
 import net.ttddyy.observation.tracing.opentelemetry.jsqlparser.JSqlParserQueryAnalyzer;
 import net.ttddyy.observation.tracing.opentelemetry.jsqlparser.JSqlParserSanitizingExpressionDeParser;
 import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration;
@@ -87,8 +87,8 @@ public class DataSourceObservationOpenTelemetryAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	OpenTelemetryConnectionUrlParser openTelemetryConnectionUrlParser() {
-		SimpleDatabaseNameRetriever simpleRetriever = new SimpleDatabaseNameRetriever();
-		SqlServerDatabaseNameRetriever sqlServerRetriever = new SqlServerDatabaseNameRetriever();
+		SimpleDatabaseNamespaceRetriever simpleRetriever = new SimpleDatabaseNamespaceRetriever();
+		SqlServerDatabaseNamespaceRetriever sqlServerRetriever = new SqlServerDatabaseNamespaceRetriever();
 		OpenTelemetryConnectionUrlParser parser = new SimpleOpenTelemetryConnectionUrlParser(
 				Map.of("mysql", simpleRetriever, "postgresql", simpleRetriever, "mariadb", simpleRetriever, "sqlserver",
 						sqlServerRetriever));
