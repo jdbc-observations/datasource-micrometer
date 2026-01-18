@@ -188,7 +188,11 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		Observation.Scope scopeToUse = executionInfo.getCustomValue(Observation.Scope.class.getName(),
 				Observation.Scope.class);
 		if (scopeToUse == null) {
-			return;
+			Observation.Scope scope = this.observationRegistrySupplier.get().getCurrentObservationScope();
+			if (scope == null) {
+				return;
+			}
+			scopeToUse = scope;
 		}
 		Observation observation = scopeToUse.getCurrentObservation();
 		try (Observation.Scope scope = scopeToUse) {
@@ -209,7 +213,9 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 				}
 				QueryContext queryContext = executionInfo.getCustomValue(QueryContext.class.getName(),
 						QueryContext.class);
-				queryContext.setAffectedRowCount(affectedRowCount);
+				if (queryContext != null) {
+					queryContext.setAffectedRowCount(affectedRowCount);
+				}
 			}
 		}
 		finally {

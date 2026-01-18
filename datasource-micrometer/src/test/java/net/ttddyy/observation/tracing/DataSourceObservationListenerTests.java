@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationPredicate;
 import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.observation.contextpropagation.ObservationThreadLocalAccessor;
 import io.micrometer.observation.tck.TestObservationRegistry;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 import io.micrometer.tracing.test.simple.SimpleTracer;
@@ -87,6 +89,7 @@ class DataSourceObservationListenerTests {
 		if (scope != null) {
 			scope.close();
 		}
+		ObservationThreadLocalAccessor.getInstance().restore();
 	}
 
 	@Test
@@ -732,6 +735,40 @@ class DataSourceObservationListenerTests {
 
 		// call "close"
 		listener.afterMethod(createResultSetCloseMethodExecutionContext(connectionInfo, resultSet));
+	}
+
+	@Test
+	void memoryLeakWhenConnectionForciblyClosedAndExecutionInfoLost() throws Exception {
+		// This test reproduces the case where ExecutionInfo loses the scope (e.g. connection evicted).
+		// The listener should fallback to getting the scope from the registry to prevent leak.
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
+
+		ExecutionInfo executionInfo = mock(ExecutionInfo.class);
+		QueryInfo queryInfo = mock(QueryInfo.class);
+		List<QueryInfo> queryInfoList = Collections.singletonList(queryInfo);
+		Method method = Statement.class.getMethod("execute", String.class);
+
+		given(executionInfo.getConnectionId()).willReturn("conn-evicted-1");
+		given(executionInfo.getMethod()).willReturn(method);
+		given(queryInfo.getQuery()).willReturn("SELECT 1");
+
+		// 1. Start query (scope is opened and stored in ThreadLocal)
+		listener.beforeQuery(executionInfo, queryInfoList);
+
+		assertThat(this.registry.getCurrentObservation()).isNotNull();
+		assertThat(this.registry.getCurrentObservationScope()).isNotNull();
+
+		// 2. Simulate ExecutionInfo returning null for scope (e.g. because it was cleared or not properly passed)
+		given(executionInfo.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class))
+				.willReturn(null);
+		given(executionInfo.getThrowable()).willReturn(new SQLException("Connection is closed"));
+
+		// 3. Stop query (should use fallback to close the scope)
+		listener.afterQuery(executionInfo, queryInfoList);
+
+		// Then
+		assertThat(this.registry.getCurrentObservation()).isNull();
+		assertThat(this.registry.getCurrentObservationScope()).isNull();
 	}
 
 }
