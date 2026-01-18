@@ -57,7 +57,7 @@ jobs:
           mkdir -p target/deploy-documents/docs/${{ env.project_version }}/docs/html
           mkdir -p target/deploy-documents/docs/${{ env.project_version }}/api
           cp -Rf docs/target/generated-docs/reference/html/* target/deploy-documents/docs/${{ env.project_version }}/docs/html/
-          cp -Rf target/site/apidocs/* target/deploy-documents/docs/${{ env.project_version }}/api/
+          cp -Rf target/reports/apidocs/* target/deploy-documents/docs/${{ env.project_version }}/api/
           cp CHANGELOG target/deploy-documents/docs/${{ env.project_version }}/CHANGELOG.txt
 
       - name: Prepare "current-snapshot" documents
@@ -66,7 +66,7 @@ jobs:
           mkdir -p target/deploy-documents/docs/current-snapshot/docs/html
           mkdir -p target/deploy-documents/docs/current-snapshot/api
           cp -Rf docs/target/generated-docs/reference/html/* target/deploy-documents/docs/current-snapshot/docs/html/
-          cp -Rf target/site/apidocs/* target/deploy-documents/docs/current-snapshot/api/
+          cp -Rf target/reports/apidocs/* target/deploy-documents/docs/current-snapshot/api/
           cp CHANGELOG target/deploy-documents/docs/current-snapshot/CHANGELOG.txt
 
       - name: Prepare "current" documents
@@ -75,7 +75,7 @@ jobs:
           mkdir -p target/deploy-documents/docs/current/docs/html
           mkdir -p target/deploy-documents/docs/current/api
           cp -Rf docs/target/generated-docs/reference/html/* target/deploy-documents/docs/current/docs/html/
-          cp -Rf target/site/apidocs/* target/deploy-documents/docs/current/api/
+          cp -Rf target/reports/apidocs/* target/deploy-documents/docs/current/api/
           cp CHANGELOG target/deploy-documents/docs/current/CHANGELOG.txt
 
       - name: Upload artifact

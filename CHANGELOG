@@ -1,9 +1,21 @@
 Datasource Micrometer Changelog
 ================================
 
+2.0.1
+------------------
+* Fix "null" from generated-keys (#88)
+
+2.0.0
+------------------
+* Support Spring Boot 4.0.0 (#78)
+
 2.0.0-RC1
 ------------------
 * Support Spring Boot 4.0.0-M3 (#78)
+
+1.2.1
+------------------
+* Fix "null" from generated-keys (#88)
 
 1.2.0
 ------------------

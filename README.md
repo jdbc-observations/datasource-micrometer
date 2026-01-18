@@ -1,6 +1,6 @@
 # Datasource Micrometer
 [![CI](https://github.com/jdbc-observations/datasource-micrometer/actions/workflows/ci.yml/badge.svg)](https://github.com/jdbc-observations/datasource-micrometer/actions/workflows/ci.yml?event=push&branch=main)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.ttddyy.observation/datasource-micrometer/badge.svg)](https://search.maven.org/search?q=net.ttddyy.observation)
+[![Maven Central](https://img.shields.io/maven-central/v/net.ttddyy.observation/datasource-micrometer)](https://central.sonatype.com/artifact/net.ttddyy.observation/datasource-micrometer)
 
 The Datasource Micrometer provides [Micrometer Observation API][micrometer-observation] instrumentation for JDBC operations.
 
@@ -52,15 +52,18 @@ dependencies {
 
 ### Using Snapshot
 
-You need add Sonatype Snapshot repositories.
+To use snapshot releases, add the Maven Central Portal Snapshots repository to your project configuration.
 
 ```xml
 <!-- Maven -->
 <repositories>
     <repository>
-        <id>sonatype-snapshots</id>
-        <name>Sonatype Snapshots</name>
-        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        <name>Central Portal Snapshots</name>
+        <id>central-portal-snapshots</id>
+        <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
         <snapshots>
             <enabled>true</enabled>
         </snapshots>
@@ -72,10 +75,18 @@ You need add Sonatype Snapshot repositories.
 // Gradle
 repositories {
     maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots"
+        name = 'Central Portal Snapshots'
+        url = 'https://central.sonatype.com/repository/maven-snapshots/'
+
+        // Only search this repository for the specific dependency
+        content {
+            includeModule("net.ttddyy.observation", "<datasource-micrometer artifacts>")
+        }
     }
+    mavenCentral()
 }
 ```
+For full instructions, see [the official documentation.](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-snapshot-releases-for-your-project)
 
 ## Java versions
 
@@ -106,10 +117,19 @@ The produced jars support following JDK versions at runtime:
 
 ## Dependent Library Versions
 
+Spring Boot Support:
+
+| DataSource Micrometer | Spring Boot |
+|:---------------------:|:-----------:|
+|         `2.x`         |    4.0.x    |
+|         `1.x`         |     3.x     |
+
+
 | DataSource Micrometer |   Spring Boot    | Micrometer Tracing BOM | Micrometer BOM |
 |:---------------------:|:----------------:|:----------------------:|:--------------:|
+|         `2.x`         |      4.0.x       |         1.6.x          |     1.16.x     | 
 |      `2.0.0-RC1`      | 4.0.0-[M3,R1,R2] |     1.6.0-[M3,R1]      | 1.16.0-[M3,R1] | 
-|        `1.0.0`        |  3.0.0 and up    |         1.0.0          |     1.10.2     | 
+|        `1.0.0`        |   3.0.0 and up   |         1.0.0          |     1.10.2     | 
 |      `1.0.0-RC1`      |    3.0.0-RC1     |       1.0.0-RC1        |   1.10.0-RC1   | 
 |      `1.0.0-M1`       |     3.0.0-M6     |        1.0.0-M8        |   1.10.0-M5    | 
 
