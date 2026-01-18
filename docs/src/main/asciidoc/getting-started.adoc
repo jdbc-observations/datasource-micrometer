@@ -13,11 +13,15 @@ It includes an introduction to {project-full-name}, along with installation inst
 
 The Datasource Micrometer provides {micrometer-observation}[Micrometer Observation API] instrumentation for JDBC operations.
 
-Currently, this project provides two modules - core instrumentation and its Spring Boot Auto Configuration.
+It provides consistent observability for JDBC-based data access by
+instrumenting common database interactions such as:
 
-If you are a {micrometer}[Micrometer] user but not using Spring Boot, you can directly use the `datasource-micrometer` module, which doesn't have a dependency on the Spring Framework. +
-If you are a Spring Boot 3 user, then you can add the `datasource-micrometer-spring-boot` module to the classpath.
-This will automatically instruments the `DataSource` and provide tracing capabilities for JDBC operations.
+* Connection acquisition and release
+* Query execution
+* Result set fetching
+* Generated key retrieval
+
+Datasource Micrometer integrates naturally with the Micrometer ecosystem and can emit metrics and spans to a variety of monitoring and tracing backends.
 
 The instrumentation implementation uses https://github.com/ttddyy/datasource-proxy[datasource-proxy] to provide a proxy for JDBC operations.
 
@@ -40,20 +44,44 @@ In addition, since the {micrometer-observation}[Observation API] and {micrometer
 
 [[getting-started-intro-modules]]
 === Modules
+Datasource Micrometer is composed of several modules that can be combined depending on your observability needs.
 
-*datasource-micrometer*
+==== datasource-micrometer
+The core module provides JDBC instrumentation using Micrometer Observation.
 
-This module provides the instrumentation on the JDBC operations.
-The implementation is provided as a {datasource-proxy}[datasource-proxy] listener.
-Non-spring applications can directly use this module.
+If you are a {micrometer}[Micrometer] user but not using Spring Boot, you can directly use the `datasource-micrometer` module, which does not have a dependency on the Spring.
 
-*datasource-micrometer-spring-boot*
+==== datasource-micrometer-opentelemetry
+The `datasource-micrometer-opentelemetry` module maps JDBC observations produced by Datasource Micrometer to the stable parts of OpenTelemetry Semantic Conventions.
 
-This module provides an auto-configuration for the Spring Boot 3 applications.
+This module uses https://github.com/JSQLParser/JSqlParser[JSqlParser] to analyze queries.
 
-*datasource-micrometer-bom*
+It focuses on query execution, which is the only JDBC interaction currently covered by OpenTelemetry Semantic Conventions.
 
-This module provides a Bill of Materials (BOM) for dependency management.
+==== datasource-micrometer-spring-boot
+The Spring Boot module provides auto-configuration for Datasource Micrometer.
+
+When present on the classpath, it:
+
+* Automatically instruments `DataSource` beans
+* Registers default observation conventions
+* Integrates with Spring Boot’s Micrometer and Observation infrastructure
+
+In addition, when the `datasource-micrometer-opentelemetry` module is available on the classpath, OpenTelemetry support is automatically enabled via auto-configuration.
+
+This is the recommended entry point for most Spring Boot applications.
+
+==== datasource-micrometer-bom
+The `datasource-micrometer-bom` module provides a Bill of Materials (BOM) for Datasource Micrometer modules.
+
+It can be used to manage consistent dependency versions across Datasource Micrometer artifacts.
+
+=== Choosing the Right Setup
+The following summarizes common usage scenarios:
+
+* Use `datasource-micrometer` if you want low-level JDBC observations without Spring Boot.
+* Use `datasource-micrometer-spring-boot` for standard Micrometer-based observability in Spring Boot applications.
+* Add `datasource-micrometer-opentelemetry` if you want JDBC spans and metrics to follow OpenTelemetry Semantic Conventions.
 
 
 [[getting-started-installation]]
@@ -79,6 +107,27 @@ This module provides a Bill of Materials (BOM) for dependency management.
 ----
 dependencies {
     implementation "net.ttddyy.observation:datasource-micrometer:{project-version}"
+}
+----
+====
+
+*datasource-micrometer-opentelemetry*
+====
+[source,xml,indent=0,subs="verbatim,attributes",role="primary"]
+.Maven
+----
+    <dependency>
+        <groupId>net.ttddyy.observation</groupId>
+        <artifactId>datasource-micrometer-opentelemetry</artifactId>
+        <version>{project-version}</version>
+    </dependency>
+----
+
+[source,groovy,indent=0,subs="verbatim,attributes",role="secondary"]
+.Gradle
+----
+dependencies {
+    implementation "net.ttddyy.observation:datasource-micrometer-opentelemetry:{project-version}"
 }
 ----
 ====

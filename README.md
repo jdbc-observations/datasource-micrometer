@@ -32,6 +32,21 @@ dependencies {
     implementation "net.ttddyy.observation:datasource-micrometer:..."
 }
 ```
+**datasource-micrometer-opentelemetry**
+```xml
+<!-- Maven -->
+<dependency>
+    <groupId>net.ttddyy.observation</groupId>
+    <artifactId>datasource-micrometer-opentelemetry</artifactId>
+    <version>...</version>
+</dependency>
+```
+```groovy
+// Gradle
+dependencies {
+    implementation "net.ttddyy.observation:datasource-micrometer-opentelemetry:..."
+}
+```
 
 **datasource-micrometer-spring-boot**
 
@@ -47,6 +62,29 @@ dependencies {
 // Gradle
 dependencies {
     implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:..."
+}
+```
+
+**datasource-micrometer-bom**
+
+```xml
+<!-- Maven -->
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>net.ttddyy.observation</groupId>
+      <artifactId>datasource-micrometer-bom</artifactId>
+      <version>...</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+```
+```groovy
+// Gradle
+dependencies {
+  implementation platform("net.ttddyy.observation:datasource-micrometer-bom:...")
 }
 ```
 

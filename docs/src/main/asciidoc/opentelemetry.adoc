@@ -1,0 +1,131 @@
+[[opentelemetry]]
+= OpenTelemetry Semantic Conventions
+
+[[opentelemetry-overview]]
+== Module Overview
+
+The `datasource-micrometer-opentelemetry` module integrates Datasource Micrometer with https://opentelemetry.io/docs/concepts/semantic-conventions/[OpenTelemetry Semantic Conventions].
+
+This module maps JDBC observations produced by Datasource Micrometer to the stable parts of OpenTelemetry Semantic Conventions `v1.39.0`, enabling OpenTelemetry-compliant spans and metrics while continuing to use Micrometer Observation as the underlying instrumentation mechanism.
+
+In Spring Boot applications, `datasource-micrometer-spring-boot` detects this module on the classpath and automatically configures the necessary beans.
+
+[[opentelemetry-supported-scope]]
+== Supported Scope
+
+OpenTelemetry Semantic Conventions currently define specifications primarily for *database query execution*.
+
+As a result, this module focuses on query-level observability while remaining compatible with Datasource Micrometer’s broader JDBC instrumentation model.
+
+Supported by this module:
+
+* Query execution spans
+* Query execution metrics
+
+Not defined by the OpenTelemetry specification:
+
+* Connection lifecycle
+* Result set fetching
+* Generated key retrieval
+
+These additional JDBC interactions are still instrumented by Datasource Micrometer unless explicitly disabled. (see <<opentelemetry-notes>>)
+
+[[opentelemetry-query-analysis]]
+== Query Analysis
+
+The OpenTelemetry specification requires structured information derived from SQL statements.
+
+This module analyzes SQL queries using https://github.com/JSQLParser/JSqlParser[JSqlParser] in order to:
+
+* Determine the database operation (SELECT, INSERT, UPDATE, DELETE, etc.)
+* Produce normalized query representations
+* Optionally sanitize literal values
+* Optionally generate summarized query forms
+
+Query analysis behavior is fully configurable via properties.
+
+[[opentelemetry-provided-components]]
+== Provided Components
+
+The following components are provided by this module:
+
+* `OpenTelemetryQueryObservationConvention`  +
+An Observation Convention that maps query execution observations to OpenTelemetry semantic conventions for spans.
+
+* `OpenTelemetryMeterObservationHandler`  +
+A Meter Observation Handler that emits metrics following OpenTelemetry database client metric specifications.
+
+* `OpenTelemetryQueryAnalyzer`  +
+Performs SQL query analysis using JSqlParser and produces OpenTelemetry-compatible attributes.
+
+These components integrate with the existing Datasource Micrometer observation infrastructure.
+
+[[opentelemetry-spring-boot-support]]
+== Spring Boot Support
+
+When the `datasource-micrometer-opentelemetry` module is present on the classpath, `datasource-micrometer-spring-boot` automatically activates OpenTelemetry-specific auto-configuration.
+
+The `DataSourceObservationOpenTelemetryAutoConfiguration` class provides:
+
+* An `OpenTelemetryQueryObservationConvention` bean for query execution spans
+* An `OpenTelemetryMeterObservationHandler` bean for OpenTelemetry-compatible metrics
+* Supporting infrastructure beans required for OpenTelemetry semantic mapping
+
+No additional manual configuration is required beyond adding the module to the classpath.
+
+=== Properties
+
+All OpenTelemetry-related features can be controlled using Spring Boot properties.
+
+==== Global Enablement
+[source]
+----
+jdbc.opentelemetry.enabled
+----
+
+Enables or disables all OpenTelemetry-specific functionality.
+
+==== Spans and Metrics
+[source]
+----
+jdbc.opentelemetry.spans.enabled
+jdbc.opentelemetry.metrics.enabled
+----
+
+Control whether OpenTelemetry spans and metrics are emitted.
+
+==== Query Analysis
+[source]
+----
+jdbc.opentelemetry.analysis.enabled
+jdbc.opentelemetry.analysis.summary.enabled
+jdbc.opentelemetry.analysis.sanitize.enabled
+----
+
+Control SQL query parsing, summarization, and sanitization behavior.
+
+See `JdbcOpenTelemetryProperties` or <<appendix-common-application-properties>> for the complete list of available options and default values.
+
+[[opentelemetry-notes]]
+== Notes
+Datasource Micrometer instruments multiple JDBC interaction types:
+
+* `CONNECTION` – Connection acquisition and close
+* `QUERY` – Query execution
+* `FETCH` – ResultSet interaction
+* `KEYS` – Generated key retrieval
+
+OpenTelemetry Semantic Conventions define specifications *only for query execution*.
+
+By default, this module replaces the observation convention for `QUERY` interactions only.
+This ensures that OpenTelemetry-compliant spans and metrics are emitted for query execution, while other JDBC interactions continue to use Datasource Micrometer’s default conventions.
+
+If you want to emit observability data *only for query execution*, you can restrict
+instrumentation using:
+
+[source]
+----
+jdbc.include=QUERY
+----
+
+This disables connection, fetch, and key-related observations while preserving OpenTelemetry-compliant query instrumentation.

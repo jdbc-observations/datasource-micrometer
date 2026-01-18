@@ -130,8 +130,14 @@ public class JdbcOpenTelemetryProperties {
 
 	public static class AnalysisCache {
 
+		/**
+		 * Whether to enable cache for query analysis.
+		 */
 		private boolean enabled = true;
 
+		/**
+		 * Cache size for query analysis.
+		 */
 		private int maxSize = 1000;
 
 		public boolean isEnabled() {
