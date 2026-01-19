@@ -53,6 +53,7 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -61,8 +62,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static io.micrometer.tracing.test.simple.TracingAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link DataSourceObservationListener}.
@@ -738,37 +743,39 @@ class DataSourceObservationListenerTests {
 	}
 
 	@Test
-	void memoryLeakWhenConnectionForciblyClosedAndExecutionInfoLost() throws Exception {
-		// This test reproduces the case where ExecutionInfo loses the scope (e.g. connection evicted).
-		// The listener should fallback to getting the scope from the registry to prevent leak.
-		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
-
+	void memoryLeakWhenBeforeQueryThrowsException() {
+		ObservationRegistry realRegistry = ObservationRegistry.create();
+		realRegistry.observationConfig().observationHandler(new DefaultTracingObservationHandler(this.tracer));
+		DataSourceObservationListener listener = new DataSourceObservationListener(realRegistry);
 		ExecutionInfo executionInfo = mock(ExecutionInfo.class);
 		QueryInfo queryInfo = mock(QueryInfo.class);
 		List<QueryInfo> queryInfoList = Collections.singletonList(queryInfo);
-		Method method = Statement.class.getMethod("execute", String.class);
 
-		given(executionInfo.getConnectionId()).willReturn("conn-evicted-1");
-		given(executionInfo.getMethod()).willReturn(method);
-		given(queryInfo.getQuery()).willReturn("SELECT 1");
+		when(executionInfo.getConnectionId()).thenReturn("test-connection");
+		when(executionInfo.getDataSourceName()).thenReturn("test-ds");
+		when(queryInfo.getQuery()).thenReturn("SELECT 1");
+		
+		Method mockMethod = mock(Method.class);
+		when(mockMethod.getName()).thenReturn("execute");
+		when(executionInfo.getMethod()).thenReturn(mockMethod);
 
-		// 1. Start query (scope is opened and stored in ThreadLocal)
-		listener.beforeQuery(executionInfo, queryInfoList);
+		// Simulate exception during addCustomValue
+		doThrow(new RuntimeException("Simulated Failure"))
+			.when(executionInfo)
+			.addCustomValue(eq(Observation.Scope.class.getName()), any());
 
-		assertThat(this.registry.getCurrentObservation()).isNotNull();
-		assertThat(this.registry.getCurrentObservationScope()).isNotNull();
+		try {
+			listener.beforeQuery(executionInfo, queryInfoList);
+		}
+		catch (RuntimeException e) {
+			// ignore
+		}
 
-		// 2. Simulate ExecutionInfo returning null for scope (e.g. because it was cleared or not properly passed)
-		given(executionInfo.getCustomValue(Observation.Scope.class.getName(), Observation.Scope.class))
-				.willReturn(null);
-		given(executionInfo.getThrowable()).willReturn(new SQLException("Connection is closed"));
-
-		// 3. Stop query (should use fallback to close the scope)
 		listener.afterQuery(executionInfo, queryInfoList);
 
-		// Then
-		assertThat(this.registry.getCurrentObservation()).isNull();
-		assertThat(this.registry.getCurrentObservationScope()).isNull();
+		assertThat(this.registry.getCurrentObservationScope())
+			.describedAs("Scope should be closed even if beforeQuery fails")
+			.isNull();
 	}
 
 }

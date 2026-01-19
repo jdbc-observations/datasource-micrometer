@@ -139,7 +139,14 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			logger.debug("Created a new child observation before query [" + observation + "]");
 		}
 
-		executionInfo.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
+		Observation.Scope scope = observation.openScope();
+		try {
+			executionInfo.addCustomValue(Observation.Scope.class.getName(), scope);
+		}
+		catch (Throwable t) {
+			scope.close();
+			throw t;
+		}
 	}
 
 	private Observation createAndStartObservation(JdbcObservationDocumentation observationType,
@@ -188,11 +195,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		Observation.Scope scopeToUse = executionInfo.getCustomValue(Observation.Scope.class.getName(),
 				Observation.Scope.class);
 		if (scopeToUse == null) {
-			Observation.Scope scope = this.observationRegistrySupplier.get().getCurrentObservationScope();
-			if (scope == null) {
-				return;
-			}
-			scopeToUse = scope;
+			return;
 		}
 		Observation observation = scopeToUse.getCurrentObservation();
 		try (Observation.Scope scope = scopeToUse) {
