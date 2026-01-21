@@ -31,6 +31,7 @@ import net.sf.jsqlparser.statement.execute.Execute;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.merge.Merge;
 import net.sf.jsqlparser.statement.refresh.RefreshMaterializedViewStatement;
+import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.FromItemVisitor;
 import net.sf.jsqlparser.statement.select.FromItemVisitorAdapter;
 import net.sf.jsqlparser.statement.select.Join;
@@ -198,7 +199,10 @@ public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 
 		@Override
 		public <S> Void visit(PlainSelect plainSelect, S context) {
-			plainSelect.getFromItem().accept(this, context);
+			FromItem fromItem = plainSelect.getFromItem();
+			if(fromItem != null) {
+				fromItem.accept(this, context);
+			}
 			visitJoins(plainSelect.getJoins(), context, this);
 			return null;
 		}

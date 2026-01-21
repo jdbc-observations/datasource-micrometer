@@ -34,6 +34,20 @@ class JSqlParserQueryVisitorTests {
 	}
 
 	@Test
+	void selectWithoutFrom() throws Exception {
+		String query = "select user()";
+		Statement statement = CCJSqlParserUtil.parse(query);
+
+		JSqlParserQueryVisitor visitor = new JSqlParserQueryVisitor();
+		JSqlParserQueryVisitedContext visited = visitor.visit(statement);
+		List<VisitedEntry> entries = visited.getEntries();
+		String mainTableName = visited.getMainTableName();
+
+		assertThat(entries).containsExactly(VisitedEntry.operation("SELECT"));
+		assertThat(mainTableName).isNull();
+	}
+
+	@Test
 	void querySelect() throws Exception {
 		String query = "select * from (SELECT * FROM emp);";
 		Statement statement = CCJSqlParserUtil.parse(query);
