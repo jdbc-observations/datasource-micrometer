@@ -16,6 +16,8 @@
 
 package net.ttddyy.observation.tracing.opentelemetry.jsqlparser;
 
+import io.micrometer.common.lang.Nullable;
+
 import java.util.List;
 
 /**
@@ -28,7 +30,11 @@ public class QuerySummaryBuilder {
 
 	private int max = 255;
 
+	@Nullable
 	public String build(List<VisitedEntry> entries) {
+		if (entries.isEmpty()) {
+			return null;
+		}
 		StringBuilder builder = new StringBuilder();
 		for (VisitedEntry entry : entries) {
 			String data = entry.getData();

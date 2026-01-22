@@ -58,4 +58,12 @@ class QuerySummaryBuilderTests {
 		assertThat(summary).isEqualTo(expected);
 	}
 
+	@Test
+	void emptyEntries() {
+		List<VisitedEntry> entries = new ArrayList<>();
+		QuerySummaryBuilder builder = new QuerySummaryBuilder();
+		String summary = builder.build(entries);
+		assertThat(summary).isNull();
+	}
+
 }

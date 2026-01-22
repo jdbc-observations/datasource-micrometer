@@ -73,7 +73,7 @@ public class QueryAnalysisResult {
 		return querySummary;
 	}
 
-	public void setQuerySummary(String querySummary) {
+	public void setQuerySummary(@Nullable String querySummary) {
 		this.querySummary = querySummary;
 	}
 
