@@ -11,8 +11,15 @@ The Datasource Micrometer provides [Micrometer Observation API][micrometer-obser
 **datasource-micrometer**  
 Micrometer observability instrumentation for JDBC DataSource.
 
+**datasource-micrometer-opentelemetry**  
+OpenTelemetry Semantic Conventions support.
+
 **datasource-micrometer-spring-boot**  
-Spring Boot 3.x AutoConfiguration for micrometer observability.
+Spring Boot support (auto-configurations, etc) for micrometer observability.
+
+**datasource-micrometer-bom**  
+Bill of Materials(BOM) for Datasource Micrometer modules.
+
 
 ### Dependency Settings
 **datasource-micrometer**
