@@ -200,7 +200,7 @@ public class JSqlParserQueryVisitor extends StatementVisitorAdapter<Void> {
 		@Override
 		public <S> Void visit(PlainSelect plainSelect, S context) {
 			FromItem fromItem = plainSelect.getFromItem();
-			if(fromItem != null) {
+			if (fromItem != null) {
 				fromItem.accept(this, context);
 			}
 			visitJoins(plainSelect.getJoins(), context, this);
