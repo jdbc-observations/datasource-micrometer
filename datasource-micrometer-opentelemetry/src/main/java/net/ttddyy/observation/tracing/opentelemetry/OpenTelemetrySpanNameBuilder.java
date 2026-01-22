@@ -16,6 +16,8 @@
 
 package net.ttddyy.observation.tracing.opentelemetry;
 
+import io.micrometer.common.lang.Nullable;
+
 /**
  * A strategy to build a span name following the OpenTelemetry Semantic Conventions.
  *
@@ -31,15 +33,25 @@ public class OpenTelemetrySpanNameBuilder {
 		StringBuilder sb = new StringBuilder();
 		if (attributes.getOperationName() != null) {
 			sb.append(attributes.getOperationName());
+			sb.append(' ');
 		}
-		sb.append(composeTarget(attributes));
+		String target = composeTarget(attributes);
+		if (target != null) {
+			sb.append(target);
+			sb.append(' ');
+		}
 
-		if (sb.length() > 0) {
+		if (sb.length() == 0) {
+			// system name always has value
 			sb.append(attributes.getSystemName());
+		}
+		else if (sb.charAt(sb.length() - 1) == ' ') {
+			sb.deleteCharAt((sb.length() - 1));
 		}
 		return sb.toString();
 	}
 
+	@Nullable
 	private String composeTarget(OpenTelemetryAttributes attributes) {
 		if (attributes.getCollectionName() != null) {
 			return attributes.getCollectionName();
@@ -53,7 +65,7 @@ public class OpenTelemetrySpanNameBuilder {
 		if (attributes.getServerAddress() != null && attributes.getServerPort() != null) {
 			return attributes.getServerAddress() + ":" + attributes.getServerPort();
 		}
-		return "";
+		return null;
 	}
 
 }
