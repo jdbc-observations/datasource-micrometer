@@ -1,6 +1,11 @@
 Datasource Micrometer Changelog
 ================================
 
+1.3.0
+------------------
+* OpenTelemetry Semantic Conventions support (#76)
+* Rename bean "dataSourceNameResolver" to "observationDataSourceNameResolver" (#33)
+
 1.2.1
 ------------------
 * Fix "null" from generated-keys (#88)
