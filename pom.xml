@@ -32,12 +32,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <micrometer-bom.version>1.16.0</micrometer-bom.version>
-        <micrometer-tracing-bom.version>1.6.0</micrometer-tracing-bom.version>
+        <micrometer-bom.version>1.16.2</micrometer-bom.version>
+        <micrometer-tracing-bom.version>1.6.2</micrometer-tracing-bom.version>
         <spring-javaformat.version>0.0.47</spring-javaformat.version>
 
         <!-- Tests  -->
-        <junit.version>6.0.1</junit.version>
+        <junit.version>6.0.2</junit.version>
         <mockito.version>5.20.0</mockito.version>
         <assertj.version>3.27.6</assertj.version>
 
@@ -48,7 +48,7 @@
         <jsqlparser.version>5.3</jsqlparser.version>
 
         <!-- datasource-micrometer-spring-boot module -->
-        <spring-boot.version>4.0.0</spring-boot.version>
+        <spring-boot.version>4.0.2</spring-boot.version>
 
         <!-- Docs -->
         <micrometer-docs-generator.version>1.0.4</micrometer-docs-generator.version>
