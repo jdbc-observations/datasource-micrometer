@@ -597,6 +597,7 @@ window.onload = function() {
 <ul class="sectlevel2">
 <li><a href="#getting-started-intro-background">1.1. Background</a></li>
 <li><a href="#getting-started-intro-modules">1.2. Modules</a></li>
+<li><a href="#choosing-the-right-setup">1.3. Choosing the Right Setup</a></li>
 </ul>
 </li>
 <li><a href="#getting-started-installation">2. Installation</a>
@@ -626,12 +627,27 @@ It includes an introduction to Datasource Micrometer, along with installation in
 <p>The Datasource Micrometer provides <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Micrometer Observation API</a> instrumentation for JDBC operations.</p>
 </div>
 <div class="paragraph">
-<p>Currently, this project provides two modules - core instrumentation and its Spring Boot Auto Configuration.</p>
+<p>It provides consistent observability for JDBC-based data access by
+instrumenting common database interactions such as:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Connection acquisition and release</p>
+</li>
+<li>
+<p>Query execution</p>
+</li>
+<li>
+<p>Result set fetching</p>
+</li>
+<li>
+<p>Generated key retrieval</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>If you are a <a href="https://micrometer.io">Micrometer</a> user but not using Spring Boot, you can directly use the <code>datasource-micrometer</code> module, which doesn&#8217;t have a dependency on the Spring Framework.<br>
-If you are a Spring Boot 3 user, then you can add the <code>datasource-micrometer-spring-boot</code> module to the classpath.
-This will automatically instruments the <code>DataSource</code> and provide tracing capabilities for JDBC operations.</p>
+<p>Datasource Micrometer integrates naturally with the Micrometer ecosystem and can emit metrics and spans to a variety of monitoring and tracing backends.</p>
 </div>
 <div class="paragraph">
 <p>The instrumentation implementation uses <a href="https://github.com/ttddyy/datasource-proxy">datasource-proxy</a> to provide a proxy for JDBC operations.</p>
@@ -659,24 +675,84 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <div class="sect2">
 <h3 id="getting-started-intro-modules"><a class="anchor" href="#getting-started-intro-modules"></a><a class="link" href="#getting-started-intro-modules">1.2. Modules</a></h3>
 <div class="paragraph">
-<p><strong>datasource-micrometer</strong></p>
+<p>Datasource Micrometer is composed of several modules that can be combined depending on your observability needs.</p>
+</div>
+<div class="sect3">
+<h4 id="datasource-micrometer"><a class="anchor" href="#datasource-micrometer"></a><a class="link" href="#datasource-micrometer">1.2.1. datasource-micrometer</a></h4>
+<div class="paragraph">
+<p>The core module provides JDBC instrumentation using Micrometer Observation.</p>
 </div>
 <div class="paragraph">
-<p>This module provides the instrumentation on the JDBC operations.
-The implementation is provided as a <a href="https://github.com/ttddyy/datasource-proxy">datasource-proxy</a> listener.
-Non-spring applications can directly use this module.</p>
+<p>If you are a <a href="https://micrometer.io">Micrometer</a> user but not using Spring Boot, you can directly use the <code>datasource-micrometer</code> module, which does not have a dependency on the Spring.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="datasource-micrometer-opentelemetry"><a class="anchor" href="#datasource-micrometer-opentelemetry"></a><a class="link" href="#datasource-micrometer-opentelemetry">1.2.2. datasource-micrometer-opentelemetry</a></h4>
+<div class="paragraph">
+<p>The <code>datasource-micrometer-opentelemetry</code> module maps JDBC observations produced by Datasource Micrometer to the stable parts of OpenTelemetry Semantic Conventions.</p>
 </div>
 <div class="paragraph">
-<p><strong>datasource-micrometer-spring-boot</strong></p>
+<p>This module uses <a href="https://github.com/JSQLParser/JSqlParser">JSqlParser</a> to analyze queries.</p>
 </div>
 <div class="paragraph">
-<p>This module provides an auto-configuration for the Spring Boot 3 applications.</p>
+<p>It focuses on query execution, which is the only JDBC interaction currently covered by OpenTelemetry Semantic Conventions.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="datasource-micrometer-spring-boot"><a class="anchor" href="#datasource-micrometer-spring-boot"></a><a class="link" href="#datasource-micrometer-spring-boot">1.2.3. datasource-micrometer-spring-boot</a></h4>
+<div class="paragraph">
+<p>The Spring Boot module provides auto-configuration for Datasource Micrometer.</p>
 </div>
 <div class="paragraph">
-<p><strong>datasource-micrometer-bom</strong></p>
+<p>When present on the classpath, it:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Automatically instruments <code>DataSource</code> beans</p>
+</li>
+<li>
+<p>Registers default observation conventions</p>
+</li>
+<li>
+<p>Integrates with Spring Boot’s Micrometer and Observation infrastructure</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>This module provides a Bill of Materials (BOM) for dependency management.</p>
+<p>In addition, when the <code>datasource-micrometer-opentelemetry</code> module is available on the classpath, OpenTelemetry support is automatically enabled via auto-configuration.</p>
+</div>
+<div class="paragraph">
+<p>This is the recommended entry point for most Spring Boot applications.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="datasource-micrometer-bom"><a class="anchor" href="#datasource-micrometer-bom"></a><a class="link" href="#datasource-micrometer-bom">1.2.4. datasource-micrometer-bom</a></h4>
+<div class="paragraph">
+<p>The <code>datasource-micrometer-bom</code> module provides a Bill of Materials (BOM) for Datasource Micrometer modules.</p>
+</div>
+<div class="paragraph">
+<p>It can be used to manage consistent dependency versions across Datasource Micrometer artifacts.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="choosing-the-right-setup"><a class="anchor" href="#choosing-the-right-setup"></a><a class="link" href="#choosing-the-right-setup">1.3. Choosing the Right Setup</a></h3>
+<div class="paragraph">
+<p>The following summarizes common usage scenarios:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use <code>datasource-micrometer</code> if you want low-level JDBC observations without Spring Boot.</p>
+</li>
+<li>
+<p>Use <code>datasource-micrometer-spring-boot</code> for standard Micrometer-based observability in Spring Boot applications.</p>
+</li>
+<li>
+<p>Add <code>datasource-micrometer-opentelemetry</code> if you want JDBC spans and metrics to follow OpenTelemetry Semantic Conventions.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -706,6 +782,31 @@ Non-spring applications can directly use this module.</p>
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
     implementation "net.ttddyy.observation:datasource-micrometer:2.1.0-SNAPSHOT"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>datasource-micrometer-opentelemetry</strong></p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock primary">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;net.ttddyy.observation&lt;/groupId&gt;
+    &lt;artifactId&gt;datasource-micrometer-opentelemetry&lt;/artifactId&gt;
+    &lt;version&gt;2.1.0-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+    implementation "net.ttddyy.observation:datasource-micrometer-opentelemetry:2.1.0-SNAPSHOT"
 }</code></pre>
 </div>
 </div>

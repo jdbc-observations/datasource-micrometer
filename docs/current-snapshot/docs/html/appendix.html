@@ -720,6 +720,51 @@ Also, you can define your own properties.
 <td class="tableblock halign-left valign-top"><p class="tableblock">Which types of tracing we would like to include.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.analysis.cache.enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to enable cache for query analysis.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.analysis.cache.max-size</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1000</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cache size for query analysis.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.analysis.enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to perform query analysis.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.analysis.sanitize.enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to sanitize queries for "db.query.text".</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.analysis.summary.enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to summarize queries for "db.query.summary".</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.attributes.overrides</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Overrides any matching attributes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to enable OpenTelemetry Semantic Conventions support.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.metrics.enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to enable support for OpenTelemetry Semantic Conventions for metrics.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.spans.enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to enable support for OpenTelemetry Semantic Conventions for spans.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.resultset-operations.enabled</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Enable recording operations on ResultSet.</p></td>

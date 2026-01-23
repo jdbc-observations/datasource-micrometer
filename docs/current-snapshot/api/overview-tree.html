@@ -52,8 +52,11 @@ loadScripts(document, 'script');</script>
 <span class="package-hierarchy-label">Package Hierarchies:</span>
 <ul class="horizontal">
 <li><a href="net/ttddyy/observation/boot/autoconfigure/package-tree.html">net.ttddyy.observation.boot.autoconfigure</a>, </li>
+<li><a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/package-tree.html">net.ttddyy.observation.boot.autoconfigure.opentelemetry</a>, </li>
 <li><a href="net/ttddyy/observation/boot/event/package-tree.html">net.ttddyy.observation.boot.event</a>, </li>
-<li><a href="net/ttddyy/observation/tracing/package-tree.html">net.ttddyy.observation.tracing</a></li>
+<li><a href="net/ttddyy/observation/tracing/package-tree.html">net.ttddyy.observation.tracing</a>, </li>
+<li><a href="net/ttddyy/observation/tracing/opentelemetry/package-tree.html">net.ttddyy.observation.tracing.opentelemetry</a>, </li>
+<li><a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/package-tree.html">net.ttddyy.observation.tracing.opentelemetry.jsqlparser</a></li>
 </ul>
 </div>
 <section class="hierarchy">
@@ -76,6 +79,7 @@ loadScripts(document, 'script');</script>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DataSourceObservationAutoConfiguration.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">DataSourceObservationAutoConfiguration</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DataSourceObservationBeanPostProcessor.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">DataSourceObservationBeanPostProcessor</a> (implements org.springframework.beans.factory.config.BeanPostProcessor)</li>
 <li class="circle">net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/DataSourceObservationListener.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">DataSourceObservationListener</a> (implements net.ttddyy.dsproxy.listener.MethodExecutionListener, net.ttddyy.dsproxy.listener.QueryExecutionListener)</li>
+<li class="circle">net.ttddyy.observation.boot.autoconfigure.opentelemetry.<a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/DataSourceObservationOpenTelemetryAutoConfiguration.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">DataSourceObservationOpenTelemetryAutoConfiguration</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DataSourceProxyBuilderConfigurer.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">DataSourceProxyBuilderConfigurer</a></li>
 <li class="circle">net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/DefaultConnectionAttributesManager.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">DefaultConnectionAttributesManager</a> (implements net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/ConnectionAttributesManager.html" title="interface in net.ttddyy.observation.tracing">ConnectionAttributesManager</a>)</li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DefaultDataSourceNameResolver.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">DefaultDataSourceNameResolver</a> (implements net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DataSourceNameResolver.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceNameResolver</a>)</li>
@@ -93,14 +97,32 @@ loadScripts(document, 'script');</script>
 </li>
 </ul>
 </li>
+<li class="circle">net.sf.jsqlparser.util.deparser.ExpressionDeParser (implements net.sf.jsqlparser.expression.ExpressionVisitor&lt;T&gt;)
+<ul>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.jsqlparser.<a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/JSqlParserSanitizingExpressionDeParser.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry.jsqlparser">JSqlParserSanitizingExpressionDeParser</a></li>
+</ul>
+</li>
+<li class="circle">net.sf.jsqlparser.statement.select.FromItemVisitorAdapter&lt;T&gt; (implements net.sf.jsqlparser.statement.select.FromItemVisitor&lt;T&gt;)
+<ul>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.jsqlparser.<a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/JSqlParserQueryVisitor.JSqlParserQueryFromItemVisitor.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry.jsqlparser">JSqlParserQueryVisitor.JSqlParserQueryFromItemVisitor</a></li>
+</ul>
+</li>
 <li class="circle">net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/HikariJdbcObservationFilter.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">HikariJdbcObservationFilter</a> (implements io.micrometer.observation.ObservationFilter)</li>
 <li class="circle">net.ttddyy.observation.boot.event.<a href="net/ttddyy/observation/boot/event/JdbcEventPublishingListener.html" class="type-name-link" title="class in net.ttddyy.observation.boot.event">JdbcEventPublishingListener</a> (implements net.ttddyy.dsproxy.listener.MethodExecutionListener, net.ttddyy.dsproxy.listener.QueryExecutionListener)</li>
+<li class="circle">net.ttddyy.observation.boot.autoconfigure.opentelemetry.<a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/JdbcOpenTelemetryProperties.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">JdbcOpenTelemetryProperties</a></li>
+<li class="circle">net.ttddyy.observation.boot.autoconfigure.opentelemetry.<a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/JdbcOpenTelemetryProperties.Analysis.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">JdbcOpenTelemetryProperties.Analysis</a></li>
+<li class="circle">net.ttddyy.observation.boot.autoconfigure.opentelemetry.<a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/JdbcOpenTelemetryProperties.AnalysisCache.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">JdbcOpenTelemetryProperties.AnalysisCache</a></li>
+<li class="circle">net.ttddyy.observation.boot.autoconfigure.opentelemetry.<a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/JdbcOpenTelemetryProperties.Attributes.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">JdbcOpenTelemetryProperties.Attributes</a></li>
+<li class="circle">net.ttddyy.observation.boot.autoconfigure.opentelemetry.<a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/JdbcOpenTelemetryProperties.Sanitize.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">JdbcOpenTelemetryProperties.Sanitize</a></li>
+<li class="circle">net.ttddyy.observation.boot.autoconfigure.opentelemetry.<a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/JdbcOpenTelemetryProperties.Summary.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">JdbcOpenTelemetryProperties.Summary</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceProxy.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.DataSourceProxy</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Event.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.Event</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Query.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.Query</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.ResultsetOperations.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.ResultsetOperations</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.SlowQuery.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.SlowQuery</a></li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.jsqlparser.<a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/JSqlParserQueryAnalyzer.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry.jsqlparser">JSqlParserQueryAnalyzer</a> (implements net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryQueryAnalyzer.html" title="interface in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryQueryAnalyzer</a>)</li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.jsqlparser.<a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/JSqlParserQueryVisitedContext.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry.jsqlparser">JSqlParserQueryVisitedContext</a></li>
 <li class="circle">io.micrometer.observation.Observation.Context (implements io.micrometer.observation.Observation.ContextView)
 <ul>
 <li class="circle">io.micrometer.observation.transport.SenderContext&lt;C&gt;
@@ -116,6 +138,13 @@ loadScripts(document, 'script');</script>
 </li>
 </ul>
 </li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryAttributes.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryAttributes</a></li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryAttributesManager.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryAttributesManager</a></li>
+<li class="circle">net.ttddyy.observation.boot.autoconfigure.opentelemetry.<a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/OpenTelemetryConnectionUrlParserCache.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">OpenTelemetryConnectionUrlParserCache</a> (implements net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryConnectionUrlParser.html" title="interface in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryConnectionUrlParser</a>)</li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryMeterObservationHandler.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryMeterObservationHandler</a> (implements io.micrometer.observation.ObservationHandler&lt;T&gt;)</li>
+<li class="circle">net.ttddyy.observation.boot.autoconfigure.opentelemetry.<a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/OpenTelemetryQueryAnalyzerCache.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">OpenTelemetryQueryAnalyzerCache</a> (implements net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryQueryAnalyzer.html" title="interface in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryQueryAnalyzer</a>)</li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryQueryObservationConvention.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryQueryObservationConvention</a> (implements net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/QueryObservationConvention.html" title="interface in net.ttddyy.observation.tracing">QueryObservationConvention</a>)</li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetrySpanNameBuilder.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetrySpanNameBuilder</a></li>
 <li class="circle">io.micrometer.tracing.handler.PropagatingSenderTracingObservationHandler&lt;T&gt; (implements io.micrometer.tracing.handler.TracingObservationHandler&lt;T&gt;)
 <ul>
 <li class="circle">net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/DataSourceBaseObservationHandler.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">DataSourceBaseObservationHandler</a>
@@ -127,7 +156,19 @@ loadScripts(document, 'script');</script>
 </li>
 </ul>
 </li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/QueryAnalysisResult.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">QueryAnalysisResult</a></li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.jsqlparser.<a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/QuerySummaryBuilder.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry.jsqlparser">QuerySummaryBuilder</a></li>
 <li class="circle">net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/ResultSetOperation.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">ResultSetOperation</a></li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/SimpleDatabaseNamespaceRetriever.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">SimpleDatabaseNamespaceRetriever</a> (implements net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/DatabaseNamespaceRetriever.html" title="interface in net.ttddyy.observation.tracing.opentelemetry">DatabaseNamespaceRetriever</a>)</li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/SimpleOpenTelemetryConnectionUrlParser.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">SimpleOpenTelemetryConnectionUrlParser</a> (implements net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryConnectionUrlParser.html" title="interface in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryConnectionUrlParser</a>)</li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/SqlServerDatabaseNamespaceRetriever.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">SqlServerDatabaseNamespaceRetriever</a> (implements net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/DatabaseNamespaceRetriever.html" title="interface in net.ttddyy.observation.tracing.opentelemetry">DatabaseNamespaceRetriever</a>)</li>
+<li class="circle">net.sf.jsqlparser.statement.StatementVisitorAdapter&lt;T&gt; (implements net.sf.jsqlparser.statement.StatementVisitor&lt;T&gt;)
+<ul>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.jsqlparser.<a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/JSqlParserQueryVisitor.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry.jsqlparser">JSqlParserQueryVisitor</a></li>
+</ul>
+</li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/UrlParseResult.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">UrlParseResult</a></li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.jsqlparser.<a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/VisitedEntry.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry.jsqlparser">VisitedEntry</a></li>
 </ul>
 </li>
 </ul>
@@ -136,6 +177,7 @@ loadScripts(document, 'script');</script>
 <h2 title="Interface Hierarchy">Interface Hierarchy</h2>
 <ul>
 <li class="circle">net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/ConnectionAttributesManager.html" class="type-name-link" title="interface in net.ttddyy.observation.tracing">ConnectionAttributesManager</a></li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/DatabaseNamespaceRetriever.html" class="type-name-link" title="interface in net.ttddyy.observation.tracing.opentelemetry">DatabaseNamespaceRetriever</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/DataSourceNameResolver.html" class="type-name-link" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceNameResolver</a></li>
 <li class="circle">io.micrometer.observation.KeyValuesConvention
 <ul>
@@ -152,6 +194,8 @@ loadScripts(document, 'script');</script>
 </li>
 </ul>
 </li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryConnectionUrlParser.html" class="type-name-link" title="interface in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryConnectionUrlParser</a></li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryQueryAnalyzer.html" class="type-name-link" title="interface in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryQueryAnalyzer</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/ProxyDataSourceBuilderCustomizer.html" class="type-name-link" title="interface in net.ttddyy.observation.boot.autoconfigure">ProxyDataSourceBuilderCustomizer</a></li>
 <li class="circle">net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/QueryParametersSpanTagProvider.html" class="type-name-link" title="interface in net.ttddyy.observation.tracing">QueryParametersSpanTagProvider</a></li>
 <li class="circle">java.util.function.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" class="type-name-link external-link" title="class or interface in java.util.function">Supplier</a>&lt;T&gt;
@@ -180,6 +224,7 @@ loadScripts(document, 'script');</script>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceType.html" class="type-name-link" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.DataSourceType</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.Logging.html" class="type-name-link" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.Logging</a></li>
 <li class="circle">net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.TraceType.html" class="type-name-link" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.TraceType</a></li>
+<li class="circle">net.ttddyy.observation.tracing.opentelemetry.jsqlparser.<a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/VisitedEntry.ValueType.html" class="type-name-link" title="enum class in net.ttddyy.observation.tracing.opentelemetry.jsqlparser">VisitedEntry.ValueType</a></li>
 </ul>
 </li>
 </ul>

@@ -58,6 +58,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Tracing observation.</div>
 </div>
+<div class="col-first odd-row-color"><a href="#net.ttddyy.observation.tracing.opentelemetry">net.ttddyy.observation.tracing.opentelemetry</a></div>
+<div class="col-last odd-row-color">
+<div class="block">OpenTelemetry Semantic Conventions support related classes.</div>
+</div>
 </div>
 <section class="class-uses">
 <ul class="block-list">
@@ -75,6 +79,44 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>default io.micrometer.common.KeyValues</code></div>
 <div class="col-second odd-row-color"><span class="type-name-label">QueryObservationConvention.</span><code><a href="../QueryObservationConvention.html#getLowCardinalityKeyValues(net.ttddyy.observation.tracing.QueryContext)" class="member-name-link">getLowCardinalityKeyValues</a><wbr>(<a href="../QueryContext.html" title="class in net.ttddyy.observation.tracing">QueryContext</a>&nbsp;context)</code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="net.ttddyy.observation.tracing.opentelemetry">
+<h2>Uses of <a href="../QueryContext.html" title="class in net.ttddyy.observation.tracing">QueryContext</a> in <a href="../opentelemetry/package-summary.html">net.ttddyy.observation.tracing.opentelemetry</a></h2>
+<div class="caption"><span>Methods in <a href="../opentelemetry/package-summary.html">net.ttddyy.observation.tracing.opentelemetry</a> with parameters of type <a href="../QueryContext.html" title="class in net.ttddyy.observation.tracing">QueryContext</a></span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Method</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code><a href="../opentelemetry/OpenTelemetryAttributes.html" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryAttributes</a></code></div>
+<div class="col-second even-row-color"><span class="type-name-label">OpenTelemetryAttributesManager.</span><code><a href="../opentelemetry/OpenTelemetryAttributesManager.html#getAttributes(net.ttddyy.observation.tracing.QueryContext)" class="member-name-link">getAttributes</a><wbr>(<a href="../QueryContext.html" title="class in net.ttddyy.observation.tracing">QueryContext</a>&nbsp;queryContext)</code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">OpenTelemetryQueryObservationConvention.</span><code><a href="../opentelemetry/OpenTelemetryQueryObservationConvention.html#getContextualName(net.ttddyy.observation.tracing.QueryContext)" class="member-name-link">getContextualName</a><wbr>(<a href="../QueryContext.html" title="class in net.ttddyy.observation.tracing">QueryContext</a>&nbsp;context)</code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>io.micrometer.common.KeyValues</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">OpenTelemetryQueryObservationConvention.</span><code><a href="../opentelemetry/OpenTelemetryQueryObservationConvention.html#getHighCardinalityKeyValues(net.ttddyy.observation.tracing.QueryContext)" class="member-name-link">getHighCardinalityKeyValues</a><wbr>(<a href="../QueryContext.html" title="class in net.ttddyy.observation.tracing">QueryContext</a>&nbsp;context)</code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>io.micrometer.common.KeyValues</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">OpenTelemetryQueryObservationConvention.</span><code><a href="../opentelemetry/OpenTelemetryQueryObservationConvention.html#getLowCardinalityKeyValues(net.ttddyy.observation.tracing.QueryContext)" class="member-name-link">getLowCardinalityKeyValues</a><wbr>(<a href="../QueryContext.html" title="class in net.ttddyy.observation.tracing">QueryContext</a>&nbsp;context)</code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code><a href="../opentelemetry/OpenTelemetryAttributes.html" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryAttributes</a></code></div>
+<div class="col-second even-row-color"><span class="type-name-label">OpenTelemetryAttributesManager.</span><code><a href="../opentelemetry/OpenTelemetryAttributesManager.html#getOrCreateAttributes(net.ttddyy.observation.tracing.QueryContext)" class="member-name-link">getOrCreateAttributes</a><wbr>(<a href="../QueryContext.html" title="class in net.ttddyy.observation.tracing">QueryContext</a>&nbsp;context)</code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>void</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">OpenTelemetryMeterObservationHandler.</span><code><a href="../opentelemetry/OpenTelemetryMeterObservationHandler.html#onStart(net.ttddyy.observation.tracing.QueryContext)" class="member-name-link">onStart</a><wbr>(<a href="../QueryContext.html" title="class in net.ttddyy.observation.tracing">QueryContext</a>&nbsp;context)</code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>void</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">OpenTelemetryMeterObservationHandler.</span><code><a href="../opentelemetry/OpenTelemetryMeterObservationHandler.html#onStop(net.ttddyy.observation.tracing.QueryContext)" class="member-name-link">onStop</a><wbr>(<a href="../QueryContext.html" title="class in net.ttddyy.observation.tracing">QueryContext</a>&nbsp;context)</code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>protected <a href="../opentelemetry/UrlParseResult.html" title="class in net.ttddyy.observation.tracing.opentelemetry">UrlParseResult</a></code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">OpenTelemetryAttributesManager.</span><code><a href="../opentelemetry/OpenTelemetryAttributesManager.html#parseConnectionUrl(net.ttddyy.observation.tracing.QueryContext)" class="member-name-link">parseConnectionUrl</a><wbr>(<a href="../QueryContext.html" title="class in net.ttddyy.observation.tracing">QueryContext</a>&nbsp;context)</code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>void</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">OpenTelemetryAttributes.</span><code><a href="../opentelemetry/OpenTelemetryAttributes.html#populateFromQueryContext(net.ttddyy.observation.tracing.QueryContext)" class="member-name-link">populateFromQueryContext</a><wbr>(<a href="../QueryContext.html" title="class in net.ttddyy.observation.tracing">QueryContext</a>&nbsp;queryContext)</code></div>
+<div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
