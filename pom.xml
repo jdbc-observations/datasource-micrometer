@@ -29,8 +29,8 @@
 
     <properties>
         <java.version>17</java.version>
-        <micrometer-bom.version>1.15.4</micrometer-bom.version>
-        <micrometer-tracing-bom.version>1.5.4</micrometer-tracing-bom.version>
+        <micrometer-bom.version>1.15.8</micrometer-bom.version>
+        <micrometer-tracing-bom.version>1.5.8</micrometer-tracing-bom.version>
         <spring-javaformat.version>0.0.47</spring-javaformat.version>
 
         <!-- Tests  -->
@@ -45,7 +45,7 @@
         <jsqlparser.version>5.3</jsqlparser.version>
 
         <!-- datasource-micrometer-spring-boot module -->
-        <spring-boot.version>3.5.6</spring-boot.version>
+        <spring-boot.version>3.5.10</spring-boot.version>
 
         <!-- Docs -->
         <micrometer-docs-generator.version>1.0.4</micrometer-docs-generator.version>
