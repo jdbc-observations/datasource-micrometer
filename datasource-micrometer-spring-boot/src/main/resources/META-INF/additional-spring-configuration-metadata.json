@@ -12,6 +12,27 @@
       "description": "Whether to enable JDBC instrumentation.",
       "defaultValue": true,
       "sourceType": "net.ttddyy.observation.boot.autoconfigure.DataSourceObservationAutoConfiguration"
+    },
+    {
+      "name": "jdbc.opentelemetry.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable OpenTelemetry Semantic Conventions support.",
+      "defaultValue": true,
+      "sourceType": "net.ttddyy.observation.boot.autoconfigure.opentelemetry.DataSourceObservationOpenTelemetryAutoConfiguration"
+    },
+    {
+      "name": "jdbc.opentelemetry.spans.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable support for OpenTelemetry Semantic Conventions for spans.",
+      "defaultValue": true,
+      "sourceType": "net.ttddyy.observation.boot.autoconfigure.opentelemetry.DataSourceObservationOpenTelemetryAutoConfiguration"
+    },
+    {
+      "name": "jdbc.opentelemetry.metrics.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable support for OpenTelemetry Semantic Conventions for metrics.",
+      "defaultValue": true,
+      "sourceType": "net.ttddyy.observation.boot.autoconfigure.opentelemetry.DataSourceObservationOpenTelemetryAutoConfiguration"
     }
   ]
 }
