@@ -16,6 +16,7 @@
 
 package net.ttddyy.observation.tracing;
 
+import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashSet;
@@ -61,6 +62,9 @@ public interface ConnectionAttributesManager {
 
 		@Nullable
 		int port;
+
+		@Nullable
+		String url;
 
 		Observation observation;
 

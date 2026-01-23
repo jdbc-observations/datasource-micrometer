@@ -11,8 +11,15 @@ The Datasource Micrometer provides [Micrometer Observation API][micrometer-obser
 **datasource-micrometer**  
 Micrometer observability instrumentation for JDBC DataSource.
 
+**datasource-micrometer-opentelemetry**  
+OpenTelemetry Semantic Conventions support.
+
 **datasource-micrometer-spring-boot**  
-Spring Boot 3.x AutoConfiguration for micrometer observability.
+Spring Boot support (auto-configurations, etc) for micrometer observability.
+
+**datasource-micrometer-bom**  
+Bill of Materials(BOM) for Datasource Micrometer modules.
+
 
 ### Dependency Settings
 **datasource-micrometer**
@@ -32,6 +39,21 @@ dependencies {
     implementation "net.ttddyy.observation:datasource-micrometer:..."
 }
 ```
+**datasource-micrometer-opentelemetry**
+```xml
+<!-- Maven -->
+<dependency>
+    <groupId>net.ttddyy.observation</groupId>
+    <artifactId>datasource-micrometer-opentelemetry</artifactId>
+    <version>...</version>
+</dependency>
+```
+```groovy
+// Gradle
+dependencies {
+    implementation "net.ttddyy.observation:datasource-micrometer-opentelemetry:..."
+}
+```
 
 **datasource-micrometer-spring-boot**
 
@@ -47,6 +69,29 @@ dependencies {
 // Gradle
 dependencies {
     implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:..."
+}
+```
+
+**datasource-micrometer-bom**
+
+```xml
+<!-- Maven -->
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>net.ttddyy.observation</groupId>
+      <artifactId>datasource-micrometer-bom</artifactId>
+      <version>...</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+```
+```groovy
+// Gradle
+dependencies {
+  implementation platform("net.ttddyy.observation:datasource-micrometer-bom:...")
 }
 ```
 

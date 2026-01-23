@@ -129,6 +129,8 @@ class DataSourceObservationAutoConfigurationIntegrationTests {
 	@SpringBootTest(
 	// @formatter:off
 			properties = {
+					"spring.autoconfigure.exclude=net.ttddyy.observation.boot.autoconfigure.opentelemetry.DataSourceObservationOpenTelemetryAutoConfiguration",
+
 					// embedded DB
 					"spring.datasource.url=jdbc:h2:mem:testdb",
 					"spring.datasource.driverClassName=org.h2.Driver",
@@ -161,6 +163,8 @@ class DataSourceObservationAutoConfigurationIntegrationTests {
 	@SpringBootTest(
 	// @formatter:off
 			properties = {
+					"spring.autoconfigure.exclude=net.ttddyy.observation.boot.autoconfigure.opentelemetry.DataSourceObservationOpenTelemetryAutoConfiguration",
+
 					"spring.sql.init.schema-locations=classpath:itest-schema.sql",
 					"spring.sql.init.data-locations=classpath:itest-data.sql",
 

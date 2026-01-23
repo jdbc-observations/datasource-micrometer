@@ -154,6 +154,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	private void populateQueryContext(ExecutionInfo executionInfo, List<QueryInfo> queryInfoList,
 			QueryContext context) {
+		context.setExecutionInfo(executionInfo);
+		context.setQueryInfoList(queryInfoList);
 		for (QueryInfo queryInfo : queryInfoList) {
 			context.getQueries().add(queryInfo.getQuery());
 			if (this.includeParameterValues) {
@@ -169,6 +171,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 		ConnectionAttributes connectionAttributes = this.connectionAttributesManager.get(connectionId);
 		if (connectionAttributes != null) {
 			String dataSourceName = connectionAttributes.connectionInfo.getDataSourceName();
+			context.setUrl(connectionAttributes.url);
 			context.setHost(connectionAttributes.host);
 			context.setPort(connectionAttributes.port);
 			context.setRemoteServiceName(dataSourceName);
@@ -311,12 +314,7 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			connectionAttributes.connectionInfo = connectionInfo;
 			connectionAttributes.observation = scopeToUse.getCurrentObservation();
 			connectionAttributes.dataSource = dataSource;
-
-			URI connectionUrl = getConnectionUrl(connection);
-			if (connectionUrl != null) {
-				connectionAttributes.host = connectionUrl.getHost();
-				connectionAttributes.port = connectionUrl.getPort();
-			}
+			populateFromConnection(connectionAttributes, connection);
 
 			String connectionId = connectionInfo.getConnectionId();
 			this.connectionAttributesManager.put(connectionId, connectionAttributes);
@@ -484,6 +482,26 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			// remote address is optional
 		}
 		return url;
+	}
+
+	private void populateFromConnection(ConnectionAttributes attributes, Connection connection) {
+		URI url = null;
+		String urlString = null;
+		try {
+			urlString = connection.getMetaData().getURL();
+			// strip "jdbc:"
+			String urlAsString = urlString.substring(5);
+			// Remove all white space according to RFC 2396;
+			url = URI.create(urlAsString.replace(" ", ""));
+		}
+		catch (Exception ex) {
+			// remote address is optional
+		}
+		attributes.url = urlString;
+		if (url != null) {
+			attributes.host = url.getHost();
+			attributes.port = url.getPort();
+		}
 	}
 
 	private void handleStatementClose(MethodExecutionContext executionContext) {
