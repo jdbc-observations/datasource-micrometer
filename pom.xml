@@ -36,7 +36,7 @@
         <!-- Tests  -->
         <junit.version>5.13.4</junit.version>
         <mockito.version>5.20.0</mockito.version>
-        <assertj.version>3.27.6</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
 
         <!-- datasource-micrometer module -->
         <datasource-proxy.version>1.11.0</datasource-proxy.version>
