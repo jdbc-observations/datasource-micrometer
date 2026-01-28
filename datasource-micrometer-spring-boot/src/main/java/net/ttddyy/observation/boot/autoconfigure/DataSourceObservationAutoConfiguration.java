@@ -133,7 +133,7 @@ public class DataSourceObservationAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public DataSourceNameResolver dataSourceNameResolver() {
+	public DataSourceNameResolver observationDataSourceNameResolver() {
 		return new DefaultDataSourceNameResolver();
 	}
 

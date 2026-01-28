@@ -13,6 +13,11 @@ Datasource Micrometer Changelog
 ------------------
 * Support Spring Boot 4.0.0-M3 (#78)
 
+1.3.0
+------------------
+* OpenTelemetry Semantic Conventions support (#76)
+* Rename bean "dataSourceNameResolver" to "observationDataSourceNameResolver" (#33)
+
 1.2.1
 ------------------
 * Fix "null" from generated-keys (#88)
