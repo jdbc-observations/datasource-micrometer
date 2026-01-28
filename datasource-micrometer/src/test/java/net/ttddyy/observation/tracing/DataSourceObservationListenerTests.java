@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationPredicate;
 import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.observation.contextpropagation.ObservationThreadLocalAccessor;
 import io.micrometer.observation.tck.TestObservationRegistry;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 import io.micrometer.tracing.test.simple.SimpleTracer;
@@ -51,6 +53,7 @@ import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -59,8 +62,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static io.micrometer.tracing.test.simple.TracingAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link DataSourceObservationListener}.
@@ -87,6 +94,7 @@ class DataSourceObservationListenerTests {
 		if (scope != null) {
 			scope.close();
 		}
+		ObservationThreadLocalAccessor.getInstance().restore();
 	}
 
 	@Test
@@ -732,6 +740,42 @@ class DataSourceObservationListenerTests {
 
 		// call "close"
 		listener.afterMethod(createResultSetCloseMethodExecutionContext(connectionInfo, resultSet));
+	}
+
+	@Test
+	void memoryLeakWhenBeforeQueryThrowsException() {
+		ObservationRegistry realRegistry = ObservationRegistry.create();
+		realRegistry.observationConfig().observationHandler(new DefaultTracingObservationHandler(this.tracer));
+		DataSourceObservationListener listener = new DataSourceObservationListener(realRegistry);
+		ExecutionInfo executionInfo = mock(ExecutionInfo.class);
+		QueryInfo queryInfo = mock(QueryInfo.class);
+		List<QueryInfo> queryInfoList = Collections.singletonList(queryInfo);
+
+		when(executionInfo.getConnectionId()).thenReturn("test-connection");
+		when(executionInfo.getDataSourceName()).thenReturn("test-ds");
+		when(queryInfo.getQuery()).thenReturn("SELECT 1");
+		
+		Method mockMethod = mock(Method.class);
+		when(mockMethod.getName()).thenReturn("execute");
+		when(executionInfo.getMethod()).thenReturn(mockMethod);
+
+		// Simulate exception during addCustomValue
+		doThrow(new RuntimeException("Simulated Failure"))
+			.when(executionInfo)
+			.addCustomValue(eq(Observation.Scope.class.getName()), any());
+
+		try {
+			listener.beforeQuery(executionInfo, queryInfoList);
+		}
+		catch (RuntimeException e) {
+			// ignore
+		}
+
+		listener.afterQuery(executionInfo, queryInfoList);
+
+		assertThat(this.registry.getCurrentObservationScope())
+			.describedAs("Scope should be closed even if beforeQuery fails")
+			.isNull();
 	}
 
 }
