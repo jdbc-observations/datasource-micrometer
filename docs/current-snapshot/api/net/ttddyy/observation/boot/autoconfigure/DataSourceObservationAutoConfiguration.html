@@ -136,11 +136,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DataSourceNameResolver.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceNameResolver</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataSourceNameResolver()" class="member-name-link">dataSourceNameResolver</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DataSourceObservationBeanPostProcessor.html" title="class in net.ttddyy.observation.boot.autoconfigure">DataSourceObservationBeanPostProcessor</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#dataSourceObservationBeanPostProcessor(org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider)" class="member-name-link">dataSourceObservationBeanPostProcessor</a><wbr>(org.springframework.beans.factory.ObjectProvider&lt;<a href="JdbcProperties.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties</a>&gt;&nbsp;jdbcProperties,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DataSourceObservationBeanPostProcessor.html" title="class in net.ttddyy.observation.boot.autoconfigure">DataSourceObservationBeanPostProcessor</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#dataSourceObservationBeanPostProcessor(org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider,org.springframework.beans.factory.ObjectProvider)" class="member-name-link">dataSourceObservationBeanPostProcessor</a><wbr>(org.springframework.beans.factory.ObjectProvider&lt;<a href="JdbcProperties.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties</a>&gt;&nbsp;jdbcProperties,
  org.springframework.beans.factory.ObjectProvider&lt;<a href="DataSourceNameResolver.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceNameResolver</a>&gt;&nbsp;dataSourceNameResolvers,
  org.springframework.beans.factory.ObjectProvider&lt;net.ttddyy.dsproxy.listener.QueryExecutionListener&gt;&nbsp;listeners,
  org.springframework.beans.factory.ObjectProvider&lt;net.ttddyy.dsproxy.listener.MethodExecutionListener&gt;&nbsp;methodExecutionListeners,
@@ -150,14 +147,17 @@ loadScripts(document, 'script');</script>
  org.springframework.beans.factory.ObjectProvider&lt;net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory&gt;&nbsp;generatedKeysProxyLogicFactory,
  org.springframework.beans.factory.ObjectProvider&lt;<a href="DataSourceProxyConnectionIdManagerProvider.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceProxyConnectionIdManagerProvider</a>&gt;&nbsp;dataSourceProxyConnectionIdManagerProvider,
  org.springframework.beans.factory.ObjectProvider&lt;<a href="ProxyDataSourceBuilderCustomizer.html" title="interface in net.ttddyy.observation.boot.autoconfigure">ProxyDataSourceBuilderCustomizer</a>&gt;&nbsp;proxyDataSourceBuilderCustomizers)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../tracing/DataSourceObservationListener.html" title="class in net.ttddyy.observation.tracing">DataSourceObservationListener</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataSourceObservationListener(org.springframework.beans.factory.ObjectProvider,net.ttddyy.observation.boot.autoconfigure.JdbcProperties,org.springframework.beans.factory.ObjectProvider)" class="member-name-link">dataSourceObservationListener</a><wbr>(org.springframework.beans.factory.ObjectProvider&lt;io.micrometer.observation.ObservationRegistry&gt;&nbsp;registry,
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../tracing/DataSourceObservationListener.html" title="class in net.ttddyy.observation.tracing">DataSourceObservationListener</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dataSourceObservationListener(org.springframework.beans.factory.ObjectProvider,net.ttddyy.observation.boot.autoconfigure.JdbcProperties,org.springframework.beans.factory.ObjectProvider)" class="member-name-link">dataSourceObservationListener</a><wbr>(org.springframework.beans.factory.ObjectProvider&lt;io.micrometer.observation.ObservationRegistry&gt;&nbsp;registry,
  <a href="JdbcProperties.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties</a>&nbsp;jdbcProperties,
  org.springframework.beans.factory.ObjectProvider&lt;io.micrometer.observation.ObservationConvention&lt;?&gt;&gt;&nbsp;observationConventions)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DataSourceProxyConnectionIdManagerProvider.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceProxyConnectionIdManagerProvider</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#observationConnectionIdManagerProvider()" class="member-name-link">observationConnectionIdManagerProvider</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DataSourceProxyConnectionIdManagerProvider.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceProxyConnectionIdManagerProvider</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#observationConnectionIdManagerProvider()" class="member-name-link">observationConnectionIdManagerProvider</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DataSourceNameResolver.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceNameResolver</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#observationDataSourceNameResolver()" class="member-name-link">observationDataSourceNameResolver</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -245,11 +245,11 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="dataSourceNameResolver()">
-<h3>dataSourceNameResolver</h3>
+<section class="detail" id="observationDataSourceNameResolver()">
+<h3>observationDataSourceNameResolver</h3>
 <div class="member-signature"><span class="annotations">@Bean
 @ConditionalOnMissingBean
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DataSourceNameResolver.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceNameResolver</a></span>&nbsp;<span class="element-name">dataSourceNameResolver</span>()</div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DataSourceNameResolver.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceNameResolver</a></span>&nbsp;<span class="element-name">observationDataSourceNameResolver</span>()</div>
 </section>
 </li>
 <li>
