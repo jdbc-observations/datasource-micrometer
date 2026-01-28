@@ -22,7 +22,7 @@
     <parent>
         <groupId>net.ttddyy.observation</groupId>
         <artifactId>datasource-micrometer-parent</artifactId>
-        <version>1.3.0</version>
+        <version>1.3.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>datasource-micrometer-bom</artifactId>
@@ -34,17 +34,17 @@
             <dependency>
                 <groupId>net.ttddyy.observation</groupId>
                 <artifactId>datasource-micrometer</artifactId>
-                <version>1.3.0</version>
+                <version>1.3.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>net.ttddyy.observation</groupId>
                 <artifactId>datasource-micrometer-opentelemetry</artifactId>
-                <version>1.3.0</version>
+                <version>1.3.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>net.ttddyy.observation</groupId>
                 <artifactId>datasource-micrometer-spring-boot</artifactId>
-                <version>1.3.0</version>
+                <version>1.3.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
