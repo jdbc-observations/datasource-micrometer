@@ -45,7 +45,7 @@ public class SimpleOpenTelemetryConnectionUrlParser implements OpenTelemetryConn
 	// db.system.name
 	private String geDatabaseType(String url) {
 		if (url.startsWith("jdbc:postgresql:")) {
-			return "postgres";
+			return "postgresql";
 		}
 		else if (url.startsWith("jdbc:mysql:")) {
 			return "mysql";
