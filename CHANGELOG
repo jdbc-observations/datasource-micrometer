@@ -21,6 +21,10 @@ Functionally equivalent to v1.3.0, provided for Spring Boot 4.x.
 ------------------
 * Support Spring Boot 4.0.0-M3 (#78)
 
+1.3.1
+------------------
+* Fix "db.system.name" for PostgreSQL (#95)
+
 1.3.0
 ------------------
 * OpenTelemetry Semantic Conventions support (#76)
