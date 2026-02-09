@@ -1,0 +1,6 @@
+net.ttddyy.observation.boot.autoconfigure
+net.ttddyy.observation.boot.autoconfigure.opentelemetry
+net.ttddyy.observation.boot.event
+net.ttddyy.observation.tracing
+net.ttddyy.observation.tracing.opentelemetry
+net.ttddyy.observation.tracing.opentelemetry.jsqlparser
