@@ -139,7 +139,14 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			logger.debug("Created a new child observation before query [" + observation + "]");
 		}
 
-		executionInfo.addCustomValue(Observation.Scope.class.getName(), observation.openScope());
+		Observation.Scope scope = observation.openScope();
+		try {
+			executionInfo.addCustomValue(Observation.Scope.class.getName(), scope);
+		}
+		catch (Throwable t) {
+			scope.close();
+			throw t;
+		}
 	}
 
 	private Observation createAndStartObservation(JdbcObservationDocumentation observationType,
@@ -212,7 +219,9 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 				}
 				QueryContext queryContext = executionInfo.getCustomValue(QueryContext.class.getName(),
 						QueryContext.class);
-				queryContext.setAffectedRowCount(affectedRowCount);
+				if (queryContext != null) {
+					queryContext.setAffectedRowCount(affectedRowCount);
+				}
 			}
 		}
 		finally {
