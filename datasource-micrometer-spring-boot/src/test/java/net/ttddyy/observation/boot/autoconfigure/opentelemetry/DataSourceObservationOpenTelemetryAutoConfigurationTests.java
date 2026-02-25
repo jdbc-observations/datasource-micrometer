@@ -51,6 +51,12 @@ class DataSourceObservationOpenTelemetryAutoConfigurationTests {
 		this.runner.withClassLoader(new FilteredClassLoader("net.ttddyy.observation.tracing.opentelemetry"))
 			.run((context) -> assertThat(context)
 				.doesNotHaveBean(DataSourceObservationOpenTelemetryAutoConfiguration.class));
+
+		// enabled via management.observations.conventions even when jdbc.opentelemetry.enabled=false
+		this.runner.withPropertyValues("jdbc.opentelemetry.enabled=false",
+				"management.observations.conventions=opentelemetry")
+			.run((context) -> assertThat(context)
+				.hasSingleBean(DataSourceObservationOpenTelemetryAutoConfiguration.class));
 	}
 
 	@Test
@@ -61,6 +67,16 @@ class DataSourceObservationOpenTelemetryAutoConfigurationTests {
 		// disabled by property
 		this.runner.withPropertyValues("jdbc.opentelemetry.spans.enabled=false")
 			.run((context) -> assertThat(context).doesNotHaveBean(OpenTelemetryQueryObservationConvention.class));
+
+		// enabled via management.observations.conventions even when spans.enabled=false
+		this.runner
+			.withPropertyValues("jdbc.opentelemetry.spans.enabled=false",
+					"management.observations.conventions=opentelemetry")
+			.run((context) -> assertThat(context).hasSingleBean(OpenTelemetryQueryObservationConvention.class));
+
+		// enabled via management.observations.conventions alone
+		this.runner.withPropertyValues("management.observations.conventions=opentelemetry")
+			.run((context) -> assertThat(context).hasSingleBean(OpenTelemetryQueryObservationConvention.class));
 	}
 
 	@Test

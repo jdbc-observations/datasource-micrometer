@@ -29,6 +29,7 @@ import net.ttddyy.observation.tracing.opentelemetry.jsqlparser.JSqlParserQueryAn
 import net.ttddyy.observation.tracing.opentelemetry.jsqlparser.JSqlParserSanitizingExpressionDeParser;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,6 +37,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.micrometer.metrics.autoconfigure.CompositeMeterRegistryAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 
 import java.util.Map;
 
@@ -49,13 +51,12 @@ import java.util.Map;
 @AutoConfiguration(after = CompositeMeterRegistryAutoConfiguration.class)
 @EnableConfigurationProperties(JdbcOpenTelemetryProperties.class)
 @ConditionalOnClass({ JSqlParserQueryAnalyzer.class, JSqlParserSanitizingExpressionDeParser.class })
-@ConditionalOnProperty(prefix = "jdbc.opentelemetry", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Conditional(DataSourceObservationOpenTelemetryAutoConfiguration.OpenTelemetryEnabledCondition.class)
 public class DataSourceObservationOpenTelemetryAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnProperty(prefix = "jdbc.opentelemetry.spans", name = "enabled", havingValue = "true",
-			matchIfMissing = true)
+	@Conditional(SpansEnabledCondition.class)
 	OpenTelemetryQueryObservationConvention openTelemetryQueryObservationConvention(
 			JdbcOpenTelemetryProperties properties, OpenTelemetryAttributesManager attributesManager) {
 		OpenTelemetryQueryObservationConvention convention = new OpenTelemetryQueryObservationConvention(
@@ -116,6 +117,44 @@ public class DataSourceObservationOpenTelemetryAutoConfiguration {
 
 		int cacheSize = analysis.getCache().getMaxSize();
 		return new OpenTelemetryQueryAnalyzerCache(analyzer, cacheSize);
+	}
+
+	static class OpenTelemetryEnabledCondition extends AnyNestedCondition {
+
+		OpenTelemetryEnabledCondition() {
+			super(ConfigurationPhase.PARSE_CONFIGURATION);
+		}
+
+		@ConditionalOnProperty(prefix = "jdbc.opentelemetry", name = "enabled", havingValue = "true",
+				matchIfMissing = true)
+		static class JdbcOpenTelemetryEnabled {
+
+		}
+
+		@ConditionalOnProperty(name = "management.observations.conventions", havingValue = "opentelemetry")
+		static class ManagementObservationsConventions {
+
+		}
+
+	}
+
+	static class SpansEnabledCondition extends AnyNestedCondition {
+
+		SpansEnabledCondition() {
+			super(ConfigurationPhase.REGISTER_BEAN);
+		}
+
+		@ConditionalOnProperty(prefix = "jdbc.opentelemetry.spans", name = "enabled", havingValue = "true",
+				matchIfMissing = true)
+		static class SpansEnabled {
+
+		}
+
+		@ConditionalOnProperty(name = "management.observations.conventions", havingValue = "opentelemetry")
+		static class ManagementObservationsConventions {
+
+		}
+
 	}
 
 }
