@@ -52,9 +52,10 @@ class DataSourceObservationOpenTelemetryAutoConfigurationTests {
 			.run((context) -> assertThat(context)
 				.doesNotHaveBean(DataSourceObservationOpenTelemetryAutoConfiguration.class));
 
-		// enabled via management.observations.conventions even when jdbc.opentelemetry.enabled=false
-		this.runner.withPropertyValues("jdbc.opentelemetry.enabled=false",
-				"management.observations.conventions=opentelemetry")
+		// enabled via management.observations.conventions even when
+		// jdbc.opentelemetry.enabled=false
+		this.runner
+			.withPropertyValues("jdbc.opentelemetry.enabled=false", "management.observations.conventions=opentelemetry")
 			.run((context) -> assertThat(context)
 				.hasSingleBean(DataSourceObservationOpenTelemetryAutoConfiguration.class));
 	}
