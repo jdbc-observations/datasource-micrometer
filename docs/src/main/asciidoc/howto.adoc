@@ -103,6 +103,11 @@ listener.setIncludeParameterValues(true);
 
 Set the `jdbc.datasource-proxy.enabled` property to `false`.
 
+[[how-to-disable-hikari-observation]]
+=== How to Disable Hikari-specific Observation
+
+Set the `jdbc.hikari.enabled` property to `false`.
+
 [[how-to-choose-what-to-observe]]
 === How to Choose What To Observe
 

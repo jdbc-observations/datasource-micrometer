@@ -35,7 +35,8 @@ ObservationRegistry registry = ...
 registry.observationConfig().observationFilter(new HikariJdbcObservationFilter());
 ----
 
-It is auto configured in `datasource-micrometer-spring-boot`.
+It is auto configured in `datasource-micrometer-spring-boot` and can be disabled with
+`jdbc.hikari.enabled=false`.
 
 [[using-features-remote-ip-and-port]]
 === Remote IP and Port
@@ -163,4 +164,3 @@ STOP Observation      | "jdbc.connection"  <==
 CLOSE Scope           | "http.server.requests"
 STOP Observation      | "http.server.requests"
 ----
-

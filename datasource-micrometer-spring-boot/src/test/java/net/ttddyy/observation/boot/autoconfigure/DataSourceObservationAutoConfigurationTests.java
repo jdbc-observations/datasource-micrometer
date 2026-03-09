@@ -227,6 +227,20 @@ class DataSourceObservationAutoConfigurationTests {
 	}
 
 	@Test
+	void hikariDisabled() {
+		new ApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+			.withPropertyValues("jdbc.hikari.enabled=false")
+			.withBean(ObservationRegistry.class, ObservationRegistry::create)
+			.withBean(Tracer.class, () -> mock(Tracer.class))
+			.withBean(CustomConnectionObservationConvention.class)
+			.run((context) -> {
+				assertThat(context).doesNotHaveBean(HikariJdbcObservationFilter.class);
+				assertThat(context).doesNotHaveBean(ObservationRegistryCustomizer.class);
+			});
+	}
+
+	@Test
 	void observationHandler() {
 		new ApplicationContextRunner()
 			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
