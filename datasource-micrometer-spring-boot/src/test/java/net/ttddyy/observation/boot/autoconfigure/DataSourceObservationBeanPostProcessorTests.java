@@ -35,9 +35,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import org.springframework.aop.SpringProxy;
 import org.springframework.beans.factory.ObjectProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -169,15 +171,18 @@ class DataSourceObservationBeanPostProcessorTests {
 		DataSource dataSource = mock(DataSource.class);
 		Object result = this.processor.postProcessAfterInitialization(dataSource, "foo");
 
-		if (type == DataSourceType.PROXY) {
+		if (type == DataSourceType.PROXY || type == DataSourceType.SPRING_PROXY) {
 			assertThat(result).isInstanceOf(DataSource.class)
 				.isInstanceOf(ProxyJdbcObject.class)
 				.isNotInstanceOf(ProxyDataSource.class);
 		}
-		else {
+		else if (type == DataSourceType.CONCRETE) {
 			assertThat(result).isInstanceOf(DataSource.class)
 				.isInstanceOf(ProxyDataSource.class)
 				.isNotInstanceOf(ProxyJdbcObject.class);
+		}
+		else {
+			fail("Not supported type: " + type);
 		}
 	}
 
