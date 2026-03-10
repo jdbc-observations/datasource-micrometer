@@ -236,3 +236,8 @@ To disable this tracking:
 This configuration option was introduced in version `1.1.2`.
 
 NOTE: Disabling this will also make an empty value on the `jdbc.generated-keys` tag from the Generated Keys span, as the generated key value will no longer be recorded.
+
+[[how-to-fix-existingvalue-hikaridatasource-error]]
+=== How to Fix “ExistingValue must be an instance of com.zaxxer.hikari.HikariDataSource” Error
+
+If you encounter this error when using Spring Cloud refresh, see <<using-features-hikaricp-support-spring-cloud-refresh>> for details and the recommended configuration.

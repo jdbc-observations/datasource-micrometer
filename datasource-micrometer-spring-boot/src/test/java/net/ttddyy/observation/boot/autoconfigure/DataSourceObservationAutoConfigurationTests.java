@@ -54,6 +54,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import org.springframework.aop.SpringProxy;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.micrometer.observation.autoconfigure.ObservationRegistryCustomizer;
 import org.springframework.boot.test.context.FilteredClassLoader;
@@ -190,6 +191,27 @@ class DataSourceObservationAutoConfigurationTests {
 					DataSource ds = context.getBean(DataSource.class);
 					assertThat(ds).isNotInstanceOf(ProxyDataSource.class).isInstanceOf(ProxyJdbcObject.class);
 					assertThat(callOrder).containsExactly("customizerC", "customizerA", "customizerB");
+				});
+		// @formatter:on
+	}
+
+	@Test
+	void proxyType() {
+		// @formatter:off
+		new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+				.withBean(ObservationRegistry.class, ObservationRegistry::create)
+				.withBean(Tracer.class, () -> mock(Tracer.class))
+				.withBean(DataSource.class, this::createMockDataSource)
+				.withPropertyValues("jdbc.datasource-proxy.type=spring_proxy")
+				.run((context) -> {
+					assertThat(context).hasNotFailed();
+					assertThat(context).hasSingleBean(ProxyDataSourceBuilderCustomizer.class);
+					DataSource ds = context.getBean(DataSource.class);
+					assertThat(ds).isNotInstanceOf(ProxyDataSource.class)
+							.isInstanceOf(SpringProxy.class)
+							.isInstanceOf(ProxyJdbcObject.class)
+							.isInstanceOf(DataSource.class);
 				});
 		// @formatter:on
 	}

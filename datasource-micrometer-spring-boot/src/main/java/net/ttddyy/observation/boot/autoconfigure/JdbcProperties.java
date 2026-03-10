@@ -386,7 +386,12 @@ public class JdbcProperties {
 		/**
 		 * Use ProxyDataSource from datasource-proxy
 		 */
-		CONCRETE
+		CONCRETE,
+
+		/**
+		 * Use ProxyFactory from spring to create a proxy that spring can unwrap
+		 */
+		SPRING_PROXY
 
 	}
 

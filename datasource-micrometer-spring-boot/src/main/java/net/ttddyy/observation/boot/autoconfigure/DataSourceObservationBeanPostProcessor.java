@@ -91,7 +91,8 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 			getConfigurer().configure(builder);
 			this.proxyDataSourceBuilderCustomizers.orderedStream()
 				.forEach(customizer -> customizer.customize(builder, dataSource, beanName, dataSourceName));
-			if (getJdbcProperties().getDatasourceProxy().getType() == DataSourceType.PROXY) {
+			DataSourceType dataSourceType = getJdbcProperties().getDatasourceProxy().getType();
+			if (dataSourceType == DataSourceType.PROXY || dataSourceType == DataSourceType.SPRING_PROXY) {
 				return builder.buildProxy();
 			}
 			else {
