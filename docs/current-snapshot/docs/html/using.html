@@ -656,6 +656,39 @@ registry.observationConfig().observationFilter(new HikariJdbcObservationFilter()
 <div class="paragraph">
 <p>It is auto configured in <code>datasource-micrometer-spring-boot</code>.</p>
 </div>
+<div id="using-features-hikaricp-support-spring-cloud-refresh" class="sidebarblock">
+<div class="content">
+<div class="title">Spring Cloud Refresh Compatibility</div>
+<div class="paragraph">
+<p>When used with Spring Cloud, an error similar to the following may occur during a refresh operation:</p>
+</div>
+<div class="paragraph">
+<p><code>ExistingValue must be an instance of com.zaxxer.hikari.HikariDataSource</code></p>
+</div>
+<div class="paragraph">
+<p>This happens because Spring Cloud’s refresh logic expects the <code>DataSource</code> bean to be an instance of <code>HikariDataSource</code>.
+However, datasource-micrometer wraps the original <code>DataSource</code> with a proxy, so the bean is no longer directly an instance of <code>HikariDataSource</code>.</p>
+</div>
+<div class="paragraph">
+<p>To avoid this issue, configure datasource-micrometer to create the proxy using Spring’s proxy infrastructure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-properties" data-lang="properties">jdbc.datasource-proxy.type=SPRING_PROXY</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When <code>SPRING_PROXY</code> is used, the proxy is created using Spring’s <code>ProxyFactory</code>.
+This allows Spring Cloud’s refresh mechanism to unwrap the proxy and access the underlying <code>HikariDataSource</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>SPRING_PROXY</code> option is available since datasource-micrometer versions 1.4 and 2.2.</p>
+</div>
+<div class="paragraph">
+<p>For more details, see <a href="https://github.com/jdbc-observations/datasource-micrometer/issues/99">Issue #99</a>.</p>
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="using-features-remote-ip-and-port"><a class="anchor" href="#using-features-remote-ip-and-port"></a><a class="link" href="#using-features-remote-ip-and-port">2.2. Remote IP and Port</a></h3>

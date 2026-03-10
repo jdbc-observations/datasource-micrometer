@@ -672,6 +672,7 @@ window.onload = function() {
 <li><a href="#how-to-use-custom-observationconvention">5.2.10. How to Use Custom ObservationConvention</a></li>
 <li><a href="#how-to-switch-to-use-proxydatasource">5.2.11. How to Switch to Use ProxyDataSource</a></li>
 <li><a href="#how-to-disable-tracking-of-resultset-operations">5.2.12. How to Disable Tracking of ResultSet Operations</a></li>
+<li><a href="#how-to-fix-existingvalue-hikaridatasource-error">5.2.13. How to Fix “ExistingValue must be an instance of com.zaxxer.hikari.HikariDataSource” Error</a></li>
 </ul>
 </li>
 </ul>
@@ -1043,6 +1044,39 @@ registry.observationConfig().observationFilter(new HikariJdbcObservationFilter()
 </div>
 <div class="paragraph">
 <p>It is auto configured in <code>datasource-micrometer-spring-boot</code>.</p>
+</div>
+<div id="using-features-hikaricp-support-spring-cloud-refresh" class="sidebarblock">
+<div class="content">
+<div class="title">Spring Cloud Refresh Compatibility</div>
+<div class="paragraph">
+<p>When used with Spring Cloud, an error similar to the following may occur during a refresh operation:</p>
+</div>
+<div class="paragraph">
+<p><code>ExistingValue must be an instance of com.zaxxer.hikari.HikariDataSource</code></p>
+</div>
+<div class="paragraph">
+<p>This happens because Spring Cloud’s refresh logic expects the <code>DataSource</code> bean to be an instance of <code>HikariDataSource</code>.
+However, datasource-micrometer wraps the original <code>DataSource</code> with a proxy, so the bean is no longer directly an instance of <code>HikariDataSource</code>.</p>
+</div>
+<div class="paragraph">
+<p>To avoid this issue, configure datasource-micrometer to create the proxy using Spring’s proxy infrastructure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">jdbc.datasource-proxy.type=SPRING_PROXY</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When <code>SPRING_PROXY</code> is used, the proxy is created using Spring’s <code>ProxyFactory</code>.
+This allows Spring Cloud’s refresh mechanism to unwrap the proxy and access the underlying <code>HikariDataSource</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>SPRING_PROXY</code> option is available since datasource-micrometer versions 1.4 and 2.2.</p>
+</div>
+<div class="paragraph">
+<p>For more details, see <a href="https://github.com/jdbc-observations/datasource-micrometer/issues/99">Issue #99</a>.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -1741,6 +1775,12 @@ Disabling this will also make an empty value on the <code>jdbc.generated-keys</c
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="how-to-fix-existingvalue-hikaridatasource-error"><a class="anchor" href="#how-to-fix-existingvalue-hikaridatasource-error"></a><a class="link" href="#how-to-fix-existingvalue-hikaridatasource-error">5.2.13. How to Fix “ExistingValue must be an instance of com.zaxxer.hikari.HikariDataSource” Error</a></h4>
+<div class="paragraph">
+<p>If you encounter this error when using Spring Cloud refresh, see <a href="#using-features-hikaricp-support-spring-cloud-refresh">Spring Cloud Refresh Compatibility</a> for details and the recommended configuration.</p>
 </div>
 </div>
 </div>

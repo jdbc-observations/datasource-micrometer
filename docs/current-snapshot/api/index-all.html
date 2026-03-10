@@ -165,6 +165,20 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/ConnectionTracingObservationHandler.html#%3Cinit%3E(io.micrometer.tracing.Tracer)" class="member-name-link">ConnectionTracingObservationHandler(Tracer)</a> - Constructor for class net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/ConnectionTracingObservationHandler.html" title="class in net.ttddyy.observation.tracing">ConnectionTracingObservationHandler</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html#createCallableStatement(java.sql.CallableStatement,java.lang.String,net.ttddyy.dsproxy.ConnectionInfo,java.sql.Connection,net.ttddyy.dsproxy.proxy.ProxyConfig)" class="member-name-link">createCallableStatement(CallableStatement, String, ConnectionInfo, Connection, ProxyConfig)</a> - Method in class net.ttddyy.observation.boot.<a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html" title="class in net.ttddyy.observation.boot">SpringJdbcProxyFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html#createConnection(java.sql.Connection,net.ttddyy.dsproxy.ConnectionInfo,net.ttddyy.dsproxy.proxy.ProxyConfig)" class="member-name-link">createConnection(Connection, ConnectionInfo, ProxyConfig)</a> - Method in class net.ttddyy.observation.boot.<a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html" title="class in net.ttddyy.observation.boot">SpringJdbcProxyFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html#createDataSource(javax.sql.DataSource,net.ttddyy.dsproxy.proxy.ProxyConfig)" class="member-name-link">createDataSource(DataSource, ProxyConfig)</a> - Method in class net.ttddyy.observation.boot.<a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html" title="class in net.ttddyy.observation.boot">SpringJdbcProxyFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html#createGeneratedKeys(java.sql.ResultSet,net.ttddyy.dsproxy.ConnectionInfo,net.ttddyy.dsproxy.proxy.ProxyConfig)" class="member-name-link">createGeneratedKeys(ResultSet, ConnectionInfo, ProxyConfig)</a> - Method in class net.ttddyy.observation.boot.<a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html" title="class in net.ttddyy.observation.boot">SpringJdbcProxyFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html#createPreparedStatement(java.sql.PreparedStatement,java.lang.String,net.ttddyy.dsproxy.ConnectionInfo,java.sql.Connection,net.ttddyy.dsproxy.proxy.ProxyConfig,boolean)" class="member-name-link">createPreparedStatement(PreparedStatement, String, ConnectionInfo, Connection, ProxyConfig, boolean)</a> - Method in class net.ttddyy.observation.boot.<a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html" title="class in net.ttddyy.observation.boot">SpringJdbcProxyFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html#createResultSet(java.sql.ResultSet,net.ttddyy.dsproxy.ConnectionInfo,net.ttddyy.dsproxy.proxy.ProxyConfig)" class="member-name-link">createResultSet(ResultSet, ConnectionInfo, ProxyConfig)</a> - Method in class net.ttddyy.observation.boot.<a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html" title="class in net.ttddyy.observation.boot">SpringJdbcProxyFactory</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html#createStatement(java.sql.Statement,net.ttddyy.dsproxy.ConnectionInfo,java.sql.Connection,net.ttddyy.dsproxy.proxy.ProxyConfig)" class="member-name-link">createStatement(Statement, ConnectionInfo, Connection, ProxyConfig)</a> - Method in class net.ttddyy.observation.boot.<a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html" title="class in net.ttddyy.observation.boot">SpringJdbcProxyFactory</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/ProxyDataSourceBuilderCustomizer.html#customize(net.ttddyy.dsproxy.support.ProxyDataSourceBuilder,javax.sql.DataSource,java.lang.String,java.lang.String)" class="member-name-link">customize(ProxyDataSourceBuilder, DataSource, String, String)</a> - Method in interface net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/ProxyDataSourceBuilderCustomizer.html" title="interface in net.ttddyy.observation.boot.autoconfigure">ProxyDataSourceBuilderCustomizer</a></dt>
 <dd>
 <div class="block">A callback to customize the given <code>ProxyDataSourceBuilder</code>.</div>
@@ -719,6 +733,8 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:N">N</h2>
 <dl class="index">
+<dt><a href="net/ttddyy/observation/boot/package-summary.html">net.ttddyy.observation.boot</a> - package net.ttddyy.observation.boot</dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/package-summary.html">net.ttddyy.observation.boot.autoconfigure</a> - package net.ttddyy.observation.boot.autoconfigure</dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/package-summary.html">net.ttddyy.observation.boot.autoconfigure.opentelemetry</a> - package net.ttddyy.observation.boot.autoconfigure.opentelemetry</dt>
@@ -1130,6 +1146,16 @@ loadScripts(document, 'script');</script>
 <div class="block">Log using SLF4J.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.SlowQuery.html#%3Cinit%3E()" class="member-name-link">SlowQuery()</a> - Constructor for class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.SlowQuery.html" title="class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.SlowQuery</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceType.html#SPRING_PROXY" class="member-name-link">SPRING_PROXY</a> - Enum constant in enum class net.ttddyy.observation.boot.autoconfigure.<a href="net/ttddyy/observation/boot/autoconfigure/JdbcProperties.DataSourceType.html" title="enum class in net.ttddyy.observation.boot.autoconfigure">JdbcProperties.DataSourceType</a></dt>
+<dd>
+<div class="block">Use ProxyFactory from spring to create a proxy that spring can unwrap</div>
+</dd>
+<dt><a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html" class="type-name-link" title="class in net.ttddyy.observation.boot">SpringJdbcProxyFactory</a> - Class in <a href="net/ttddyy/observation/boot/package-summary.html">net.ttddyy.observation.boot</a></dt>
+<dd>
+<div class="block"><code>JdbcProxyFactory</code> implementation using spring's <code>ProxyFactory</code>.</div>
+</dd>
+<dt><a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html#%3Cinit%3E()" class="member-name-link">SpringJdbcProxyFactory()</a> - Constructor for class net.ttddyy.observation.boot.<a href="net/ttddyy/observation/boot/SpringJdbcProxyFactory.html" title="class in net.ttddyy.observation.boot">SpringJdbcProxyFactory</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/tracing/opentelemetry/SqlServerDatabaseNamespaceRetriever.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">SqlServerDatabaseNamespaceRetriever</a> - Class in <a href="net/ttddyy/observation/tracing/opentelemetry/package-summary.html">net.ttddyy.observation.tracing.opentelemetry</a></dt>
 <dd>
