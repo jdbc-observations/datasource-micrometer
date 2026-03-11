@@ -173,6 +173,7 @@ public class DataSourceObservationAutoConfiguration {
 
 	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass(name = "com.zaxxer.hikari.HikariDataSource")
+	@ConditionalOnProperty(prefix = "jdbc.hikari", name = "enabled", havingValue = "true", matchIfMissing = true)
 	static class Hikari {
 
 		@Bean

@@ -35,7 +35,8 @@ ObservationRegistry registry = ...
 registry.observationConfig().observationFilter(new HikariJdbcObservationFilter());
 ----
 
-It is auto configured in `datasource-micrometer-spring-boot`.
+It is auto configured in `datasource-micrometer-spring-boot` and can be disabled with
+`jdbc.hikari.enabled=false`.
 
 .Spring Cloud Refresh Compatibility
 [[using-features-hikaricp-support-spring-cloud-refresh]]
@@ -188,4 +189,3 @@ STOP Observation      | "jdbc.connection"  <==
 CLOSE Scope           | "http.server.requests"
 STOP Observation      | "http.server.requests"
 ----
-

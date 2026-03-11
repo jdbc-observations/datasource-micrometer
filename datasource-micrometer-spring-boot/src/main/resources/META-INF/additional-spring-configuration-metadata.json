@@ -21,6 +21,13 @@
       "sourceType": "net.ttddyy.observation.boot.autoconfigure.opentelemetry.DataSourceObservationOpenTelemetryAutoConfiguration"
     },
     {
+      "name": "jdbc.hikari.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable Hikari-specific observation support.",
+      "defaultValue": true,
+      "sourceType": "net.ttddyy.observation.boot.autoconfigure.DataSourceObservationAutoConfiguration"
+    },
+    {
       "name": "jdbc.opentelemetry.spans.enabled",
       "type": "java.lang.Boolean",
       "description": "Whether to enable support for OpenTelemetry Semantic Conventions for spans.",
