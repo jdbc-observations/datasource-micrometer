@@ -45,20 +45,22 @@ When used with Spring Cloud, an error similar to the following may occur during 
 
 `ExistingValue must be an instance of com.zaxxer.hikari.HikariDataSource`
 
-This happens because Spring Cloud’s refresh logic expects the `DataSource` bean to be an instance of `HikariDataSource`.
-However, datasource-micrometer wraps the original `DataSource` with a proxy, so the bean is no longer directly an instance of `HikariDataSource`.
+TIP: If you are encountering this error, see <<how-to-fix-existingvalue-error>>.
 
-To avoid this issue, configure datasource-micrometer to create the proxy using Spring’s proxy infrastructure:
+This happens because Spring Cloud’s refresh logic expects the `DataSource` bean to be an instance of `HikariDataSource`.
+However, Datasource Micrometer wraps the original `DataSource` with a proxy, so the bean is no longer directly an instance of `HikariDataSource`.
+
+To avoid this issue, configure Datasource Micrometer to create the proxy using Spring’s proxy infrastructure:
 
 [source,properties]
 ----
 jdbc.datasource-proxy.type=SPRING_PROXY
 ----
 
-When `SPRING_PROXY` is used, the proxy is created using Spring’s `ProxyFactory`.
-This allows Spring Cloud’s refresh mechanism to unwrap the proxy and access the underlying `HikariDataSource`.
+NOTE: The `SPRING_PROXY` type was introduced in versions `1.4` and `2.2`, and is the default starting with those versions.
 
-The `SPRING_PROXY` option is available since datasource-micrometer versions 1.4 and 2.2.
+When `SPRING_PROXY` is used, the proxy is created using Spring’s `ProxyFactory`.
+This allows Spring Cloud’s refresh mechanism to unwrap the proxy and access the underlying `HikariDataSource` bean.
 
 For more details, see https://github.com/jdbc-observations/datasource-micrometer/issues/99[Issue #99].
 ****

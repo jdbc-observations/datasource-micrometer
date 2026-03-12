@@ -31,6 +31,7 @@ import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
+import net.ttddyy.observation.boot.SpringJdbcProxyFactory;
 import net.ttddyy.observation.boot.autoconfigure.JdbcProperties.TraceType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -171,6 +172,9 @@ public class DataSourceProxyBuilderConfigurer {
 		ifAvailable(this.queryTransformer, proxyDataSourceBuilder::queryTransformer);
 		ifAvailable(this.dataSourceProxyConnectionIdManagerProvider,
 				d -> proxyDataSourceBuilder.connectionIdManager(d.get()));
+		if (this.jdbcProperties.getDatasourceProxy().getType() == JdbcProperties.DataSourceType.SPRING_PROXY) {
+			proxyDataSourceBuilder.jdbcProxyFactory(new SpringJdbcProxyFactory());
+		}
 		return proxyDataSourceBuilder;
 	}
 

@@ -36,7 +36,6 @@ import net.ttddyy.dsproxy.proxy.GlobalConnectionIdManager;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
 import net.ttddyy.dsproxy.transform.QueryTransformer;
-import net.ttddyy.observation.boot.SpringJdbcProxyFactory;
 import net.ttddyy.observation.boot.autoconfigure.JdbcProperties.TraceType;
 import net.ttddyy.observation.boot.event.JdbcEventPublishingListener;
 import net.ttddyy.observation.tracing.ConnectionObservationConvention;
@@ -49,7 +48,6 @@ import net.ttddyy.observation.tracing.QueryObservationConvention;
 import net.ttddyy.observation.tracing.QueryTracingObservationHandler;
 import net.ttddyy.observation.tracing.ResultSetObservationConvention;
 import net.ttddyy.observation.tracing.ResultSetTracingObservationHandler;
-
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationRegistryCustomizer;
@@ -161,14 +159,6 @@ public class DataSourceObservationAutoConfiguration {
 	@ConditionalOnProperty(prefix = "jdbc.event", name = "enabled", havingValue = "true")
 	JdbcEventPublishingListener jdbcEventPublishingListener(ApplicationEventPublisher publisher) {
 		return new JdbcEventPublishingListener(publisher);
-	}
-
-	@Bean
-	@ConditionalOnProperty(prefix = "jdbc.datasource-proxy", name = "type", havingValue = "SPRING_PROXY")
-	ProxyDataSourceBuilderCustomizer springJdbcProxyFactoryDataSourceBuilderCustomizer() {
-		return (builder, dataSource, beanName, dataSourceName) -> {
-			builder.jdbcProxyFactory(new SpringJdbcProxyFactory());
-		};
 	}
 
 	@Configuration(proxyBeanMethods = false)

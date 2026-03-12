@@ -225,8 +225,19 @@ Define beans for your custom observation conventions, which will then be automat
 
 [[how-to-switch-to-use-proxydatasource]]
 === How to Switch to Use ProxyDataSource
-Since version `1.1`, the instrumented `DataSource` is now a pure JDK proxy.
-To revert to the previous behavior using `ProxyDataSource`, set the property: `jdbc.datasource-proxy.type=CONCRETE`
+Since version `1.4`, the default proxy implementation is a Spring AOP proxy (`SPRING_PROXY`).
+
+If you want to use the JDK proxy implementation, set:
+[source,properties]
+----
+jdbc.datasource-proxy.type=PROXY
+----
+
+To use `ProxyDataSource` from datasource-proxy (the behavior used before version `1.1`), set:
+[source,properties]
+----
+jdbc.datasource-proxy.type=CONCRETE
+----
 
 [[how-to-disable-tracking-of-resultset-operations]]
 === How to Disable Tracking of ResultSet Operations
@@ -242,7 +253,20 @@ This configuration option was introduced in version `1.1.2`.
 
 NOTE: Disabling this will also make an empty value on the `jdbc.generated-keys` tag from the Generated Keys span, as the generated key value will no longer be recorded.
 
-[[how-to-fix-existingvalue-hikaridatasource-error]]
-=== How to Fix “ExistingValue must be an instance of com.zaxxer.hikari.HikariDataSource” Error
+[[how-to-fix-existingvalue-error]]
+=== How to fix “ExistingValue must be an instance of com.zaxxer.hikari.HikariDataSource” error
 
-If you encounter this error when using Spring Cloud refresh, see <<using-features-hikaricp-support-spring-cloud-refresh>> for details and the recommended configuration.
+When using Spring Cloud refresh (for example via `/actuator/refresh`), you may encounter the following error:
+
+`ExistingValue must be an instance of com.zaxxer.hikari.HikariDataSource`
+
+This occurs because the `DataSource` bean is wrapped with a proxy.
+
+Configure Datasource Micrometer to use the Spring proxy type:
+
+[source,properties]
+----
+jdbc.datasource-proxy.type=SPRING_PROXY
+----
+
+For background and details, see <<using-features-hikaricp-support-spring-cloud-refresh>>.
