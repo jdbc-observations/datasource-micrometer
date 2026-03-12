@@ -197,23 +197,38 @@ class DataSourceObservationAutoConfigurationTests {
 
 	@Test
 	void proxyType() {
-		// @formatter:off
-		new ApplicationContextRunner()
-				.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
-				.withBean(ObservationRegistry.class, ObservationRegistry::create)
-				.withBean(Tracer.class, () -> mock(Tracer.class))
-				.withBean(DataSource.class, this::createMockDataSource)
-				.withPropertyValues("jdbc.datasource-proxy.type=spring_proxy")
-				.run((context) -> {
-					assertThat(context).hasNotFailed();
-					assertThat(context).hasSingleBean(ProxyDataSourceBuilderCustomizer.class);
-					DataSource ds = context.getBean(DataSource.class);
-					assertThat(ds).isNotInstanceOf(ProxyDataSource.class)
-							.isInstanceOf(SpringProxy.class)
-							.isInstanceOf(ProxyJdbcObject.class)
-							.isInstanceOf(DataSource.class);
-				});
-		// @formatter:on
+		ApplicationContextRunner runner = new ApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+			.withBean(ObservationRegistry.class, ObservationRegistry::create)
+			.withBean(Tracer.class, () -> mock(Tracer.class))
+			.withBean(DataSource.class, this::createMockDataSource);
+
+		// default is spring_proxy
+		runner.run((context) -> {
+			assertThat(context).hasNotFailed();
+			DataSource ds = context.getBean(DataSource.class);
+			assertThat(ds).isNotInstanceOf(ProxyDataSource.class)
+				.isInstanceOf(SpringProxy.class)
+				.isInstanceOf(ProxyJdbcObject.class)
+				.isInstanceOf(DataSource.class);
+		});
+
+		// with type Proxy
+		runner.withPropertyValues("jdbc.datasource-proxy.type=proxy").run((context) -> {
+			assertThat(context).hasNotFailed();
+			DataSource ds = context.getBean(DataSource.class);
+			assertThat(ds).isNotInstanceOf(ProxyDataSource.class)
+				.isNotInstanceOf(SpringProxy.class)
+				.isInstanceOf(ProxyJdbcObject.class)
+				.isInstanceOf(DataSource.class);
+		});
+
+		// with type concrete
+		runner.withPropertyValues("jdbc.datasource-proxy.type=concrete").run((context) -> {
+			assertThat(context).hasNotFailed();
+			DataSource ds = context.getBean(DataSource.class);
+			assertThat(ds).isInstanceOf(ProxyDataSource.class);
+		});
 	}
 
 	private DataSource createMockDataSource() {

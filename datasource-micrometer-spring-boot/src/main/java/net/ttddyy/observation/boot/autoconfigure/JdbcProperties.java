@@ -131,7 +131,7 @@ public class JdbcProperties {
 		/**
 		 * Type for the generating DataSource.
 		 */
-		private DataSourceType type = DataSourceType.PROXY;
+		private DataSourceType type = DataSourceType.SPRING_PROXY;
 
 		public Logging getLogging() {
 			return this.logging;
