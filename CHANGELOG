@@ -1,6 +1,13 @@
 Datasource Micrometer Changelog
 ================================
 
+1.4.0
+------------------
+* Make "DataSourceType.SPRING_PROXY" the default proxy strategy (#102)
+* Add "jdbc.hikari.enabled" property for Hikari observation (#100)
+* Add "DataSourceType.SPRING_PROXY" (#99)
+* Exclude jms-core from JSqlParser 5.3 (#96)
+
 1.3.1
 ------------------
 * Fix "db.system.name" for PostgreSQL (#95)
