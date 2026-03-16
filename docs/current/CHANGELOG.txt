@@ -1,6 +1,34 @@
 Datasource Micrometer Changelog
 ================================
 
+Version parity:
+- 1.x for Spring Boot 3.x
+- 2.x for Spring Boot 4.x
+
+2.2.0
+------------------
+Functionally equivalent to v1.4.0, provided for Spring Boot 4.x.
+
+2.1.1
+------------------
+Functionally equivalent to v1.3.1, provided for Spring Boot 4.x.
+
+2.1.0
+------------------
+Functionally equivalent to v1.3.0, provided for Spring Boot 4.x.
+
+2.0.1
+------------------
+* Fix "null" from generated-keys (#88)
+
+2.0.0
+------------------
+* Support Spring Boot 4.0.0 (#78)
+
+2.0.0-RC1
+------------------
+* Support Spring Boot 4.0.0-M3 (#78)
+
 1.4.0
 ------------------
 * Make "DataSourceType.SPRING_PROXY" the default proxy strategy (#102)
