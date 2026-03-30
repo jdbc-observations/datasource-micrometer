@@ -18,12 +18,21 @@ package net.ttddyy.observation.boot;
 
 import com.zaxxer.hikari.HikariDataSource;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.framework.Advised;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
 import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,6 +71,31 @@ class SpringJdbcProxyFactoryTests {
 			throw new IllegalStateException("Failed to unwrap proxied object", ex);
 		}
 		return (T) candidate;
+	}
+
+	@Test
+	void shouldRegisterResourceHints() {
+		RuntimeHints hints = new RuntimeHints();
+		new SpringJdbcProxyFactory.SpringJdbcProxyFactoryRuntimeHints().registerHints(hints,
+				getClass().getClassLoader());
+		assertThat(RuntimeHintsPredicates.proxies()
+			.forInterfaces(AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, DataSource.class)))
+			.accepts(hints);
+		assertThat(RuntimeHintsPredicates.proxies()
+			.forInterfaces(AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, Connection.class)))
+			.accepts(hints);
+		assertThat(RuntimeHintsPredicates.proxies()
+			.forInterfaces(AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, Statement.class)))
+			.accepts(hints);
+		assertThat(RuntimeHintsPredicates.proxies()
+			.forInterfaces(AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, PreparedStatement.class)))
+			.accepts(hints);
+		assertThat(RuntimeHintsPredicates.proxies()
+			.forInterfaces(AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, CallableStatement.class)))
+			.accepts(hints);
+		assertThat(RuntimeHintsPredicates.proxies()
+			.forInterfaces(AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, ResultSet.class)))
+			.accepts(hints);
 	}
 
 }
