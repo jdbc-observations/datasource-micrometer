@@ -29,7 +29,12 @@ import net.ttddyy.dsproxy.proxy.jdk.ResultSetInvocationHandler;
 import net.ttddyy.dsproxy.proxy.jdk.StatementInvocationHandler;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.springframework.aop.ProxyMethodInvocation;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aot.hint.ProxyHints;
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.RuntimeHintsRegistrar;
+import org.springframework.lang.Nullable;
 
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
@@ -54,6 +59,7 @@ import java.sql.Statement;
  * @author Tadaya Tsuyukubo
  * @since 1.4
  * @see ProxyFactory
+ * @see SpringJdbcProxyFactoryRuntimeHints
  */
 public class SpringJdbcProxyFactory implements JdbcProxyFactory {
 
@@ -128,6 +134,26 @@ public class SpringJdbcProxyFactory implements JdbcProxyFactory {
 		proxyFactory.setTarget(target);
 		Object proxy = proxyFactory.getProxy();
 		return proxyClass.cast(proxy);
+	}
+
+	/**
+	 * @since 1.4.1
+	 */
+	static class SpringJdbcProxyFactoryRuntimeHints implements RuntimeHintsRegistrar {
+
+		@Override
+		public void registerHints(RuntimeHints hints, @Nullable ClassLoader classLoader) {
+			ProxyHints proxies = hints.proxies();
+			proxies.registerJdkProxy(AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, DataSource.class));
+			proxies.registerJdkProxy(AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, Connection.class));
+			proxies.registerJdkProxy(AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, Statement.class));
+			proxies.registerJdkProxy(
+					AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, PreparedStatement.class));
+			proxies.registerJdkProxy(
+					AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, CallableStatement.class));
+			proxies.registerJdkProxy(AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, ResultSet.class));
+		}
+
 	}
 
 }
