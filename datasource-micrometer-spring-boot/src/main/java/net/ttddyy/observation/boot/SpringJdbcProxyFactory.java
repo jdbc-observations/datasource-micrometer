@@ -132,7 +132,10 @@ public class SpringJdbcProxyFactory implements JdbcProxyFactory {
 		ProxyFactory proxyFactory = new ProxyFactory(ProxyJdbcObject.class, proxyClass);
 		proxyFactory.addAdvice(interceptor);
 		proxyFactory.setTarget(target);
-		Object proxy = proxyFactory.getProxy();
+		// Always use the classloader that loaded ProxyJdbcObject to avoid relying on
+		// TCCL. This ensures the proxy can see all required interfaces even when running
+		// on a different thread with TCCL. (gh-109)
+		Object proxy = proxyFactory.getProxy(ProxyJdbcObject.class.getClassLoader());
 		return proxyClass.cast(proxy);
 	}
 
