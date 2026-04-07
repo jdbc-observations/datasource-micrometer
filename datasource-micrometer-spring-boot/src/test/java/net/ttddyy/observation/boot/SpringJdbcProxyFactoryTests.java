@@ -19,12 +19,15 @@ package net.ttddyy.observation.boot;
 import com.zaxxer.hikari.HikariDataSource;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
 import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
+import org.springframework.boot.test.context.FilteredClassLoader;
+import org.springframework.instrument.classloading.SimpleThrowawayClassLoader;
 import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
@@ -33,8 +36,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests for {@link SpringJdbcProxyFactory}
@@ -96,6 +102,26 @@ class SpringJdbcProxyFactoryTests {
 		assertThat(RuntimeHintsPredicates.proxies()
 			.forInterfaces(AopProxyUtils.completeJdkProxyInterfaces(ProxyJdbcObject.class, ResultSet.class)))
 			.accepts(hints);
+	}
+
+	@Test
+	void differentClassloader() throws Exception {
+		SpringJdbcProxyFactory proxyFactory = new SpringJdbcProxyFactory();
+
+		DataSource dataSource = mock(DataSource.class);
+		AtomicReference<DataSource> ref = new AtomicReference<>();
+		Thread thread = new Thread(() -> {
+			ref.set(proxyFactory.createDataSource(dataSource, ProxyConfig.Builder.create().build()));
+		});
+		thread.setContextClassLoader(new FilteredClassLoader(ProxyJdbcObject.class, DataSource.class));
+		thread.start();
+
+		Awaitility.await().untilAtomic(ref, notNullValue());
+
+		DataSource proxy = ref.get();
+		assertThat(proxy).isInstanceOfSatisfying(ProxyJdbcObject.class, (jdbcObject) -> {
+			assertThat(jdbcObject.getTarget()).isSameAs(dataSource);
+		});
 	}
 
 }

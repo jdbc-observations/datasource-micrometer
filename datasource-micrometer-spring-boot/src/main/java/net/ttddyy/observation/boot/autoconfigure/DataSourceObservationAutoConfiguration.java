@@ -40,6 +40,7 @@ import net.ttddyy.observation.boot.autoconfigure.JdbcProperties.TraceType;
 import net.ttddyy.observation.boot.event.JdbcEventPublishingListener;
 import net.ttddyy.observation.tracing.ConnectionObservationConvention;
 import net.ttddyy.observation.tracing.ConnectionTracingObservationHandler;
+import net.ttddyy.observation.tracing.JdbcConnectionInfoExtractor;
 import net.ttddyy.observation.tracing.DataSourceObservationListener;
 import net.ttddyy.observation.tracing.GeneratedKeysObservationConvention;
 import net.ttddyy.observation.tracing.HikariJdbcObservationFilter;
@@ -74,6 +75,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
@@ -95,8 +97,10 @@ public class DataSourceObservationAutoConfiguration {
 
 	@Bean
 	@Order(OBSERVATION_LISTENER_ORDER)
+	@ConditionalOnMissingBean
 	public DataSourceObservationListener dataSourceObservationListener(ObjectProvider<ObservationRegistry> registry,
-			JdbcProperties jdbcProperties, ObjectProvider<ObservationConvention<?>> observationConventions) {
+			JdbcProperties jdbcProperties, ObjectProvider<ObservationConvention<?>> observationConventions,
+			@Nullable JdbcConnectionInfoExtractor connectionInfoExtractor) {
 		Set<JdbcObservationDocumentation> supportedDocumentations = jdbcProperties.getIncludes()
 			.stream()
 			.map((include) -> include.supportedDocumentation)
@@ -121,6 +125,9 @@ public class DataSourceObservationAutoConfiguration {
 				listener.setResultSetObservationConvention((ResultSetObservationConvention) convention);
 			}
 		});
+		if (connectionInfoExtractor != null) {
+			listener.setJdbcConnectionInfoExtractor(connectionInfoExtractor);
+		}
 		return listener;
 	}
 
