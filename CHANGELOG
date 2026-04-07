@@ -29,6 +29,12 @@ Functionally equivalent to v1.3.0, provided for Spring Boot 4.x.
 ------------------
 * Support Spring Boot 4.0.0-M3 (#78)
 
+1.4.1
+------------------
+* Specify fixed classloader in "SpringJdbcProxyFactory" (#109)
+* Extract connection info retrieval from "DataSourceObservationListener" (#108)
+* Add runtime hints for "SpringJdbcProxyFactory" (#107)
+
 1.4.0
 ------------------
 * Make "DataSourceType.SPRING_PROXY" the default proxy strategy (#102)
