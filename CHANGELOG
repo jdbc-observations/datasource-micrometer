@@ -1,6 +1,12 @@
 Datasource Micrometer Changelog
 ================================
 
+1.4.1
+------------------
+* Specify fixed classloader in "SpringJdbcProxyFactory" (#109)
+* Extract connection info retrieval from "DataSourceObservationListener" (#108)
+* Add runtime hints for "SpringJdbcProxyFactory" (#107)
+
 1.4.0
 ------------------
 * Make "DataSourceType.SPRING_PROXY" the default proxy strategy (#102)
