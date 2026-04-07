@@ -5,6 +5,10 @@ Version parity:
 - 1.x for Spring Boot 3.x
 - 2.x for Spring Boot 4.x
 
+2.2.1
+------------------
+Functionally equivalent to v1.4.1, provided for Spring Boot 4.x.
+
 2.2.0
 ------------------
 Functionally equivalent to v1.4.0, provided for Spring Boot 4.x.
