@@ -16,7 +16,6 @@
 
 package net.ttddyy.observation.tracing;
 
-import java.net.URI;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -101,6 +100,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	 */
 	private Set<JdbcObservationDocumentation> supportedTypes = new HashSet<>(
 			Arrays.asList(JdbcObservationDocumentation.values()));
+
+	private JdbcConnectionInfoExtractor jdbcConnectionInfoExtractor = new DefaultJdbcConnectionInfoExtractor();
 
 	public DataSourceObservationListener(ObservationRegistry observationRegistry) {
 		this(() -> observationRegistry);
@@ -469,38 +470,12 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	 * {@code
 	 * jdbc:mysql://localhost:5555/mydatabase}. Taken from Spring Cloud Sleuth.
 	 */
-	@Nullable
-	private URI getConnectionUrl(Connection connection) {
-		URI url = null;
-		try {
-			// strip "jdbc:"
-			String urlAsString = connection.getMetaData().getURL().substring(5);
-			// Remove all white space according to RFC 2396;
-			url = URI.create(urlAsString.replace(" ", ""));
-		}
-		catch (Exception ex) {
-			// remote address is optional
-		}
-		return url;
-	}
-
 	private void populateFromConnection(ConnectionAttributes attributes, Connection connection) {
-		URI url = null;
-		String urlString = null;
-		try {
-			urlString = connection.getMetaData().getURL();
-			// strip "jdbc:"
-			String urlAsString = urlString.substring(5);
-			// Remove all white space according to RFC 2396;
-			url = URI.create(urlAsString.replace(" ", ""));
-		}
-		catch (Exception ex) {
-			// remote address is optional
-		}
-		attributes.url = urlString;
-		if (url != null) {
-			attributes.host = url.getHost();
-			attributes.port = url.getPort();
+		JdbcConnectionInfoExtractor.JdbcConnectionInfo info = this.jdbcConnectionInfoExtractor.extract(connection);
+		attributes.url = info.getUrl();
+		if (info.getUrl() != null) {
+			attributes.host = info.getHost();
+			attributes.port = info.getPort();
 		}
 	}
 
@@ -575,6 +550,14 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	 */
 	public void setIncludeResultSetOperations(boolean includeResultSetOperations) {
 		this.includeResultSetOperations = includeResultSetOperations;
+	}
+
+	/**
+	 * @param jdbcConnectionInfoExtractor
+	 * @since 1.4.1
+	 */
+	public void setJdbcConnectionInfoExtractor(JdbcConnectionInfoExtractor jdbcConnectionInfoExtractor) {
+		this.jdbcConnectionInfoExtractor = jdbcConnectionInfoExtractor;
 	}
 
 }
