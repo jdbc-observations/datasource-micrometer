@@ -20,6 +20,24 @@
 
 ---
 
+## Documentation
+
+| Channel             | Reference                  | API                         | Changelog                       |
+|---------------------|----------------------------|-----------------------------|---------------------------------|
+| **Current release** | [HTML][reference-current]  | [Javadoc][javadoc-current]  | [CHANGELOG][changelog-current]  |
+| **Snapshot**        | [HTML][reference-snapshot] | [Javadoc][javadoc-snapshot] | [CHANGELOG][changelog-snapshot] |
+
+Other versions: *TBD.*
+
+[reference-current]: https://jdbc-observations.github.io/datasource-micrometer/docs/current/docs/html
+[reference-snapshot]: https://jdbc-observations.github.io/datasource-micrometer/docs/current-snapshot/docs/html
+[javadoc-current]: https://jdbc-observations.github.io/datasource-micrometer/docs/current/api/
+[javadoc-snapshot]: https://jdbc-observations.github.io/datasource-micrometer/docs/current-snapshot/api/
+[changelog-current]: https://jdbc-observations.github.io/datasource-micrometer/docs/current/CHANGELOG.txt
+[changelog-snapshot]: https://jdbc-observations.github.io/datasource-micrometer/docs/current-snapshot/CHANGELOG.txt
+
+---
+
 ## Dependencies
 
 Replace `...` with the [version from Maven Central](https://central.sonatype.com/artifact/net.ttddyy.observation/datasource-micrometer).
@@ -165,24 +183,6 @@ Runtime JDK requirements by artifact:
 |-------------------------------------|----------------------------------------|
 | `datasource-micrometer`             | **8+** (aligned with Micrometer 1.x)   |
 | `datasource-micrometer-spring-boot` | **17+** (aligned with Spring Boot 3.x) |
-
----
-
-## Documentation
-
-| Channel             | Reference                  | API                         | Changelog                       |
-|---------------------|----------------------------|-----------------------------|---------------------------------|
-| **Current release** | [HTML][reference-current]  | [Javadoc][javadoc-current]  | [CHANGELOG][changelog-current]  |
-| **Snapshot**        | [HTML][reference-snapshot] | [Javadoc][javadoc-snapshot] | [CHANGELOG][changelog-snapshot] |
-
-Other versions: *TBD.*
-
-[reference-current]: https://jdbc-observations.github.io/datasource-micrometer/docs/current/docs/html
-[reference-snapshot]: https://jdbc-observations.github.io/datasource-micrometer/docs/current-snapshot/docs/html
-[javadoc-current]: https://jdbc-observations.github.io/datasource-micrometer/docs/current/api/
-[javadoc-snapshot]: https://jdbc-observations.github.io/datasource-micrometer/docs/current-snapshot/api/
-[changelog-current]: https://jdbc-observations.github.io/datasource-micrometer/docs/current/CHANGELOG.txt
-[changelog-snapshot]: https://jdbc-observations.github.io/datasource-micrometer/docs/current-snapshot/CHANGELOG.txt
 
 ---
 
