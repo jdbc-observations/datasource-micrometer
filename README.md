@@ -1,31 +1,34 @@
 # Datasource Micrometer
+
 [![CI](https://github.com/jdbc-observations/datasource-micrometer/actions/workflows/ci.yml/badge.svg)](https://github.com/jdbc-observations/datasource-micrometer/actions/workflows/ci.yml?event=push&branch=main)
 [![Maven Central](https://img.shields.io/maven-central/v/net.ttddyy.observation/datasource-micrometer)](https://central.sonatype.com/artifact/net.ttddyy.observation/datasource-micrometer)
 
-The Datasource Micrometer provides [Micrometer Observation API][micrometer-observation] instrumentation for JDBC operations.
+**Datasource Micrometer** adds [Micrometer Observation API][micrometer-observation] instrumentation for JDBC operations.
 
 [micrometer-observation]: https://docs.micrometer.io/micrometer/reference/observation.html
 
+---
+
 ## Modules
 
-**datasource-micrometer**  
-Micrometer observability instrumentation for JDBC DataSource.
+| Module                                  | Purpose                                                         |
+|-----------------------------------------|-----------------------------------------------------------------|
+| **datasource-micrometer**               | Micrometer observability instrumentation for JDBC `DataSource`. |
+| **datasource-micrometer-opentelemetry** | OpenTelemetry semantic conventions support.                     |
+| **datasource-micrometer-spring-boot**   | Spring Boot auto-configuration and related support.             |
+| **datasource-micrometer-bom**           | Bill of Materials (BOM) for aligned versions of all modules.    |
 
-**datasource-micrometer-opentelemetry**  
-OpenTelemetry Semantic Conventions support.
+---
 
-**datasource-micrometer-spring-boot**  
-Spring Boot support (auto-configurations, etc) for micrometer observability.
+## Dependencies
 
-**datasource-micrometer-bom**  
-Bill of Materials(BOM) for Datasource Micrometer modules.
+Replace `...` with the [version from Maven Central](https://central.sonatype.com/artifact/net.ttddyy.observation/datasource-micrometer).
 
+### datasource-micrometer
 
-### Dependency Settings
-**datasource-micrometer**
+**Maven**
 
 ```xml
-<!-- Maven -->
 <dependency>
     <groupId>net.ttddyy.observation</groupId>
     <artifactId>datasource-micrometer</artifactId>
@@ -33,49 +36,61 @@ Bill of Materials(BOM) for Datasource Micrometer modules.
 </dependency>
 ```
 
+**Gradle**
+
 ```groovy
-// Gradle
 dependencies {
     implementation "net.ttddyy.observation:datasource-micrometer:..."
 }
 ```
-**datasource-micrometer-opentelemetry**
+
+### datasource-micrometer-opentelemetry
+
+**Maven**
+
 ```xml
-<!-- Maven -->
 <dependency>
     <groupId>net.ttddyy.observation</groupId>
     <artifactId>datasource-micrometer-opentelemetry</artifactId>
     <version>...</version>
 </dependency>
 ```
+
+**Gradle**
+
 ```groovy
-// Gradle
 dependencies {
     implementation "net.ttddyy.observation:datasource-micrometer-opentelemetry:..."
 }
 ```
 
-**datasource-micrometer-spring-boot**
+### datasource-micrometer-spring-boot
+
+**Maven**
 
 ```xml
-<!-- Maven -->
 <dependency>
     <groupId>net.ttddyy.observation</groupId>
     <artifactId>datasource-micrometer-spring-boot</artifactId>
     <version>...</version>
 </dependency>
 ```
+
+**Gradle**
+
 ```groovy
-// Gradle
 dependencies {
     implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:..."
 }
 ```
 
-**datasource-micrometer-bom**
+### datasource-micrometer-bom
+
+Import the BOM to align transitive versions (optional but recommended when you use multiple artifacts).
+
+**Maven**
 
 ```xml
-<!-- Maven -->
 <dependencyManagement>
   <dependencies>
     <dependency>
@@ -88,19 +103,24 @@ dependencies {
   </dependencies>
 </dependencyManagement>
 ```
+
+**Gradle**
+
 ```groovy
-// Gradle
 dependencies {
   implementation platform("net.ttddyy.observation:datasource-micrometer-bom:...")
 }
 ```
 
-### Using Snapshot
+---
 
-To use snapshot releases, add the Maven Central Portal Snapshots repository to your project configuration.
+## Snapshot releases
+
+Add the Maven Central Portal Snapshots repository, then use a snapshot version as usual.
+
+**Maven**
 
 ```xml
-<!-- Maven -->
 <repositories>
     <repository>
         <name>Central Portal Snapshots</name>
@@ -116,14 +136,15 @@ To use snapshot releases, add the Maven Central Portal Snapshots repository to y
 </repositories>
 ```
 
+**Gradle**
+
 ```groovy
-// Gradle
 repositories {
     maven {
         name = 'Central Portal Snapshots'
         url = 'https://central.sonatype.com/repository/maven-snapshots/'
 
-        // Only search this repository for the specific dependency
+        // Only resolve datasource-micrometer artifacts from this repo
         content {
             includeModule("net.ttddyy.observation", "<datasource-micrometer artifacts>")
         }
@@ -131,27 +152,30 @@ repositories {
     mavenCentral()
 }
 ```
-For full instructions, see [the official documentation.](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-snapshot-releases-for-your-project)
+
+Full setup details: [Consuming snapshot releases](https://central.sonatype.org/publish/publish-portal-snapshots/#consuming-snapshot-releases-for-your-project) (Sonatype).
+
+---
 
 ## Java versions
 
-The produced jars support following JDK versions at runtime:
+Runtime JDK requirements by artifact:
 
-- `datasource-micrometer`: Java 8+ to match with micrometer 1.x java baseline.
-- `datasource-micrometer-spring-boot`: Java 17+ to match with Spring Boot 3.x java baseline.
+| Artifact                            | JDK                                    |
+|-------------------------------------|----------------------------------------|
+| `datasource-micrometer`             | **8+** (aligned with Micrometer 1.x)   |
+| `datasource-micrometer-spring-boot` | **17+** (aligned with Spring Boot 3.x) |
+
+---
 
 ## Documentation
 
-- Current release
-    - [Reference Doc.][reference-current]
-    - [API Doc.][javadoc-current]
-    - [Changelog][changelog-current]
-- Snapshot
-    - [Reference Doc.][reference-snapshot]
-    - [API Doc.][javadoc-snapshot]
-    - [Changelog][changelog-snapshot]
-- Other versions (TBD)
+| Channel             | Reference                  | API                         | Changelog                       |
+|---------------------|----------------------------|-----------------------------|---------------------------------|
+| **Current release** | [HTML][reference-current]  | [Javadoc][javadoc-current]  | [CHANGELOG][changelog-current]  |
+| **Snapshot**        | [HTML][reference-snapshot] | [Javadoc][javadoc-snapshot] | [CHANGELOG][changelog-snapshot] |
 
+Other versions: *TBD.*
 
 [reference-current]: https://jdbc-observations.github.io/datasource-micrometer/docs/current/docs/html
 [reference-snapshot]: https://jdbc-observations.github.io/datasource-micrometer/docs/current-snapshot/docs/html
@@ -160,46 +184,36 @@ The produced jars support following JDK versions at runtime:
 [changelog-current]: https://jdbc-observations.github.io/datasource-micrometer/docs/current/CHANGELOG.txt
 [changelog-snapshot]: https://jdbc-observations.github.io/datasource-micrometer/docs/current-snapshot/CHANGELOG.txt
 
-## Dependent Library Versions
+---
 
-Spring Boot Support:
+## Compatible versions
 
-| DataSource Micrometer | Spring Boot |
+### Spring Boot (summary)
+
+| Datasource Micrometer | Spring Boot |
 |:---------------------:|:-----------:|
-|         `2.x`         |     4.x     |
-|         `1.x`         |     3.x     |
+|          2.x          |     4.x     |
+|          1.x          |     3.x     |
 
+### Spring Boot, Micrometer BOM, and Micrometer Tracing BOM
 
-| DataSource Micrometer |   Spring Boot    | Micrometer Tracing BOM | Micrometer BOM |
+| Datasource Micrometer |   Spring Boot    | Micrometer Tracing BOM | Micrometer BOM |
 |:---------------------:|:----------------:|:----------------------:|:--------------:|
-|         `2.x`         |       4.x        |         1.6.x          |     1.16.x     | 
-|      `2.0.0-RC1`      | 4.0.0-[M3,R1,R2] |     1.6.0-[M3,R1]      | 1.16.0-[M3,R1] | 
-|        `1.0.0`        |   3.0.0 and up   |         1.0.0          |     1.10.2     | 
-|      `1.0.0-RC1`      |    3.0.0-RC1     |       1.0.0-RC1        |   1.10.0-RC1   | 
-|      `1.0.0-M1`       |     3.0.0-M6     |        1.0.0-M8        |   1.10.0-M5    | 
+|          2.x          |       4.x        |         1.6.x          |     1.16.x     |
+|       2.0.0-RC1       | 4.0.0-[M3,R1,R2] |     1.6.0-[M3,R1]      | 1.16.0-[M3,R1] |
+|         1.0.0         |   3.0.0 and up   |         1.0.0          |     1.10.2     |
+|       1.0.0-RC1       |    3.0.0-RC1     |       1.0.0-RC1        |   1.10.0-RC1   |
+|       1.0.0-M1        |     3.0.0-M6     |        1.0.0-M8        |   1.10.0-M5    |
+
+---
 
 ## Development
 
-To build the entire project, JDK-17 is required.
+JDK **17** is required to build the project.
 
-```shell
-./mvnw install
-```
-
-### Building document
-
-```shell
-./mvnw install -Pdocs -pl docs
-```
-
-### Building javadoc
-
-```shell
-./mvnw javadoc:aggregate
-```
-
-### Apply Source Code Format
-
-```shell
-./mvnw spring-javaformat:apply
-```
+| Task                     | Command                          |
+|--------------------------|----------------------------------|
+| Full build               | `./mvnw install`                 |
+| Documentation site       | `./mvnw install -Pdocs -pl docs` |
+| Aggregated Javadoc       | `./mvnw javadoc:aggregate`       |
+| Apply source formatting  | `./mvnw spring-javaformat:apply` |
