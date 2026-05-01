@@ -62,7 +62,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="net/ttddyy/observation/tracing/ConnectionAttributesManager.html" title="interface in net.ttddyy.observation.tracing">ConnectionAttributesManager</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">
-<div class="block">Manage attributes that belong to each connection.</div>
+<div class="block">Manages attributes associated with each connection.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/tracing/ConnectionAttributesManager.ConnectionAttributes.html" title="class in net.ttddyy.observation.tracing">ConnectionAttributesManager.ConnectionAttributes</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
@@ -72,15 +72,15 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/tracing/ConnectionContext.html" title="class in net.ttddyy.observation.tracing">ConnectionContext</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block"><code>Context</code> for <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.sql/java/sql/Connection.html" title="class or interface in java.sql" class="external-link"><code>Connection</code></a> related operations.</div>
+<div class="block"><code>Context</code> for JDBC Connection operations.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="net/ttddyy/observation/tracing/ConnectionObservationConvention.html" title="interface in net.ttddyy.observation.tracing">ConnectionObservationConvention</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
-<div class="block">A <code>ObservationConvention</code> for connection.</div>
+<div class="block">An <code>ObservationConvention</code> for JDBC connection operations.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/tracing/ConnectionTracingObservationHandler.html" title="class in net.ttddyy.observation.tracing">ConnectionTracingObservationHandler</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">A <code>TracingObservationHandler</code> for connection.</div>
+<div class="block">A <code>TracingObservationHandler</code> for JDBC connection operations.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="net/ttddyy/observation/tracing/opentelemetry/DatabaseNamespaceRetriever.html" title="interface in net.ttddyy.observation.tracing.opentelemetry">DatabaseNamespaceRetriever</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">&nbsp;</div>
@@ -90,7 +90,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/tracing/DataSourceBaseObservationHandler.html" title="class in net.ttddyy.observation.tracing">DataSourceBaseObservationHandler</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">A base class of tracing observation handler for JDBC operations.</div>
+<div class="block">Base class for tracing observation handlers for JDBC operations.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="net/ttddyy/observation/boot/autoconfigure/DataSourceNameResolver.html" title="interface in net.ttddyy.observation.boot.autoconfigure">DataSourceNameResolver</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">
@@ -112,7 +112,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/DataSourceObservationOpenTelemetryAutoConfiguration.html" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">DataSourceObservationOpenTelemetryAutoConfiguration</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block"><code>Auto-configuration</code> for Micrometer Observation
- instrumentation providing OpenTelemetry Semantic Conventions support.</div>
+ instrumentation with OpenTelemetry Semantic Conventions support.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/boot/autoconfigure/DataSourceProxyBuilderConfigurer.html" title="class in net.ttddyy.observation.boot.autoconfigure">DataSourceProxyBuilderConfigurer</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
@@ -160,7 +160,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/boot/event/JdbcEventPublishingListener.html" title="class in net.ttddyy.observation.boot.event">JdbcEventPublishingListener</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">A datasource-proxy listener that publishes spring events for jdbc interactions.</div>
+<div class="block">A datasource-proxy listener that publishes Spring events for JDBC interactions.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/boot/event/JdbcMethodExecutionEvent.html" title="class in net.ttddyy.observation.boot.event">JdbcMethodExecutionEvent</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
@@ -188,7 +188,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab3">&nbsp;</div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/JdbcOpenTelemetryProperties.html" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">JdbcOpenTelemetryProperties</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Configuration properties for OpenTelemetry Semantic Conventions support.</div>
+<div class="block">Configuration properties for OpenTelemetry Semantic Conventions.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/JdbcOpenTelemetryProperties.Analysis.html" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">JdbcOpenTelemetryProperties.Analysis</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
@@ -251,7 +251,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryAttributes.html" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryAttributes</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Holds all data required by OpenTelemetry Semantic Conventions support.</div>
+<div class="block">Holds data required for OpenTelemetry Semantic Conventions.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryAttributesManager.html" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryAttributesManager</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
@@ -267,7 +267,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryMeterObservationHandler.html" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryMeterObservationHandler</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">OpenTelemetry Semantic Conventions metrics support.</div>
+<div class="block">Observation handler for OpenTelemetry Semantic Conventions metrics.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryQueryAnalyzer.html" title="interface in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryQueryAnalyzer</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
@@ -303,7 +303,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="net/ttddyy/observation/tracing/QueryParametersSpanTagProvider.html" title="interface in net.ttddyy.observation.tracing">QueryParametersSpanTagProvider</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
-<div class="block">Provide a tag value for query parameters.</div>
+<div class="block">Provides tag values for query parameters.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/QuerySummaryBuilder.html" title="class in net.ttddyy.observation.tracing.opentelemetry.jsqlparser">QuerySummaryBuilder</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
@@ -311,7 +311,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/tracing/QueryTracingObservationHandler.html" title="class in net.ttddyy.observation.tracing">QueryTracingObservationHandler</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">A <code>TracingObservationHandler</code> for query.</div>
+<div class="block">A <code>TracingObservationHandler</code> for query execution.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/tracing/ResultSetContext.html" title="class in net.ttddyy.observation.tracing">ResultSetContext</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
@@ -319,7 +319,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="net/ttddyy/observation/tracing/ResultSetObservationConvention.html" title="interface in net.ttddyy.observation.tracing">ResultSetObservationConvention</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
-<div class="block">A <code>ObservationConvention</code> for result-set operations.</div>
+<div class="block">An <code>ObservationConvention</code> for result-set operations.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/ttddyy/observation/tracing/ResultSetOperation.html" title="class in net.ttddyy.observation.tracing">ResultSetOperation</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">

@@ -125,7 +125,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/JdbcObservationDocumentation.html#CONNECTION" class="member-name-link">CONNECTION</a> - Enum constant in enum class net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/JdbcObservationDocumentation.html" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation</a></dt>
 <dd>
-<div class="block">Span created when a JDBC connection takes place.</div>
+<div class="block">Span created when a JDBC connection is acquired.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/JdbcObservationDocumentation.JdbcEvents.html#CONNECTION_ACQUIRED" class="member-name-link">CONNECTION_ACQUIRED</a> - Enum constant in enum class net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/JdbcObservationDocumentation.JdbcEvents.html" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation.JdbcEvents</a></dt>
 <dd>
@@ -143,7 +143,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/tracing/ConnectionAttributesManager.html" class="type-name-link" title="interface in net.ttddyy.observation.tracing">ConnectionAttributesManager</a> - Interface in <a href="net/ttddyy/observation/tracing/package-summary.html">net.ttddyy.observation.tracing</a></dt>
 <dd>
-<div class="block">Manage attributes that belong to each connection.</div>
+<div class="block">Manages attributes associated with each connection.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/ConnectionAttributesManager.ConnectionAttributes.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">ConnectionAttributesManager.ConnectionAttributes</a> - Class in <a href="net/ttddyy/observation/tracing/package-summary.html">net.ttddyy.observation.tracing</a></dt>
 <dd>&nbsp;</dd>
@@ -153,17 +153,17 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/tracing/ConnectionContext.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">ConnectionContext</a> - Class in <a href="net/ttddyy/observation/tracing/package-summary.html">net.ttddyy.observation.tracing</a></dt>
 <dd>
-<div class="block"><code>Context</code> for <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.sql/java/sql/Connection.html" title="class or interface in java.sql" class="external-link"><code>Connection</code></a> related operations.</div>
+<div class="block"><code>Context</code> for JDBC Connection operations.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/ConnectionContext.html#%3Cinit%3E()" class="member-name-link">ConnectionContext()</a> - Constructor for class net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/ConnectionContext.html" title="class in net.ttddyy.observation.tracing">ConnectionContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/tracing/ConnectionObservationConvention.html" class="type-name-link" title="interface in net.ttddyy.observation.tracing">ConnectionObservationConvention</a> - Interface in <a href="net/ttddyy/observation/tracing/package-summary.html">net.ttddyy.observation.tracing</a></dt>
 <dd>
-<div class="block">A <code>ObservationConvention</code> for connection.</div>
+<div class="block">An <code>ObservationConvention</code> for JDBC connection operations.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/ConnectionTracingObservationHandler.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">ConnectionTracingObservationHandler</a> - Class in <a href="net/ttddyy/observation/tracing/package-summary.html">net.ttddyy.observation.tracing</a></dt>
 <dd>
-<div class="block">A <code>TracingObservationHandler</code> for connection.</div>
+<div class="block">A <code>TracingObservationHandler</code> for JDBC connection operations.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/ConnectionTracingObservationHandler.html#%3Cinit%3E(io.micrometer.tracing.Tracer)" class="member-name-link">ConnectionTracingObservationHandler(Tracer)</a> - Constructor for class net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/ConnectionTracingObservationHandler.html" title="class in net.ttddyy.observation.tracing">ConnectionTracingObservationHandler</a></dt>
 <dd>&nbsp;</dd>
@@ -226,7 +226,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/tracing/DataSourceBaseObservationHandler.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">DataSourceBaseObservationHandler</a> - Class in <a href="net/ttddyy/observation/tracing/package-summary.html">net.ttddyy.observation.tracing</a></dt>
 <dd>
-<div class="block">A base class of tracing observation handler for JDBC operations.</div>
+<div class="block">Base class for tracing observation handlers for JDBC operations.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/DataSourceBaseObservationHandler.html#%3Cinit%3E(io.micrometer.tracing.Tracer)" class="member-name-link">DataSourceBaseObservationHandler(Tracer)</a> - Constructor for class net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/DataSourceBaseObservationHandler.html" title="class in net.ttddyy.observation.tracing">DataSourceBaseObservationHandler</a></dt>
 <dd>&nbsp;</dd>
@@ -262,7 +262,7 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/DataSourceObservationOpenTelemetryAutoConfiguration.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">DataSourceObservationOpenTelemetryAutoConfiguration</a> - Class in <a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/package-summary.html">net.ttddyy.observation.boot.autoconfigure.opentelemetry</a></dt>
 <dd>
 <div class="block"><code>Auto-configuration</code> for Micrometer Observation
- instrumentation providing OpenTelemetry Semantic Conventions support.</div>
+ instrumentation with OpenTelemetry Semantic Conventions support.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/DataSourceObservationOpenTelemetryAutoConfiguration.html#%3Cinit%3E()" class="member-name-link">DataSourceObservationOpenTelemetryAutoConfiguration()</a> - Constructor for class net.ttddyy.observation.boot.autoconfigure.opentelemetry.<a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/DataSourceObservationOpenTelemetryAutoConfiguration.html" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">DataSourceObservationOpenTelemetryAutoConfiguration</a></dt>
 <dd>&nbsp;</dd>
@@ -626,7 +626,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/event/JdbcEventPublishingListener.html" class="type-name-link" title="class in net.ttddyy.observation.boot.event">JdbcEventPublishingListener</a> - Class in <a href="net/ttddyy/observation/boot/event/package-summary.html">net.ttddyy.observation.boot.event</a></dt>
 <dd>
-<div class="block">A datasource-proxy listener that publishes spring events for jdbc interactions.</div>
+<div class="block">A datasource-proxy listener that publishes Spring events for JDBC interactions.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/boot/event/JdbcEventPublishingListener.html#%3Cinit%3E(org.springframework.context.ApplicationEventPublisher)" class="member-name-link">JdbcEventPublishingListener(ApplicationEventPublisher)</a> - Constructor for class net.ttddyy.observation.boot.event.<a href="net/ttddyy/observation/boot/event/JdbcEventPublishingListener.html" title="class in net.ttddyy.observation.boot.event">JdbcEventPublishingListener</a></dt>
 <dd>&nbsp;</dd>
@@ -658,7 +658,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/JdbcOpenTelemetryProperties.html" class="type-name-link" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">JdbcOpenTelemetryProperties</a> - Class in <a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/package-summary.html">net.ttddyy.observation.boot.autoconfigure.opentelemetry</a></dt>
 <dd>
-<div class="block">Configuration properties for OpenTelemetry Semantic Conventions support.</div>
+<div class="block">Configuration properties for OpenTelemetry Semantic Conventions.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/JdbcOpenTelemetryProperties.html#%3Cinit%3E()" class="member-name-link">JdbcOpenTelemetryProperties()</a> - Constructor for class net.ttddyy.observation.boot.autoconfigure.opentelemetry.<a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/JdbcOpenTelemetryProperties.html" title="class in net.ttddyy.observation.boot.autoconfigure.opentelemetry">JdbcOpenTelemetryProperties</a></dt>
 <dd>&nbsp;</dd>
@@ -771,7 +771,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/boot/autoconfigure/opentelemetry/package-summary.html">net.ttddyy.observation.boot.autoconfigure.opentelemetry</a> - package net.ttddyy.observation.boot.autoconfigure.opentelemetry</dt>
 <dd>
-<div class="block">OpenTelemetry Semantic Conventions support related classes.</div>
+<div class="block">Classes supporting OpenTelemetry Semantic Conventions.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/boot/event/package-summary.html">net.ttddyy.observation.boot.event</a> - package net.ttddyy.observation.boot.event</dt>
 <dd>&nbsp;</dd>
@@ -781,11 +781,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/opentelemetry/package-summary.html">net.ttddyy.observation.tracing.opentelemetry</a> - package net.ttddyy.observation.tracing.opentelemetry</dt>
 <dd>
-<div class="block">OpenTelemetry Semantic Conventions support related classes.</div>
+<div class="block">Classes supporting OpenTelemetry Semantic Conventions.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/package-summary.html">net.ttddyy.observation.tracing.opentelemetry.jsqlparser</a> - package net.ttddyy.observation.tracing.opentelemetry.jsqlparser</dt>
 <dd>
-<div class="block">JSqlParser related classes for OpenTelemetry Semantic Conventions support.</div>
+<div class="block">JSqlParser-related classes supporting OpenTelemetry Semantic Conventions.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryQueryAnalyzer.html#NOOP" class="member-name-link">NOOP</a> - Static variable in interface net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryQueryAnalyzer.html" title="interface in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryQueryAnalyzer</a></dt>
 <dd>&nbsp;</dd>
@@ -804,7 +804,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryAttributes.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryAttributes</a> - Class in <a href="net/ttddyy/observation/tracing/opentelemetry/package-summary.html">net.ttddyy.observation.tracing.opentelemetry</a></dt>
 <dd>
-<div class="block">Holds all data required by OpenTelemetry Semantic Conventions support.</div>
+<div class="block">Holds data required for OpenTelemetry Semantic Conventions.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryAttributes.html#%3Cinit%3E()" class="member-name-link">OpenTelemetryAttributes()</a> - Constructor for class net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryAttributes.html" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryAttributes</a></dt>
 <dd>&nbsp;</dd>
@@ -826,7 +826,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryMeterObservationHandler.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryMeterObservationHandler</a> - Class in <a href="net/ttddyy/observation/tracing/opentelemetry/package-summary.html">net.ttddyy.observation.tracing.opentelemetry</a></dt>
 <dd>
-<div class="block">OpenTelemetry Semantic Conventions metrics support.</div>
+<div class="block">Observation handler for OpenTelemetry Semantic Conventions metrics.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryMeterObservationHandler.html#%3Cinit%3E(net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryAttributesManager,io.micrometer.core.instrument.MeterRegistry)" class="member-name-link">OpenTelemetryMeterObservationHandler(OpenTelemetryAttributesManager, MeterRegistry)</a> - Constructor for class net.ttddyy.observation.tracing.opentelemetry.<a href="net/ttddyy/observation/tracing/opentelemetry/OpenTelemetryMeterObservationHandler.html" title="class in net.ttddyy.observation.tracing.opentelemetry">OpenTelemetryMeterObservationHandler</a></dt>
 <dd>&nbsp;</dd>
@@ -926,7 +926,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/QueryParametersSpanTagProvider.html" class="type-name-link" title="interface in net.ttddyy.observation.tracing">QueryParametersSpanTagProvider</a> - Interface in <a href="net/ttddyy/observation/tracing/package-summary.html">net.ttddyy.observation.tracing</a></dt>
 <dd>
-<div class="block">Provide a tag value for query parameters.</div>
+<div class="block">Provides tag values for query parameters.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/QuerySummaryBuilder.html" class="type-name-link" title="class in net.ttddyy.observation.tracing.opentelemetry.jsqlparser">QuerySummaryBuilder</a> - Class in <a href="net/ttddyy/observation/tracing/opentelemetry/jsqlparser/package-summary.html">net.ttddyy.observation.tracing.opentelemetry.jsqlparser</a></dt>
 <dd>
@@ -936,7 +936,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/tracing/QueryTracingObservationHandler.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">QueryTracingObservationHandler</a> - Class in <a href="net/ttddyy/observation/tracing/package-summary.html">net.ttddyy.observation.tracing</a></dt>
 <dd>
-<div class="block">A <code>TracingObservationHandler</code> for query.</div>
+<div class="block">A <code>TracingObservationHandler</code> for query execution.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/QueryTracingObservationHandler.html#%3Cinit%3E(io.micrometer.tracing.Tracer)" class="member-name-link">QueryTracingObservationHandler(Tracer)</a> - Constructor for class net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/QueryTracingObservationHandler.html" title="class in net.ttddyy.observation.tracing">QueryTracingObservationHandler</a></dt>
 <dd>&nbsp;</dd>
@@ -953,7 +953,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/tracing/JdbcObservationDocumentation.html#RESULT_SET" class="member-name-link">RESULT_SET</a> - Enum constant in enum class net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/JdbcObservationDocumentation.html" title="enum class in net.ttddyy.observation.tracing">JdbcObservationDocumentation</a></dt>
 <dd>
-<div class="block">Span created when working with JDBC result set.</div>
+<div class="block">Span created when fetching data from a JDBC result set.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/ConnectionAttributesManager.ResultSetAttributes.html#%3Cinit%3E()" class="member-name-link">ResultSetAttributes()</a> - Constructor for class net.ttddyy.observation.tracing.<a href="net/ttddyy/observation/tracing/ConnectionAttributesManager.ResultSetAttributes.html" title="class in net.ttddyy.observation.tracing">ConnectionAttributesManager.ResultSetAttributes</a></dt>
 <dd>&nbsp;</dd>
@@ -967,7 +967,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/ttddyy/observation/tracing/ResultSetObservationConvention.html" class="type-name-link" title="interface in net.ttddyy.observation.tracing">ResultSetObservationConvention</a> - Interface in <a href="net/ttddyy/observation/tracing/package-summary.html">net.ttddyy.observation.tracing</a></dt>
 <dd>
-<div class="block">A <code>ObservationConvention</code> for result-set operations.</div>
+<div class="block">An <code>ObservationConvention</code> for result-set operations.</div>
 </dd>
 <dt><a href="net/ttddyy/observation/tracing/ResultSetOperation.html" class="type-name-link" title="class in net.ttddyy.observation.tracing">ResultSetOperation</a> - Class in <a href="net/ttddyy/observation/tracing/package-summary.html">net.ttddyy.observation.tracing</a></dt>
 <dd>
