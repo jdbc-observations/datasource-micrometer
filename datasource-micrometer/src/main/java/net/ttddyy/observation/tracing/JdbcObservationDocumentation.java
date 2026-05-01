@@ -28,7 +28,7 @@ import io.micrometer.observation.docs.ObservationDocumentation;
 public enum JdbcObservationDocumentation implements ObservationDocumentation {
 
 	/**
-	 * Span created when a JDBC connection takes place.
+	 * Span created when a JDBC connection is acquired.
 	 */
 	CONNECTION {
 		@Override
@@ -92,7 +92,7 @@ public enum JdbcObservationDocumentation implements ObservationDocumentation {
 	},
 
 	/**
-	 * Span created when working with JDBC result set.
+	 * Span created when fetching data from a JDBC result set.
 	 */
 	RESULT_SET {
 		@Override

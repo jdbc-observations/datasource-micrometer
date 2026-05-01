@@ -22,7 +22,7 @@ import net.ttddyy.dsproxy.ExecutionInfo;
 import net.ttddyy.dsproxy.QueryInfo;
 
 /**
- * Provide a tag value for query parameters.
+ * Provides tag values for query parameters.
  *
  * @author Tadaya Tsuyukubo
  */

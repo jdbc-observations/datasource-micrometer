@@ -21,7 +21,7 @@ import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.handler.TracingObservationHandler;
 
 /**
- * A {@link TracingObservationHandler} for query.
+ * A {@link TracingObservationHandler} for query execution.
  *
  * @author Tadaya Tsuyukubo
  */

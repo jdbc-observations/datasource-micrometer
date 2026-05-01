@@ -15,7 +15,7 @@
  */
 
 /**
- * JSqlParser related classes for OpenTelemetry Semantic Conventions support.
+ * JSqlParser-related classes supporting OpenTelemetry Semantic Conventions.
  */
 @NonNullApi
 package net.ttddyy.observation.tracing.opentelemetry.jsqlparser;

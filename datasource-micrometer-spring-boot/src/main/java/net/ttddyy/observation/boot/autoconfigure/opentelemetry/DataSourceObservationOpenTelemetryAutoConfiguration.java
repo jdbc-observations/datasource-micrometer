@@ -41,7 +41,7 @@ import java.util.Map;
 
 /**
  * {@link EnableAutoConfiguration Auto-configuration} for Micrometer Observation
- * instrumentation providing OpenTelemetry Semantic Conventions support.
+ * instrumentation with OpenTelemetry Semantic Conventions support.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.3.0

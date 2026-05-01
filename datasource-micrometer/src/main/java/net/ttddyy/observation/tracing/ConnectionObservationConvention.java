@@ -26,7 +26,7 @@ import io.micrometer.observation.ObservationConvention;
 import net.ttddyy.observation.tracing.JdbcObservationDocumentation.ConnectionKeyNames;
 
 /**
- * A {@link ObservationConvention} for connection.
+ * An {@link ObservationConvention} for JDBC connection operations.
  *
  * @author Tadaya Tsuyukubo
  */

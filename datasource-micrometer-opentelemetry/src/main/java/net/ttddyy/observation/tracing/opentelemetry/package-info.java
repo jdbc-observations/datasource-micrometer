@@ -15,7 +15,7 @@
  */
 
 /**
- * OpenTelemetry Semantic Conventions support related classes.
+ * Classes supporting OpenTelemetry Semantic Conventions.
  */
 @NonNullApi
 package net.ttddyy.observation.tracing.opentelemetry;

@@ -27,7 +27,7 @@ import io.micrometer.tracing.handler.PropagatingSenderTracingObservationHandler;
 import io.micrometer.tracing.propagation.Propagator;
 
 /**
- * A base class of tracing observation handler for JDBC operations.
+ * Base class for tracing observation handlers for JDBC operations.
  *
  * @author Tadaya Tsuyukubo
  */

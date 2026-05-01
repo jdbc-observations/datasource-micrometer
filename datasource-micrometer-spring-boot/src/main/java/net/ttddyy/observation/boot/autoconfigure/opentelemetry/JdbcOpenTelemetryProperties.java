@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Configuration properties for OpenTelemetry Semantic Conventions support.
+ * Configuration properties for OpenTelemetry Semantic Conventions.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.3.0

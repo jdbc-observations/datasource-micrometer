@@ -27,7 +27,7 @@ import net.ttddyy.observation.tracing.JdbcObservationDocumentation.ResultSetHigh
 import net.ttddyy.observation.tracing.JdbcObservationDocumentation.ResultSetLowCardinalityKeyNames;
 
 /**
- * A {@link ObservationConvention} for result-set operations.
+ * An {@link ObservationConvention} for result-set operations.
  *
  * @author Tadaya Tsuyukubo
  */

@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * OpenTelemetry Semantic Conventions metrics support.
+ * Observation handler for OpenTelemetry Semantic Conventions metrics.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.3.0

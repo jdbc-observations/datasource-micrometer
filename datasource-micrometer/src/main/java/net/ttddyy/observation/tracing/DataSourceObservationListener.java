@@ -92,11 +92,10 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	private boolean includeResultSetOperations = true;
 
 	/**
-	 * A set of {@link JdbcObservationDocumentation} to observe by this listener. For
-	 * non-matched {@link JdbcObservationDocumentation}, no-op {@link Observation} will be
-	 * used.
+	 * A set of {@link JdbcObservationDocumentation} types to observe. For observation
+	 * types not included in this set, no-op {@link Observation} will be used.
 	 * <p>
-	 * Default value matches all {@link JdbcObservationDocumentation} types.
+	 * Default value includes all {@link JdbcObservationDocumentation} types.
 	 */
 	private Set<JdbcObservationDocumentation> supportedTypes = new HashSet<>(
 			Arrays.asList(JdbcObservationDocumentation.values()));
@@ -545,7 +544,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 
 	/**
 	 * Whether to populate {@link ResultSetOperation}.
-	 * @param includeResultSetOperations set {@code false} not to record them.
+	 * @param includeResultSetOperations set to {@code false} to disable recording
+	 * ResultSet operations.
 	 * @since 1.1.2
 	 */
 	public void setIncludeResultSetOperations(boolean includeResultSetOperations) {

@@ -27,7 +27,7 @@ import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import org.springframework.context.ApplicationEventPublisher;
 
 /**
- * A datasource-proxy listener that publishes spring events for jdbc interactions.
+ * A datasource-proxy listener that publishes Spring events for JDBC interactions.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.1

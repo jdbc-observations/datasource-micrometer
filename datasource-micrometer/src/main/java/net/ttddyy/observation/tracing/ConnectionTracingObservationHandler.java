@@ -22,7 +22,7 @@ import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.handler.TracingObservationHandler;
 
 /**
- * A {@link TracingObservationHandler} for connection.
+ * A {@link TracingObservationHandler} for JDBC connection operations.
  *
  * @author Tadaya Tsuyukubo
  */

@@ -21,7 +21,7 @@ import java.sql.Connection;
 import io.micrometer.observation.Observation;
 
 /**
- * {@link Observation.Context Context} for {@link Connection} related operations.
+ * {@link Observation.Context Context} for JDBC Connection operations.
  *
  * @author Tadaya Tsuyukubo
  */
