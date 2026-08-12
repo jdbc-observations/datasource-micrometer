@@ -17,6 +17,7 @@
 package net.ttddyy.observation.boot.autoconfigure;
 
 import java.sql.Connection;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -37,6 +38,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import org.springframework.aop.SpringProxy;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -184,6 +187,110 @@ class DataSourceObservationBeanPostProcessorTests {
 		else {
 			fail("Not supported type: " + type);
 		}
+	}
+
+	@Test
+	void delegatingDataSourceWrappingAlreadyProxiedTargetIsSkipped() throws Exception {
+		setupProcessorForProxying();
+
+		// First: proxy the physical datasource
+		DataSource physical = mockPhysicalDataSource();
+		Object proxied = this.processor.postProcessAfterInitialization(physical, "physicalDataSource");
+		assertThat(proxied).isInstanceOf(ProxyJdbcObject.class);
+
+		// Then: wrap the proxy in a LazyConnectionDataSourceProxy (DelegatingDataSource)
+		LazyConnectionDataSourceProxy lazy = new LazyConnectionDataSourceProxy((DataSource) proxied);
+
+		// The delegating wrapper should NOT be double-proxied
+		Object result = this.processor.postProcessAfterInitialization(lazy, "actualDataSource");
+		assertThat(result).isNotInstanceOf(ProxyJdbcObject.class)
+			.isInstanceOf(LazyConnectionDataSourceProxy.class);
+	}
+
+	@Test
+	void routingDataSourceWrappingAlreadyProxiedTargetsIsSkipped() throws Exception {
+		setupProcessorForProxying();
+
+		// First: proxy both physical datasources
+		DataSource physicalRw = mockPhysicalDataSource();
+		DataSource physicalRo = mockPhysicalDataSource();
+		DataSource proxiedRw = (DataSource) this.processor.postProcessAfterInitialization(physicalRw,
+				"readWriteDataSource");
+		DataSource proxiedRo = (DataSource) this.processor.postProcessAfterInitialization(physicalRo,
+				"readOnlyDataSource");
+
+		// Then: build an AbstractRoutingDataSource pointing at the already-proxied pools
+		AbstractRoutingDataSource router = new AbstractRoutingDataSource() {
+			@Override
+			protected Object determineCurrentLookupKey() {
+				return "rw";
+			}
+		};
+		router.setTargetDataSources(Map.of("rw", proxiedRw, "ro", proxiedRo));
+		router.setDefaultTargetDataSource(proxiedRw);
+		router.afterPropertiesSet();
+
+		// The routing datasource should NOT be double-proxied
+		Object result = this.processor.postProcessAfterInitialization(router, "actualDataSource");
+		assertThat(result).isNotInstanceOf(ProxyJdbcObject.class)
+			.isInstanceOf(AbstractRoutingDataSource.class);
+	}
+
+	@Test
+	void nestedDelegatingChainWrappingAlreadyProxiedTargetIsSkipped() throws Exception {
+		setupProcessorForProxying();
+
+		DataSource physical = mockPhysicalDataSource();
+		DataSource proxied = (DataSource) this.processor.postProcessAfterInitialization(physical, "physical");
+
+		// Build: LazyConnectionDataSourceProxy → AbstractRoutingDataSource → proxied
+		AbstractRoutingDataSource router = new AbstractRoutingDataSource() {
+			@Override
+			protected Object determineCurrentLookupKey() {
+				return "default";
+			}
+		};
+		router.setTargetDataSources(Map.of("default", proxied));
+		router.setDefaultTargetDataSource(proxied);
+		router.afterPropertiesSet();
+
+		LazyConnectionDataSourceProxy lazy = new LazyConnectionDataSourceProxy(router);
+
+		// Neither the router nor the lazy wrapper should be double-proxied
+		Object routerResult = this.processor.postProcessAfterInitialization(router, "router");
+		assertThat(routerResult).isNotInstanceOf(ProxyJdbcObject.class);
+
+		Object lazyResult = this.processor.postProcessAfterInitialization(lazy, "lazy");
+		assertThat(lazyResult).isNotInstanceOf(ProxyJdbcObject.class);
+	}
+
+	@Test
+	void independentDataSourceIsStillProxied() throws Exception {
+		setupProcessorForProxying();
+
+		DataSource first = mockPhysicalDataSource();
+		DataSource second = mockPhysicalDataSource();
+
+		Object firstResult = this.processor.postProcessAfterInitialization(first, "firstDataSource");
+		Object secondResult = this.processor.postProcessAfterInitialization(second, "secondDataSource");
+
+		assertThat(firstResult).isInstanceOf(ProxyJdbcObject.class);
+		assertThat(secondResult).isInstanceOf(ProxyJdbcObject.class);
+	}
+
+	private void setupProcessorForProxying() {
+		JdbcProperties jdbcProperties = new JdbcProperties();
+		given(this.jdbcPropertiesProvider.getObject()).willReturn(jdbcProperties);
+		given(this.dataSourceNameResolverProvider.getObject()).willReturn(new DefaultDataSourceNameResolver());
+		// Use willAnswer so each call gets a fresh stream (streams are single-use)
+		given(this.proxyDataSourceBuilderCustomizers.orderedStream()).willAnswer(inv -> Stream.of());
+	}
+
+	private static DataSource mockPhysicalDataSource() throws Exception {
+		Connection connection = mock(Connection.class);
+		DataSource dataSource = mock(DataSource.class);
+		given(dataSource.getConnection()).willReturn(connection);
+		return dataSource;
 	}
 
 }

@@ -16,10 +16,18 @@
 
 package net.ttddyy.observation.boot.autoconfigure;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Set;
+
 import javax.sql.DataSource;
 
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
@@ -37,6 +45,12 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  * @author Tadaya Tsuyukubo
  */
 public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor {
+
+	/**
+	 * Tracks datasource instances (pre-proxy) that this post-processor has already
+	 * instrumented, so routing/delegating wrappers referencing them can be skipped.
+	 */
+	private final Set<DataSource> proxiedDataSources = Collections.newSetFromMap(new IdentityHashMap<>());
 
 	private final ObjectProvider<JdbcProperties> jdbcPropertiesProvider;
 
@@ -85,23 +99,82 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean instanceof DataSource dataSource && !ScopedProxyUtils.isScopedTarget(beanName)
-				&& !isExcludedBean(beanName)) {
+				&& !isExcludedBean(beanName) && !containsAlreadyProxiedTarget(dataSource)) {
 			String dataSourceName = this.dataSourceNameResolverProvider.getObject().resolve(beanName, dataSource);
 			ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSourceName, dataSource);
 			getConfigurer().configure(builder);
 			this.proxyDataSourceBuilderCustomizers.orderedStream()
 				.forEach(customizer -> customizer.customize(builder, dataSource, beanName, dataSourceName));
 			DataSourceType dataSourceType = getJdbcProperties().getDatasourceProxy().getType();
+			Object proxy;
 			if (dataSourceType == DataSourceType.PROXY || dataSourceType == DataSourceType.SPRING_PROXY) {
-				return builder.buildProxy();
+				proxy = builder.buildProxy();
 			}
 			else {
-				return builder.build();
+				proxy = builder.build();
 			}
+			this.proxiedDataSources.add(dataSource);
+			return proxy;
 		}
 		else {
 			return bean;
 		}
+	}
+
+	/**
+	 * Returns {@code true} if {@code ds} is a routing or delegating wrapper whose chain
+	 * contains a datasource that this post-processor has already instrumented. Detected
+	 * via reflection to avoid a compile-time dependency on spring-jdbc.
+	 *
+	 * <p>Two common patterns are checked:
+	 * <ul>
+	 * <li>{@code getTargetDataSource()} — covers {@code DelegatingDataSource} (e.g.
+	 * {@code LazyConnectionDataSourceProxy})</li>
+	 * <li>{@code resolvedDataSources} field — covers {@code AbstractRoutingDataSource}
+	 * subclasses</li>
+	 * </ul>
+	 */
+	private boolean containsAlreadyProxiedTarget(DataSource ds) {
+		// DelegatingDataSource pattern: getTargetDataSource()
+		try {
+			Method m = ds.getClass().getMethod("getTargetDataSource");
+			Object target = m.invoke(ds);
+			if (target instanceof DataSource targetDs) {
+				return this.proxiedDataSources.contains(targetDs) || isProxyJdbcObject(targetDs)
+						|| containsAlreadyProxiedTarget(targetDs);
+			}
+		}
+		catch (ReflectiveOperationException ignored) {
+		}
+
+		// AbstractRoutingDataSource pattern: resolvedDataSources field
+		Class<?> cls = ds.getClass();
+		while (cls != null && cls != Object.class) {
+			try {
+				Field f = cls.getDeclaredField("resolvedDataSources");
+				f.setAccessible(true);
+				@SuppressWarnings("unchecked")
+				Map<Object, DataSource> resolved = (Map<Object, DataSource>) f.get(ds);
+				if (resolved != null) {
+					return resolved.values()
+						.stream()
+						.anyMatch(t -> this.proxiedDataSources.contains(t) || isProxyJdbcObject(t)
+								|| containsAlreadyProxiedTarget(t));
+				}
+				break;
+			}
+			catch (NoSuchFieldException e) {
+				cls = cls.getSuperclass();
+			}
+			catch (IllegalAccessException ignored) {
+				break;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isProxyJdbcObject(DataSource ds) {
+		return ds instanceof ProxyJdbcObject;
 	}
 
 	private DataSourceProxyBuilderConfigurer getConfigurer() {
