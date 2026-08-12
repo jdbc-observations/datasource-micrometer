@@ -16,7 +16,13 @@
 
 package net.ttddyy.observation.boot.autoconfigure;
 
+import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -189,8 +195,72 @@ class DataSourceObservationBeanPostProcessorTests {
 		}
 	}
 
+	// -------------------------------------------------------------------------
+	// Regression: double-proxy memory leak (Spring Boot 3.5 + OTel)
+	// -------------------------------------------------------------------------
+	//
+	// Root cause: DataSourceObservationAutoConfiguration wraps every DataSource
+	// bean. When actualDataSource (LazyConnectionDataSourceProxy) is processed
+	// AFTER readWriteDataSource/readOnlyDataSource are already proxied, the
+	// outer wrapper gets a second observation proxy on top. The nested scopes
+	// close out of order → dangling OTel spans accumulate in worker-thread
+	// ThreadLocals → memory leak.
+	//
+	// Fix: containsAlreadyProxiedTarget walks the chain; if any target is a
+	// ProxyJdbcObject, the outer datasource is returned unwrapped.
+	// -------------------------------------------------------------------------
+
+	@Test
+	void doubleProxyBugReproduction_withFixOuterWrapperIsNotProxiedAgain() throws Exception {
+		setupProcessorForProxying();
+
+		// Step 1 — the physical pool is correctly observation-proxied
+		DataSource physical = mockPhysicalDataSource();
+		DataSource proxied = (DataSource) this.processor.postProcessAfterInitialization(physical, "readWriteDataSource");
+		assertThat(proxied).isInstanceOf(ProxyJdbcObject.class);
+
+		// Step 2 — build the outer wrapper that references the already-proxied pool
+		// (mirrors actualDataSource → LazyConnectionDataSourceProxy → proxied rw/ro in labor-service)
+		LazyConnectionDataSourceProxy actualDataSource = new LazyConnectionDataSourceProxy(proxied);
+
+		// Step 3 — run the BeanPostProcessor on the wrapper
+		// WITHOUT the fix: postProcessAfterInitialization would return a ProxyJdbcObject
+		//   wrapping actualDataSource, creating the double-proxy chain that leaks spans.
+		// WITH the fix: the chain is detected as already-proxied → wrapper returned unchanged.
+		assertThat(DataSourceObservationBeanPostProcessor.SPRING_JDBC_PRESENT).isTrue();
+		Object result = this.processor.postProcessAfterInitialization(actualDataSource, "actualDataSource");
+
+		assertThat(result)
+			.isNotInstanceOf(ProxyJdbcObject.class)
+			.isInstanceOf(LazyConnectionDataSourceProxy.class);
+
+		// The proxied pool is still reachable through the wrapper
+		assertThat(((LazyConnectionDataSourceProxy) result).getTargetDataSource())
+			.isInstanceOf(ProxyJdbcObject.class);
+	}
+
+	@Test
+	void springJdbcPresentIsFalseWhenSpringJdbcAbsent() throws Exception {
+		try (URLClassLoader isolatedLoader = buildSpringJdbcAbsentLoader()) {
+			Class<?> processorClass = isolatedLoader
+				.loadClass("net.ttddyy.observation.boot.autoconfigure.DataSourceObservationBeanPostProcessor");
+
+			// Prove the flag is false when spring-jdbc is filtered from the classloader
+			Field field = processorClass.getDeclaredField("SPRING_JDBC_PRESENT");
+			field.setAccessible(true);
+			assertThat(field.get(null)).isEqualTo(false);
+
+			// Prove the fallback: containsAlreadyProxiedTarget always returns false regardless
+			// of what datasource is passed — every DataSource is proxied, no double-proxy check
+			Method check = processorClass.getDeclaredMethod("containsAlreadyProxiedTarget", DataSource.class);
+			check.setAccessible(true);
+			assertThat(check.invoke(null, (Object) null)).isEqualTo(false);
+		}
+	}
+
 	@Test
 	void delegatingDataSourceWrappingAlreadyProxiedTargetIsSkipped() throws Exception {
+		assertThat(DataSourceObservationBeanPostProcessor.SPRING_JDBC_PRESENT).isTrue();
 		setupProcessorForProxying();
 
 		// First: proxy the physical datasource
@@ -209,6 +279,7 @@ class DataSourceObservationBeanPostProcessorTests {
 
 	@Test
 	void routingDataSourceWrappingAlreadyProxiedTargetsIsSkipped() throws Exception {
+		assertThat(DataSourceObservationBeanPostProcessor.SPRING_JDBC_PRESENT).isTrue();
 		setupProcessorForProxying();
 
 		// First: proxy both physical datasources
@@ -238,6 +309,7 @@ class DataSourceObservationBeanPostProcessorTests {
 
 	@Test
 	void nestedDelegatingChainWrappingAlreadyProxiedTargetIsSkipped() throws Exception {
+		assertThat(DataSourceObservationBeanPostProcessor.SPRING_JDBC_PRESENT).isTrue();
 		setupProcessorForProxying();
 
 		DataSource physical = mockPhysicalDataSource();
@@ -276,6 +348,56 @@ class DataSourceObservationBeanPostProcessorTests {
 
 		assertThat(firstResult).isInstanceOf(ProxyJdbcObject.class);
 		assertThat(secondResult).isInstanceOf(ProxyJdbcObject.class);
+	}
+
+	@Test
+	void routingDatasourceWithUnproxiedTargetsIsStillProxied() throws Exception {
+		// When targets are plain (not ProxyJdbcObject), the routing wrapper itself
+		// must be proxied. This covers the fallback when spring-jdbc is absent
+		// (SPRING_JDBC_PRESENT=false → containsAlreadyProxiedTarget always returns false)
+		// and the normal case where the routing datasource is processed before its targets.
+		setupProcessorForProxying();
+
+		final DataSource physicalRw = mockPhysicalDataSource();
+		final DataSource physicalRo = mockPhysicalDataSource();
+
+		final AbstractRoutingDataSource router = new AbstractRoutingDataSource() {
+			@Override
+			protected Object determineCurrentLookupKey() {
+				return "rw";
+			}
+		};
+		router.setTargetDataSources(Map.of("rw", physicalRw, "ro", physicalRo));
+		router.setDefaultTargetDataSource(physicalRw);
+		router.afterPropertiesSet();
+
+		final Object result = this.processor.postProcessAfterInitialization(router, "actualDataSource");
+		assertThat(result).isInstanceOf(ProxyJdbcObject.class);
+	}
+
+	// Builds a URLClassLoader with the platform classloader as parent (so javax.sql.* is
+	// resolvable for reflection) but spring-jdbc filtered out — causing SPRING_JDBC_PRESENT
+	// to initialize to false when DataSourceObservationBeanPostProcessor is loaded fresh.
+	private static URLClassLoader buildSpringJdbcAbsentLoader() {
+		URL[] urls = Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
+			.map(entry -> {
+				try {
+					return new File(entry).toURI().toURL();
+				}
+				catch (Exception ex) {
+					throw new RuntimeException(ex);
+				}
+			})
+			.toArray(URL[]::new);
+		return new URLClassLoader(urls, ClassLoader.getPlatformClassLoader()) {
+			@Override
+			public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+				if (name.startsWith("org.springframework.jdbc.datasource")) {
+					throw new ClassNotFoundException(name);
+				}
+				return super.loadClass(name, resolve);
+			}
+		};
 	}
 
 	private void setupProcessorForProxying() {
