@@ -54,12 +54,17 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.aop.SpringProxy;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.micrometer.observation.autoconfigure.ObservationRegistryCustomizer;
 import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -355,6 +360,106 @@ class DataSourceObservationAutoConfigurationTests {
 				Arguments.of("jdbc.includes=CONNECTION,QUERY, FETCH", Set.of(connection, query, resultSet),
 						Set.of(JdbcObservationDocumentation.CONNECTION, JdbcObservationDocumentation.QUERY,
 								JdbcObservationDocumentation.RESULT_SET)));
+	}
+
+	// -------------------------------------------------------------------------
+	// Regression: double-proxy memory leak (Spring Boot 3.5 + OTel)
+	// -------------------------------------------------------------------------
+	//
+	// Full topology that reproduces the issue:
+	//
+	//   observation-proxy(actualDataSource)           ← BUG: should NOT happen
+	//     → LazyConnectionDataSourceProxy
+	//         → AbstractRoutingDataSource
+	//             → observation-proxy(readWriteDataSource)   ← correct
+	//             → observation-proxy(readOnlyDataSource)    ← correct
+	//
+	// DataSourceObservationAutoConfiguration wraps every DataSource bean.
+	// When readWriteDataSource/readOnlyDataSource are already proxied, actualDataSource
+	// (which holds references to them) gets wrapped too — creating nested observation
+	// scopes that close out of order and leak OTel spans into worker-thread ThreadLocals.
+	//
+	// With the fix, containsAlreadyProxiedTarget detects the already-proxied targets
+	// in the chain and skips wrapping actualDataSource.
+	//
+	// Without the fix:
+	//   assertThat(context.getBean("actualDataSource")).isInstanceOf(ProxyJdbcObject.class) → PASSES (bug)
+	// With the fix:
+	//   assertThat(context.getBean("actualDataSource")).isNotInstanceOf(ProxyJdbcObject.class) → PASSES (fixed)
+	// -------------------------------------------------------------------------
+
+	@Test
+	void outerDelegatingWrapperIsNotProxiedWhenRoutingTargetsAreAlreadyProxied() {
+		new ApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+			.withBean(ObservationRegistry.class, ObservationRegistry::create)
+			.withBean(Tracer.class, () -> mock(Tracer.class))
+			.withUserConfiguration(NestedRoutingDataSourceConfiguration.class)
+			.run((context) -> {
+				assertThat(context).hasNotFailed();
+
+				// Physical pools must be observation-proxied
+				assertThat(context.getBean("readWriteDataSource", DataSource.class))
+					.isInstanceOf(ProxyJdbcObject.class);
+				assertThat(context.getBean("readOnlyDataSource", DataSource.class))
+					.isInstanceOf(ProxyJdbcObject.class);
+
+				// actualDataSource must NOT be double-proxied — the fix returns it unchanged
+				assertThat(context.getBean("actualDataSource", DataSource.class))
+					.isNotInstanceOf(ProxyJdbcObject.class)
+					.isInstanceOf(LazyConnectionDataSourceProxy.class);
+			});
+	}
+
+	/**
+	 * Topology that reproduces the double-proxy scenario:
+	 * <pre>
+	 * actualDataSource (LazyConnectionDataSourceProxy)
+	 *   → AbstractRoutingDataSource
+	 *     → readWriteDataSource  (already observation-proxied by the time actualDataSource is created)
+	 *     → readOnlyDataSource   (already observation-proxied by the time actualDataSource is created)
+	 * </pre>
+	 */
+	@Configuration(proxyBeanMethods = false)
+	static class NestedRoutingDataSourceConfiguration {
+
+		@Bean
+		DataSource readWriteDataSource() {
+			return mockPooledDataSource();
+		}
+
+		@Bean
+		DataSource readOnlyDataSource() {
+			return mockPooledDataSource();
+		}
+
+		@Bean
+		DataSource actualDataSource(@Qualifier("readWriteDataSource") DataSource readWriteDataSource,
+				@Qualifier("readOnlyDataSource") DataSource readOnlyDataSource) {
+			AbstractRoutingDataSource router = new AbstractRoutingDataSource() {
+				@Override
+				protected Object determineCurrentLookupKey() {
+					return "rw";
+				}
+			};
+			router.setTargetDataSources(Map.of("rw", readWriteDataSource, "ro", readOnlyDataSource));
+			router.setDefaultTargetDataSource(readWriteDataSource);
+			router.afterPropertiesSet();
+			return new LazyConnectionDataSourceProxy(router);
+		}
+
+		private static DataSource mockPooledDataSource() {
+			Connection connection = mock(Connection.class);
+			DataSource ds = mock(DataSource.class);
+			try {
+				given(ds.getConnection()).willReturn(connection);
+			}
+			catch (SQLException ex) {
+				throw new RuntimeException(ex);
+			}
+			return ds;
+		}
+
 	}
 
 	static class CustomConnectionObservationConvention implements ConnectionObservationConvention {

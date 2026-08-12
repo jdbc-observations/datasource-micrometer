@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
+import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
 import net.ttddyy.dsproxy.proxy.ResultSetProxyLogicFactory;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import net.ttddyy.dsproxy.transform.ParameterTransformer;
@@ -30,6 +31,9 @@ import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.jdbc.datasource.DelegatingDataSource;
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+import org.springframework.util.ClassUtils;
 
 /**
  * A {@link BeanPostProcessor} to instrument {@link DataSource} beans.
@@ -37,6 +41,10 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  * @author Tadaya Tsuyukubo
  */
 public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor {
+
+	static final boolean SPRING_JDBC_PRESENT = ClassUtils.isPresent(
+			"org.springframework.jdbc.datasource.DelegatingDataSource",
+			DataSourceObservationBeanPostProcessor.class.getClassLoader());
 
 	private final ObjectProvider<JdbcProperties> jdbcPropertiesProvider;
 
@@ -85,7 +93,7 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean instanceof DataSource dataSource && !ScopedProxyUtils.isScopedTarget(beanName)
-				&& !isExcludedBean(beanName)) {
+				&& !isExcludedBean(beanName) && !containsAlreadyProxiedTarget(dataSource)) {
 			String dataSourceName = this.dataSourceNameResolverProvider.getObject().resolve(beanName, dataSource);
 			ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSourceName, dataSource);
 			getConfigurer().configure(builder);
@@ -102,6 +110,20 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 		else {
 			return bean;
 		}
+	}
+
+	/**
+	 * Returns {@code true} if {@code ds} is a routing or delegating wrapper whose chain
+	 * contains a datasource already instrumented by datasource-proxy.
+	 *
+	 * <p>When {@code spring-jdbc} is absent the check is skipped and returns {@code false},
+	 * preserving the pre-existing behaviour of wrapping all datasource beans.
+	 */
+	private static boolean containsAlreadyProxiedTarget(DataSource ds) {
+		if (SPRING_JDBC_PRESENT) {
+			return SpringJdbcDelegate.containsProxiedTarget(ds);
+		}
+		return false;
 	}
 
 	private DataSourceProxyBuilderConfigurer getConfigurer() {
@@ -123,6 +145,32 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 
 	private JdbcProperties getJdbcProperties() {
 		return this.jdbcPropertiesProvider.getObject();
+	}
+
+	/**
+	 * Isolated in a separate class so that the JVM only loads it when
+	 * {@code spring-jdbc} is actually on the classpath. If it were inlined in the
+	 * outer class, the mere presence of {@link DelegatingDataSource} and
+	 * {@link AbstractRoutingDataSource} in the constant pool would cause a
+	 * {@link NoClassDefFoundError} at class-load time when {@code spring-jdbc} is absent.
+	 */
+	private static final class SpringJdbcDelegate {
+
+		static boolean containsProxiedTarget(final DataSource ds) {
+			if (ds instanceof DelegatingDataSource delegating) {
+				final DataSource target = delegating.getTargetDataSource();
+				return target != null
+						&& (target instanceof ProxyJdbcObject || containsProxiedTarget(target));
+			}
+			if (ds instanceof AbstractRoutingDataSource routing) {
+				return routing.getResolvedDataSources()
+					.values()
+					.stream()
+					.anyMatch(target -> target instanceof ProxyJdbcObject || containsProxiedTarget(target));
+			}
+			return false;
+		}
+
 	}
 
 }
