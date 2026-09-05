@@ -471,7 +471,8 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 	 * jdbc:mysql://localhost:5555/mydatabase}. Taken from Spring Cloud Sleuth.
 	 */
 	private void populateFromConnection(ConnectionAttributes attributes, Connection connection) {
-		JdbcConnectionInfoExtractor.JdbcConnectionInfo info = this.jdbcConnectionInfoExtractor.extract(connection);
+		JdbcConnectionInfoExtractor.JdbcConnectionInfo info = this.jdbcConnectionInfoExtractor
+			.extract(attributes.dataSource, connection);
 		attributes.url = info.getUrl();
 		if (info.getUrl() != null) {
 			attributes.host = info.getHost();

@@ -22,6 +22,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -47,6 +48,7 @@ class DefaultJdbcConnectionInfoExtractorTests {
 
 	@Test
 	void parsingFailure() throws Exception {
+		DataSource dataSource = mock(DataSource.class);
 		Connection connection;
 		JdbcConnectionInfoExtractor.JdbcConnectionInfo result;
 		SQLException sqlException = mock(SQLException.class);
@@ -54,7 +56,7 @@ class DefaultJdbcConnectionInfoExtractorTests {
 		connection = mock(Connection.class);
 		doThrow(sqlException).when(connection).getMetaData();
 
-		result = this.extractor.extract(connection);
+		result = this.extractor.extract(dataSource, connection);
 		assertThat(result).isSameAs(DefaultJdbcConnectionInfoExtractor.EMPTY_RESULT);
 
 		connection = mock(Connection.class);
@@ -62,7 +64,7 @@ class DefaultJdbcConnectionInfoExtractorTests {
 		doReturn(metaData).when(connection).getMetaData();
 		doThrow(sqlException).when(metaData).getURL();
 
-		result = this.extractor.extract(connection);
+		result = this.extractor.extract(dataSource, connection);
 		assertThat(result).isSameAs(DefaultJdbcConnectionInfoExtractor.EMPTY_RESULT);
 	}
 
@@ -70,24 +72,26 @@ class DefaultJdbcConnectionInfoExtractorTests {
 	@ValueSource(strings = "localhost:{12345}") // "{","}" are not compliant to RFC 2396
 	@NullSource
 	void invalidUrl(String url) throws Exception {
+		DataSource dataSource = mock(DataSource.class);
 		// valid, invalid
 		Connection connection = mock(Connection.class);
 		DatabaseMetaData metaData = mock(DatabaseMetaData.class);
 		doReturn(metaData).when(connection).getMetaData();
 		doReturn(url).when(metaData).getURL();
 
-		JdbcConnectionInfoExtractor.JdbcConnectionInfo result = this.extractor.extract(connection);
+		JdbcConnectionInfoExtractor.JdbcConnectionInfo result = this.extractor.extract(dataSource, connection);
 		assertThat(result).isSameAs(DefaultJdbcConnectionInfoExtractor.EMPTY_RESULT);
 	}
 
 	@Test
 	void extract() throws Exception {
+		DataSource dataSource = mock(DataSource.class);
 		Connection connection = mock(Connection.class);
 		DatabaseMetaData metaData = mock(DatabaseMetaData.class);
 		doReturn(metaData).when(connection).getMetaData();
 		doReturn("jdbc://localhost:5432").when(metaData).getURL();
 
-		JdbcConnectionInfoExtractor.JdbcConnectionInfo result = this.extractor.extract(connection);
+		JdbcConnectionInfoExtractor.JdbcConnectionInfo result = this.extractor.extract(dataSource, connection);
 
 		assertThat(result.getUrl()).isEqualTo("jdbc://localhost:5432");
 		assertThat(result.getHost()).isEqualTo("localhost");
@@ -96,14 +100,16 @@ class DefaultJdbcConnectionInfoExtractorTests {
 
 	@Test
 	void cache() throws Exception {
+		DataSource dataSourceA = mock(DataSource.class);
+		DataSource dataSourceB = mock(DataSource.class);
 		Connection connection = mock(Connection.class);
 		DatabaseMetaData metaData = mock(DatabaseMetaData.class);
 		doReturn(metaData).when(connection).getMetaData();
-		doReturn("jdbc://localhost:5432", "jdbc://localhost:5432", "jdbc://remote:5432").when(metaData).getURL();
+		doReturn("jdbc://localhost:5432").when(metaData).getURL();
 
-		JdbcConnectionInfoExtractor.JdbcConnectionInfo first = this.extractor.extract(connection);
-		JdbcConnectionInfoExtractor.JdbcConnectionInfo second = this.extractor.extract(connection);
-		JdbcConnectionInfoExtractor.JdbcConnectionInfo third = this.extractor.extract(connection);
+		JdbcConnectionInfoExtractor.JdbcConnectionInfo first = this.extractor.extract(dataSourceA, connection);
+		JdbcConnectionInfoExtractor.JdbcConnectionInfo second = this.extractor.extract(dataSourceA, connection);
+		JdbcConnectionInfoExtractor.JdbcConnectionInfo third = this.extractor.extract(dataSourceB, connection);
 
 		assertThat(first).isSameAs(second);
 		assertThat(first).isNotSameAs(third);
@@ -111,14 +117,15 @@ class DefaultJdbcConnectionInfoExtractorTests {
 
 	@Test
 	void clear() throws Exception {
+		DataSource dataSource = mock(DataSource.class);
 		Connection connection = mock(Connection.class);
 		DatabaseMetaData metaData = mock(DatabaseMetaData.class);
 		doReturn(metaData).when(connection).getMetaData();
 		doReturn("jdbc://localhost:5432", "jdbc://localhost:5432").when(metaData).getURL();
 
-		JdbcConnectionInfoExtractor.JdbcConnectionInfo first = this.extractor.extract(connection);
+		JdbcConnectionInfoExtractor.JdbcConnectionInfo first = this.extractor.extract(dataSource, connection);
 		this.extractor.clear();
-		JdbcConnectionInfoExtractor.JdbcConnectionInfo second = this.extractor.extract(connection);
+		JdbcConnectionInfoExtractor.JdbcConnectionInfo second = this.extractor.extract(dataSource, connection);
 
 		assertThat(first).isNotSameAs(second);
 	}

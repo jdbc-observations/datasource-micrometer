@@ -18,11 +18,12 @@ package net.ttddyy.observation.tracing;
 
 import io.micrometer.common.lang.Nullable;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.Objects;
 
 /**
- * Retrieve necessary details from {@link Connection}.
+ * Retrieve the necessary details from {@link Connection}.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.4.1
@@ -31,7 +32,15 @@ public interface JdbcConnectionInfoExtractor {
 
 	JdbcConnectionInfo EMPTY_RESULT = new JdbcConnectionInfo(null, null, 0);
 
-	JdbcConnectionInfo extract(Connection connection);
+	/**
+	 * Extract {@link JdbcConnectionInfo} from {@link Connection}.
+	 * <p>
+	 * {@link DataSource} could be used to cache the result.
+	 * @param dataSource datasource that the connection is associated with.
+	 * @param connection connection to extract information from.
+	 * @return extracted information.
+	 */
+	JdbcConnectionInfo extract(DataSource dataSource, Connection connection);
 
 	class JdbcConnectionInfo {
 
