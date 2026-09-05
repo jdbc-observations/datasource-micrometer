@@ -144,6 +144,12 @@ public class DataSourceObservationAutoConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
+	public DataSourceProxyCreationStrategy dataSourceProxyCreationStrategy() {
+		return DataSourceProxyCreationStrategy.DEFAULT;
+	}
+
+	@Bean
 	public static DataSourceObservationBeanPostProcessor dataSourceObservationBeanPostProcessor(
 			ObjectProvider<JdbcProperties> jdbcProperties,
 			ObjectProvider<DataSourceNameResolver> dataSourceNameResolvers,
@@ -154,11 +160,12 @@ public class DataSourceObservationAutoConfiguration {
 			ObjectProvider<ResultSetProxyLogicFactory> resultSetProxyLogicFactory,
 			ObjectProvider<ResultSetProxyLogicFactory> generatedKeysProxyLogicFactory,
 			ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProvider,
-			ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers) {
+			ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers,
+			ObjectProvider<DataSourceProxyCreationStrategy> dataSourceProxyCreationStrategy) {
 		return new DataSourceObservationBeanPostProcessor(jdbcProperties, dataSourceNameResolvers, listeners,
 				methodExecutionListeners, parameterTransformer, queryTransformer, resultSetProxyLogicFactory,
 				generatedKeysProxyLogicFactory, dataSourceProxyConnectionIdManagerProvider,
-				proxyDataSourceBuilderCustomizers);
+				proxyDataSourceBuilderCustomizers, dataSourceProxyCreationStrategy);
 	}
 
 	@Bean

@@ -305,6 +305,19 @@ class DataSourceObservationAutoConfigurationTests {
 	}
 
 	@Test
+	void customDataSourceProxyCreationStrategy() {
+		DataSourceProxyCreationStrategy strategy = mock(DataSourceProxyCreationStrategy.class);
+		new ApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))
+			.withBean(ObservationRegistry.class, ObservationRegistry::create)
+			.withBean(Tracer.class, () -> mock(Tracer.class))
+			.withBean(DataSourceProxyCreationStrategy.class, () -> strategy)
+			.run((context) -> {
+				assertThat(context).getBean(DataSourceProxyCreationStrategy.class).isSameAs(strategy);
+			});
+	}
+
+	@Test
 	void event() {
 		ApplicationContextRunner runner = new ApplicationContextRunner()
 			.withConfiguration(AutoConfigurations.of(DataSourceObservationAutoConfiguration.class))

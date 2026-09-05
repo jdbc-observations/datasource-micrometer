@@ -18,6 +18,7 @@ package net.ttddyy.observation.tracing;
 
 import io.micrometer.common.lang.Nullable;
 
+import javax.sql.DataSource;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -26,33 +27,41 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Default implementation of {@link JdbcConnectionInfoExtractor}.
+ * <p>
+ * Caches the
+ * {@link net.ttddyy.observation.tracing.JdbcConnectionInfoExtractor.JdbcConnectionInfo}
+ * based on the {@link DataSource}.
  *
  * @author Tadaya Tsuyukubo
  * @since 1.4.1
  */
 public class DefaultJdbcConnectionInfoExtractor implements JdbcConnectionInfoExtractor {
 
-	private final Map<String, JdbcConnectionInfo> cache = new ConcurrentHashMap<>();
+	private final Map<DataSource, JdbcConnectionInfo> cache = new ConcurrentHashMap<>();
 
 	@Override
-	public JdbcConnectionInfo extract(Connection connection) {
-		String jdbcUrl = retrieveUrl(connection);
-		if (jdbcUrl == null) {
-			return JdbcConnectionInfoExtractor.EMPTY_RESULT;
-		}
-		return this.cache.computeIfAbsent(jdbcUrl, key -> {
-			URI url;
-			try {
-				// strip "jdbc:"
-				String urlAsString = jdbcUrl.substring(5);
-				// Remove all white space according to RFC 2396;
-				url = URI.create(urlAsString.replace(" ", ""));
-			}
-			catch (Exception ex) {
+	public JdbcConnectionInfo extract(DataSource dataSource, Connection connection) {
+		return this.cache.computeIfAbsent(dataSource, key -> {
+			String jdbcUrl = retrieveUrl(connection);
+			if (jdbcUrl == null) {
 				return JdbcConnectionInfoExtractor.EMPTY_RESULT;
 			}
-			return new JdbcConnectionInfo(key, url.getHost(), url.getPort());
+			return constructJdbcConnectionInfo(jdbcUrl);
 		});
+	}
+
+	protected JdbcConnectionInfo constructJdbcConnectionInfo(String jdbcUrl) {
+		URI url;
+		try {
+			// strip "jdbc:"
+			String urlAsString = jdbcUrl.substring(5);
+			// Remove all white space according to RFC 2396;
+			url = URI.create(urlAsString.replace(" ", ""));
+		}
+		catch (Exception ex) {
+			return JdbcConnectionInfoExtractor.EMPTY_RESULT;
+		}
+		return new JdbcConnectionInfo(jdbcUrl, url.getHost(), url.getPort());
 	}
 
 	protected @Nullable String retrieveUrl(Connection connection) {

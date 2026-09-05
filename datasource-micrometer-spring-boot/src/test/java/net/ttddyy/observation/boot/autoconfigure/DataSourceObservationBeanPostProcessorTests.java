@@ -16,12 +16,6 @@
 
 package net.ttddyy.observation.boot.autoconfigure;
 
-import java.sql.Connection;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import javax.sql.DataSource;
-
 import net.ttddyy.dsproxy.listener.MethodExecutionListener;
 import net.ttddyy.dsproxy.listener.QueryExecutionListener;
 import net.ttddyy.dsproxy.proxy.ProxyJdbcObject;
@@ -34,9 +28,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-
-import org.springframework.aop.SpringProxy;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.ObjectProvider;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -72,6 +70,8 @@ class DataSourceObservationBeanPostProcessorTests {
 
 	private ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers;
 
+	private ObjectProvider<DataSourceProxyCreationStrategy> dataSourceProxyCreationStrategy;
+
 	private DataSourceObservationBeanPostProcessor processor;
 
 	@BeforeEach
@@ -87,12 +87,14 @@ class DataSourceObservationBeanPostProcessorTests {
 		this.generatedKeysProxyLogicFactoryProvider = mock(ObjectProvider.class);
 		this.dataSourceProxyConnectionIdManagerProviderProvider = mock(ObjectProvider.class);
 		this.proxyDataSourceBuilderCustomizers = mock(ObjectProvider.class);
+		this.dataSourceProxyCreationStrategy = mock(ObjectProvider.class);
 
 		this.processor = new DataSourceObservationBeanPostProcessor(this.jdbcPropertiesProvider,
 				this.dataSourceNameResolverProvider, this.listenersProvider, this.methodExecutionListenersProvider,
 				this.parameterTransformerProvider, this.queryTransformerProvider,
 				this.resultSetProxyLogicFactoryProvider, this.generatedKeysProxyLogicFactoryProvider,
-				this.dataSourceProxyConnectionIdManagerProviderProvider, this.proxyDataSourceBuilderCustomizers);
+				this.dataSourceProxyConnectionIdManagerProviderProvider, this.proxyDataSourceBuilderCustomizers,
+				this.dataSourceProxyCreationStrategy);
 	}
 
 	@Test
@@ -109,6 +111,10 @@ class DataSourceObservationBeanPostProcessorTests {
 		Connection connection = mock(Connection.class);
 		DataSource dataSource = mock(DataSource.class);
 		given(dataSource.getConnection()).willReturn(connection);
+
+		DataSourceProxyCreationStrategy creationStrategy = mock(DataSourceProxyCreationStrategy.class);
+		given(creationStrategy.shouldCreateProxy(any(DataSource.class), any(String.class))).willReturn(true);
+		given(this.dataSourceProxyCreationStrategy.getObject()).willReturn(creationStrategy);
 
 		Object result = this.processor.postProcessAfterInitialization(dataSource, "foo");
 
@@ -130,6 +136,34 @@ class DataSourceObservationBeanPostProcessorTests {
 		assertThat(result).isInstanceOf(DataSource.class).isNotInstanceOf(ProxyDataSource.class);
 	}
 
+	@ParameterizedTest
+	@ValueSource(booleans = { true, false })
+	void shouldCreateProxy(boolean shouldCreateProxy) {
+		JdbcProperties jdbcProperties = new JdbcProperties();
+		given(this.jdbcPropertiesProvider.getObject()).willReturn(jdbcProperties);
+
+		DataSourceNameResolver dataSourceNameResolver = mock(DataSourceNameResolver.class);
+		given(dataSourceNameResolver.resolve(any(String.class), any(DataSource.class))).willReturn("my-ds");
+		given(this.dataSourceNameResolverProvider.getObject()).willReturn(dataSourceNameResolver);
+
+		DataSourceProxyCreationStrategy creationStrategy = mock(DataSourceProxyCreationStrategy.class);
+		given(creationStrategy.shouldCreateProxy(any(DataSource.class), any(String.class)))
+			.willReturn(shouldCreateProxy);
+		given(this.dataSourceProxyCreationStrategy.getObject()).willReturn(creationStrategy);
+
+		DataSource dataSource = mock(DataSource.class);
+		Object result = this.processor.postProcessAfterInitialization(dataSource, "foo");
+
+		if (shouldCreateProxy) {
+			assertThat(result).isNotSameAs(dataSource)
+				.isInstanceOf(DataSource.class)
+				.isInstanceOf(ProxyJdbcObject.class);
+		}
+		else {
+			assertThat(result).isSameAs(dataSource);
+		}
+	}
+
 	@Test
 	void proxyDataSourceBuilderCustomizers() {
 		JdbcProperties jdbcProperties = new JdbcProperties();
@@ -138,6 +172,10 @@ class DataSourceObservationBeanPostProcessorTests {
 		DataSourceNameResolver dataSourceNameResolver = mock(DataSourceNameResolver.class);
 		given(dataSourceNameResolver.resolve(any(String.class), any(DataSource.class))).willReturn("not-customized-ds");
 		given(this.dataSourceNameResolverProvider.getObject()).willReturn(dataSourceNameResolver);
+
+		DataSourceProxyCreationStrategy creationStrategy = mock(DataSourceProxyCreationStrategy.class);
+		given(creationStrategy.shouldCreateProxy(any(DataSource.class), any(String.class))).willReturn(true);
+		given(this.dataSourceProxyCreationStrategy.getObject()).willReturn(creationStrategy);
 
 		ProxyDataSourceBuilderCustomizer customizer = (builder, dataSource, beanName, dataSourceName) -> {
 			assertThat(beanName).isEqualTo("foo");
@@ -167,6 +205,10 @@ class DataSourceObservationBeanPostProcessorTests {
 		DataSourceNameResolver dataSourceNameResolver = mock(DataSourceNameResolver.class);
 		given(dataSourceNameResolver.resolve(any(String.class), any(DataSource.class))).willReturn("my-ds");
 		given(this.dataSourceNameResolverProvider.getObject()).willReturn(dataSourceNameResolver);
+
+		DataSourceProxyCreationStrategy creationStrategy = mock(DataSourceProxyCreationStrategy.class);
+		given(creationStrategy.shouldCreateProxy(any(DataSource.class), any(String.class))).willReturn(true);
+		given(this.dataSourceProxyCreationStrategy.getObject()).willReturn(creationStrategy);
 
 		DataSource dataSource = mock(DataSource.class);
 		Object result = this.processor.postProcessAfterInitialization(dataSource, "foo");

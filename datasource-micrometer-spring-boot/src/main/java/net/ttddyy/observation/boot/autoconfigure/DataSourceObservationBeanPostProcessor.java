@@ -60,6 +60,8 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 
 	private final ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers;
 
+	private final ObjectProvider<DataSourceProxyCreationStrategy> dataSourceProxyCreationStrategy;
+
 	public DataSourceObservationBeanPostProcessor(ObjectProvider<JdbcProperties> jdbcPropertiesProvider,
 			ObjectProvider<DataSourceNameResolver> dataSourceNameResolverProvider,
 			ObjectProvider<QueryExecutionListener> listenersProvider,
@@ -69,7 +71,8 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 			ObjectProvider<ResultSetProxyLogicFactory> resultSetProxyLogicFactoryProvider,
 			ObjectProvider<ResultSetProxyLogicFactory> generatedKeysProxyLogicFactoryProvider,
 			ObjectProvider<DataSourceProxyConnectionIdManagerProvider> dataSourceProxyConnectionIdManagerProviderProvider,
-			ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers) {
+			ObjectProvider<ProxyDataSourceBuilderCustomizer> proxyDataSourceBuilderCustomizers,
+			ObjectProvider<DataSourceProxyCreationStrategy> dataSourceProxyCreationStrategy) {
 		this.jdbcPropertiesProvider = jdbcPropertiesProvider;
 		this.dataSourceNameResolverProvider = dataSourceNameResolverProvider;
 		this.listenersProvider = listenersProvider;
@@ -80,12 +83,13 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 		this.generatedKeysProxyLogicFactoryProvider = generatedKeysProxyLogicFactoryProvider;
 		this.dataSourceProxyConnectionIdManagerProviderProvider = dataSourceProxyConnectionIdManagerProviderProvider;
 		this.proxyDataSourceBuilderCustomizers = proxyDataSourceBuilderCustomizers;
+		this.dataSourceProxyCreationStrategy = dataSourceProxyCreationStrategy;
 	}
 
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean instanceof DataSource dataSource && !ScopedProxyUtils.isScopedTarget(beanName)
-				&& !isExcludedBean(beanName)) {
+				&& !isExcludedBean(beanName) && shouldCreateProxy(dataSource, beanName)) {
 			String dataSourceName = this.dataSourceNameResolverProvider.getObject().resolve(beanName, dataSource);
 			ProxyDataSourceBuilder builder = ProxyDataSourceBuilder.create(dataSourceName, dataSource);
 			getConfigurer().configure(builder);
@@ -119,6 +123,10 @@ public class DataSourceObservationBeanPostProcessor implements BeanPostProcessor
 
 	private boolean isExcludedBean(String beanName) {
 		return getJdbcProperties().getExcludedDataSourceBeanNames().contains(beanName);
+	}
+
+	private boolean shouldCreateProxy(DataSource dataSource, String beanName) {
+		return this.dataSourceProxyCreationStrategy.getObject().shouldCreateProxy(dataSource, beanName);
 	}
 
 	private JdbcProperties getJdbcProperties() {
