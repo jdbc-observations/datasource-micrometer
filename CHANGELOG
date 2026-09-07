@@ -33,6 +33,11 @@ Functionally equivalent to v1.3.0, provided for Spring Boot 4.x.
 ------------------
 * Support Spring Boot 4.0.0-M3 (#78)
 
+1.5.0
+------------------
+* Cache connection info per datasource (#119)
+* Add `DataSourceProxyCreationStrategy` to customize proxy creation decision (#117)
+
 1.4.1
 ------------------
 * Specify fixed classloader in "SpringJdbcProxyFactory" (#109)
