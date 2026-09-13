@@ -9,11 +9,11 @@ jobs:
     if: github.repository == 'jdbc-observations/datasource-micrometer'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Set up Maven Central Repository
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           java-version: 17
           distribution: temurin
@@ -32,7 +32,7 @@ jobs:
           JRELEASER_MAVENCENTRAL_PASSWORD: ${{ secrets.MAVENCENTRAL_PASSWORD }}
       - name: JReleaser release output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: jreleaser-release
           path: |
