@@ -270,3 +270,27 @@ jdbc.datasource-proxy.type=SPRING_PROXY
 ----
 
 For background and details, see <<using-features-hikaricp-support-spring-cloud-refresh>>.
+
+[[how-to-exclude-datasource-beans-from-instrumentation]]
+=== How to Exclude `DataSource` Beans from Instrumentation
+
+By default, all `DataSource` beans are instrumented.
+If your application defines multiple `DataSource` beans, such as a routing `DataSource` composed of multiple data sources, you may want to instrument only the outer `DataSource`.
+
+To exclude specific `DataSource` beans, specify their bean names using the `jdbc.excluded-data-source-bean-names` property.
+
+[source,properties,indent=0]
+----
+jdbc.excluded-data-source-bean-names=internalDataSource,anotherDataSource
+----
+
+For more control over proxy creation, define a `DataSourceProxyCreationStrategy` bean.
+The strategy is called for each `DataSource` bean and can use the bean name or the `DataSource` instance to decide whether to create a proxy.
+
+[source,java,indent=0]
+----
+@Bean
+DataSourceProxyCreationStrategy dataSourceProxyCreationStrategy() {
+	return (dataSource, beanName) -> !beanName.equals("internalDataSource");
+}
+----
