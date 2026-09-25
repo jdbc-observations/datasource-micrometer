@@ -618,6 +618,7 @@ window.onload = function() {
 <li><a href="#how-to-switch-to-use-proxydatasource">2.12. How to Switch to Use ProxyDataSource</a></li>
 <li><a href="#how-to-disable-tracking-of-resultset-operations">2.13. How to Disable Tracking of ResultSet Operations</a></li>
 <li><a href="#how-to-fix-existingvalue-error">2.14. How to fix “ExistingValue must be an instance of com.zaxxer.hikari.HikariDataSource” error</a></li>
+<li><a href="#how-to-exclude-datasource-beans-from-instrumentation">2.15. How to Exclude <code>DataSource</code> Beans from Instrumentation</a></li>
 </ul>
 </li>
 </ul>
@@ -988,6 +989,33 @@ Disabling this will also make an empty value on the <code>jdbc.generated-keys</c
 </div>
 <div class="paragraph">
 <p>For background and details, see <a href="#using-features-hikaricp-support-spring-cloud-refresh">[using-features-hikaricp-support-spring-cloud-refresh]</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-to-exclude-datasource-beans-from-instrumentation"><a class="anchor" href="#how-to-exclude-datasource-beans-from-instrumentation"></a><a class="link" href="#how-to-exclude-datasource-beans-from-instrumentation">2.15. How to Exclude <code>DataSource</code> Beans from Instrumentation</a></h3>
+<div class="paragraph">
+<p>By default, all <code>DataSource</code> beans are instrumented.
+If your application defines multiple <code>DataSource</code> beans, such as a routing <code>DataSource</code> composed of multiple data sources, you may want to instrument only the outer <code>DataSource</code>.</p>
+</div>
+<div class="paragraph">
+<p>To exclude specific <code>DataSource</code> beans, specify their bean names using the <code>jdbc.excluded-data-source-bean-names</code> property.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-properties" data-lang="properties">jdbc.excluded-data-source-bean-names=internalDataSource,anotherDataSource</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For more control over proxy creation, define a <code>DataSourceProxyCreationStrategy</code> bean.
+The strategy is called for each <code>DataSource</code> bean and can use the bean name or the <code>DataSource</code> instance to decide whether to create a proxy.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@Bean
+DataSourceProxyCreationStrategy dataSourceProxyCreationStrategy() {
+    return (dataSource, beanName) -&gt; !beanName.equals("internalDataSource");
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
