@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +49,7 @@ import net.ttddyy.dsproxy.StatementType;
 import net.ttddyy.dsproxy.listener.MethodExecutionContext;
 import net.ttddyy.dsproxy.proxy.ParameterSetOperation;
 import net.ttddyy.dsproxy.proxy.ProxyConfig;
+import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import net.ttddyy.observation.tracing.ConnectionAttributesManager.ConnectionAttributes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,6 +61,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static io.micrometer.tracing.test.simple.TracingAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -403,6 +406,26 @@ class DataSourceObservationListenerTests {
 				.assertThatThrowable()
 				.isSameAs(exception);
 		// @formatter:on
+	}
+
+	@Test
+	void getConnectionFailurePropagatesOriginalException() throws Exception {
+		this.registry.observationConfig().observationHandler(new ConnectionTracingObservationHandler(this.tracer));
+		DataSource dataSource = mock(DataSource.class);
+		SQLException exception = new SQLException("connection failed");
+		given(dataSource.getConnection()).willThrow(exception);
+
+		DataSourceObservationListener listener = new DataSourceObservationListener(this.registry);
+		DataSource proxyDataSource = ProxyDataSourceBuilder.create(dataSource)
+			.name("myDS")
+			.listener(listener)
+			.methodListener(listener)
+			.build();
+
+		assertThatThrownBy(proxyDataSource::getConnection).isSameAs(exception);
+
+		assertThat(this.tracer).onlySpan().assertThatThrowable().isSameAs(exception);
+		assertThat(this.tracer.lastSpan()).isEnded();
 	}
 
 	@Test
