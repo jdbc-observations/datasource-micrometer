@@ -300,11 +300,12 @@ public class DataSourceObservationListener implements QueryExecutionListener, Me
 			// For normal case, observation is stopped when connection is closed.
 			// see "handleConnectionClose()".
 			if (scopeToUse != null) {
+				Observation observation = scopeToUse.getCurrentObservation();
 				try {
 					scopeToUse.close();
 				}
 				finally {
-					stopObservation(scopeToUse.getCurrentObservation(), executionContext.getThrown());
+					stopObservation(observation, executionContext.getThrown());
 				}
 			}
 		}
