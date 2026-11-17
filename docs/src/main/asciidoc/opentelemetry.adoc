@@ -94,6 +94,18 @@ jdbc.opentelemetry.metrics.enabled
 
 Control whether OpenTelemetry spans and metrics are emitted.
 
+==== Metrics
+[source]
+----
+jdbc.opentelemetry.metrics.include-query-text
+----
+
+Controls whether `db.query.text` is included in the `db.client.operation.duration` metric.
+It is disabled by default because `db.query.text` is an opt-in attribute for this metric in OpenTelemetry Semantic Conventions, and including it creates a separate time series for each distinct query.
+Spans include `db.query.text` regardless of this setting.
+
+The `db.client.operation.duration` histogram uses the explicit bucket boundaries defined by the specification: `[ 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10 ]` seconds.
+
 ==== Query Analysis
 [source]
 ----
