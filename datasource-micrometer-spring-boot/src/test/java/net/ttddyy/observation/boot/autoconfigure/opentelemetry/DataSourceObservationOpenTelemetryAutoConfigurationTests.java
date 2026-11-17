@@ -22,6 +22,8 @@ import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryMeterObservatio
 import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryQueryAnalyzer;
 import net.ttddyy.observation.tracing.opentelemetry.OpenTelemetryQueryObservationConvention;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -90,6 +92,20 @@ class DataSourceObservationOpenTelemetryAutoConfigurationTests {
 			.withPropertyValues("jdbc.opentelemetry.metrics.include-query-text=true")
 			.run((context) -> assertThat(context).getBean(OpenTelemetryMeterObservationHandler.class)
 				.hasFieldOrPropertyWithValue("includeQueryText", true));
+	}
+
+	@Test
+	void attributesOverrides() {
+		this.runner.withBean(MeterRegistry.class, SimpleMeterRegistry::new)
+			.withPropertyValues("jdbc.opentelemetry.attributes.overrides[server.address]=my-host")
+			.run((context) -> {
+				assertThat(context).getBean(OpenTelemetryQueryObservationConvention.class)
+					.extracting("attributesOverrides")
+					.isEqualTo(Map.of("server.address", "my-host"));
+				assertThat(context).getBean(OpenTelemetryMeterObservationHandler.class)
+					.extracting("attributesOverrides")
+					.isEqualTo(Map.of("server.address", "my-host"));
+			});
 	}
 
 	@Test
