@@ -18,12 +18,19 @@ package net.ttddyy.observation.tracing.opentelemetry;
 
 import io.micrometer.common.KeyValue;
 import io.micrometer.common.KeyValues;
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.config.MeterFilter;
+import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import net.ttddyy.observation.tracing.QueryContext;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static io.micrometer.core.tck.MeterRegistryAssert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -71,7 +78,6 @@ class OpenTelemetryMeterObservationHandlerTests {
 				KeyValue.of(OpenTelemetryQueryObservationConvention.DB_RESPONSE_STATUS_CODE, "response-status-code"),
 				KeyValue.of(OpenTelemetryQueryObservationConvention.ERROR_TYPE, "error-type"),
 				KeyValue.of(OpenTelemetryQueryObservationConvention.DB_QUERY_SUMMARY, "query-summary"),
-				KeyValue.of(OpenTelemetryQueryObservationConvention.DB_QUERY_TEXT, "query-text"),
 				KeyValue.of(OpenTelemetryQueryObservationConvention.DB_STORED_PROCEDURE_NAME, "stored-procedure-name"),
 				KeyValue.of(OpenTelemetryQueryObservationConvention.SERVER_ADDRESS, "server-address"),
 				KeyValue.of(OpenTelemetryQueryObservationConvention.SERVER_PORT, "server-port"),
@@ -81,6 +87,8 @@ class OpenTelemetryMeterObservationHandlerTests {
 		);
 
 		assertThat(registry).hasTimerWithNameAndTags("db.client.operation.duration", keyValues);
+		assertThat(registry).doesNotHaveTimerWithNameAndTagKeys("db.client.operation.duration",
+				OpenTelemetryQueryObservationConvention.DB_QUERY_TEXT);
 	}
 
 	@Test
@@ -156,7 +164,6 @@ class OpenTelemetryMeterObservationHandlerTests {
 				KeyValue.of(OpenTelemetryQueryObservationConvention.DB_RESPONSE_STATUS_CODE, "response-status-code-override"),
 				KeyValue.of(OpenTelemetryQueryObservationConvention.ERROR_TYPE, "error-type-override"),
 				KeyValue.of(OpenTelemetryQueryObservationConvention.DB_QUERY_SUMMARY, "query-summary-override"),
-				KeyValue.of(OpenTelemetryQueryObservationConvention.DB_QUERY_TEXT, "query-text-override"),
 				KeyValue.of(OpenTelemetryQueryObservationConvention.DB_STORED_PROCEDURE_NAME, "stored-procedure-name-override"),
 				KeyValue.of(OpenTelemetryQueryObservationConvention.SERVER_ADDRESS, "server-address-override"),
 				KeyValue.of(OpenTelemetryQueryObservationConvention.SERVER_PORT, "server-port-override"),
@@ -166,6 +173,79 @@ class OpenTelemetryMeterObservationHandlerTests {
 		);
 
 		assertThat(registry).hasTimerWithNameAndTags("db.client.operation.duration", keyValues);
+		assertThat(registry).doesNotHaveTimerWithNameAndTagKeys("db.client.operation.duration",
+				OpenTelemetryQueryObservationConvention.DB_QUERY_TEXT);
+	}
+
+	@Test
+	public void metricWithQueryTextIncluded() {
+		OpenTelemetryAttributesManager manager = mock(OpenTelemetryAttributesManager.class);
+		SimpleMeterRegistry registry = new SimpleMeterRegistry();
+		OpenTelemetryMeterObservationHandler handler = new OpenTelemetryMeterObservationHandler(manager, registry);
+		handler.setIncludeQueryText(true);
+
+		OpenTelemetryAttributes attributes = new OpenTelemetryAttributes();
+		attributes.setQuerySummary("query-summary");
+		attributes.setQueryText("query-text");
+
+		QueryContext queryContext = new QueryContext();
+		given(manager.getOrCreateAttributes(queryContext)).willReturn(attributes);
+
+		handler.onStart(queryContext);
+		handler.onStop(queryContext);
+
+		KeyValues keyValues = KeyValues.of(
+				KeyValue.of(OpenTelemetryQueryObservationConvention.DB_QUERY_SUMMARY, "query-summary"),
+				KeyValue.of(OpenTelemetryQueryObservationConvention.DB_QUERY_TEXT, "query-text"));
+		assertThat(registry).hasTimerWithNameAndTags("db.client.operation.duration", keyValues);
+	}
+
+	@Test
+	public void metricWithQueryTextIncludedButAbsent() {
+		OpenTelemetryAttributesManager manager = mock(OpenTelemetryAttributesManager.class);
+		SimpleMeterRegistry registry = new SimpleMeterRegistry();
+		OpenTelemetryMeterObservationHandler handler = new OpenTelemetryMeterObservationHandler(manager, registry);
+		handler.setIncludeQueryText(true);
+
+		QueryContext queryContext = new QueryContext();
+		given(manager.getOrCreateAttributes(queryContext)).willReturn(new OpenTelemetryAttributes());
+
+		handler.onStart(queryContext);
+		handler.onStop(queryContext);
+
+		assertThat(registry).hasTimerWithNameAndTags("db.client.operation.duration",
+				KeyValues.of(KeyValue.of("network.peer.port", "0")));
+		assertThat(registry).doesNotHaveTimerWithNameAndTagKeys("db.client.operation.duration",
+				OpenTelemetryQueryObservationConvention.DB_QUERY_TEXT);
+	}
+
+	@Test
+	public void histogramBuckets() {
+		OpenTelemetryAttributesManager manager = mock(OpenTelemetryAttributesManager.class);
+		SimpleMeterRegistry registry = new SimpleMeterRegistry();
+		AtomicReference<DistributionStatisticConfig> configHolder = new AtomicReference<>();
+		registry.config().meterFilter(new MeterFilter() {
+			@Override
+			public DistributionStatisticConfig configure(Meter.Id id, DistributionStatisticConfig config) {
+				configHolder.set(config);
+				return config;
+			}
+		});
+		OpenTelemetryMeterObservationHandler handler = new OpenTelemetryMeterObservationHandler(manager, registry);
+
+		QueryContext queryContext = new QueryContext();
+		given(manager.getOrCreateAttributes(queryContext)).willReturn(new OpenTelemetryAttributes());
+
+		handler.onStart(queryContext);
+		handler.onStop(queryContext);
+
+		// only the explicit bucket boundaries defined by the spec
+		DistributionStatisticConfig config = configHolder.get();
+		Assertions.assertThat(config.isPercentileHistogram()).isNotEqualTo(Boolean.TRUE);
+		double[] boundariesInSeconds = Arrays.stream(config.getServiceLevelObjectiveBoundaries())
+			.map((nanos) -> nanos / TimeUnit.SECONDS.toNanos(1))
+			.toArray();
+		Assertions.assertThat(boundariesInSeconds).containsExactly(0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10);
 	}
 
 }
