@@ -1,6 +1,11 @@
 Datasource Micrometer Changelog
 ================================
 
+1.5.1
+------------------
+* OpenTelemetry metric (`db.client.operation.duration`) no longer includes `db.query.text` by default and no longer publishes a percentile histogram, following OpenTelemetry Semantic Conventions.
+  Set `jdbc.opentelemetry.metrics.include-query-text=true` to include `db.query.text`. (#126)
+
 1.5.0
 ------------------
 * Cache connection info per datasource (#119)

@@ -79,6 +79,20 @@ class DataSourceObservationOpenTelemetryAutoConfigurationTests {
 	}
 
 	@Test
+	void metricsIncludeQueryText() {
+		// default
+		this.runner.withBean(MeterRegistry.class, SimpleMeterRegistry::new)
+			.run((context) -> assertThat(context).getBean(OpenTelemetryMeterObservationHandler.class)
+				.hasFieldOrPropertyWithValue("includeQueryText", false));
+
+		// enabled by property
+		this.runner.withBean(MeterRegistry.class, SimpleMeterRegistry::new)
+			.withPropertyValues("jdbc.opentelemetry.metrics.include-query-text=true")
+			.run((context) -> assertThat(context).getBean(OpenTelemetryMeterObservationHandler.class)
+				.hasFieldOrPropertyWithValue("includeQueryText", true));
+	}
+
+	@Test
 	void openTelemetryQueryAnalyzerCache() {
 		// default
 		this.runner.run((context) -> assertThat(context).getBean("openTelemetryQueryAnalyzer")
