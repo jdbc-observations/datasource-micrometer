@@ -77,6 +77,10 @@ public class DataSourceObservationOpenTelemetryAutoConfiguration {
 		OpenTelemetryMeterObservationHandler handler = new OpenTelemetryMeterObservationHandler(attributesManager,
 				meterRegistry);
 		handler.setIncludeQueryText(properties.getMetrics().isIncludeQueryText());
+		Map<String, String> overrides = properties.getAttributes().getOverrides();
+		if (!overrides.isEmpty()) {
+			handler.setAttributesOverrides(overrides);
+		}
 		return handler;
 	}
 

@@ -42,7 +42,7 @@
         <assertj.version>3.27.7</assertj.version>
 
         <!-- datasource-micrometer module -->
-        <datasource-proxy.version>1.11.0</datasource-proxy.version>
+        <datasource-proxy.version>1.11.1</datasource-proxy.version>
 
         <!-- datasource-micrometer-opentracing module -->
         <jsqlparser.version>5.3</jsqlparser.version>
