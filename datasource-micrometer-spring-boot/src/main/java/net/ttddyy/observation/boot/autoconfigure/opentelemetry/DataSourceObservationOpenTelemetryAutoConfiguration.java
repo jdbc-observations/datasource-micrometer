@@ -72,9 +72,12 @@ public class DataSourceObservationOpenTelemetryAutoConfiguration {
 	@ConditionalOnProperty(prefix = "jdbc.opentelemetry.metrics", name = "enabled", havingValue = "true",
 			matchIfMissing = true)
 	@ConditionalOnBean(MeterRegistry.class)
-	OpenTelemetryMeterObservationHandler openTelemetryMeterObservationHandler(
+	OpenTelemetryMeterObservationHandler openTelemetryMeterObservationHandler(JdbcOpenTelemetryProperties properties,
 			OpenTelemetryAttributesManager attributesManager, MeterRegistry meterRegistry) {
-		return new OpenTelemetryMeterObservationHandler(attributesManager, meterRegistry);
+		OpenTelemetryMeterObservationHandler handler = new OpenTelemetryMeterObservationHandler(attributesManager,
+				meterRegistry);
+		handler.setIncludeQueryText(properties.getMetrics().isIncludeQueryText());
+		return handler;
 	}
 
 	@Bean

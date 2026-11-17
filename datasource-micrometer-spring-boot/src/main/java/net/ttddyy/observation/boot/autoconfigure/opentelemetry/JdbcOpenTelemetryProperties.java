@@ -34,12 +34,42 @@ public class JdbcOpenTelemetryProperties {
 
 	private final Analysis analysis = new Analysis();
 
+	private final Metrics metrics = new Metrics();
+
 	public Attributes getAttributes() {
 		return this.attributes;
 	}
 
 	public Analysis getAnalysis() {
 		return this.analysis;
+	}
+
+	public Metrics getMetrics() {
+		return this.metrics;
+	}
+
+	/**
+	 * Metrics related properties.
+	 *
+	 * @since 1.5.1
+	 */
+	public static class Metrics {
+
+		/**
+		 * Whether to include "db.query.text" in the "db.client.operation.duration"
+		 * metric. It is opt-in in OpenTelemetry Semantic Conventions as it causes high
+		 * cardinality.
+		 */
+		private boolean includeQueryText;
+
+		public boolean isIncludeQueryText() {
+			return this.includeQueryText;
+		}
+
+		public void setIncludeQueryText(boolean includeQueryText) {
+			this.includeQueryText = includeQueryText;
+		}
+
 	}
 
 	public static class Attributes {

@@ -46,6 +46,8 @@ public class OpenTelemetryMeterObservationHandler implements ObservationHandler<
 
 	private Map<String, String> attributesOverrides = new HashMap<>();
 
+	private boolean includeQueryText;
+
 	public OpenTelemetryMeterObservationHandler(OpenTelemetryAttributesManager attributesManager,
 			MeterRegistry meterRegistry) {
 		this.attributesManager = attributesManager;
@@ -78,7 +80,9 @@ public class OpenTelemetryMeterObservationHandler implements ObservationHandler<
 				attributes::getResponseStatusCode);
 		addTagIfAvailable(tags, OpenTelemetryQueryObservationConvention.ERROR_TYPE, attributes::getErrorType);
 		addTagIfAvailable(tags, OpenTelemetryQueryObservationConvention.DB_QUERY_SUMMARY, attributes::getQuerySummary);
-		addTagIfAvailable(tags, OpenTelemetryQueryObservationConvention.DB_QUERY_TEXT, attributes::getQueryText);
+		if (this.includeQueryText) {
+			addTagIfAvailable(tags, OpenTelemetryQueryObservationConvention.DB_QUERY_TEXT, attributes::getQueryText);
+		}
 		addTagIfAvailable(tags, OpenTelemetryQueryObservationConvention.DB_STORED_PROCEDURE_NAME,
 				attributes::getStoredProcedureName);
 		addTagIfAvailable(tags, OpenTelemetryQueryObservationConvention.SERVER_ADDRESS, attributes::getServerAddress);
@@ -88,10 +92,8 @@ public class OpenTelemetryMeterObservationHandler implements ObservationHandler<
 		addTagIfAvailable(tags, "network.peer.port", () -> String.valueOf(context.getPort()));
 
 		Timer.Sample sample = context.getRequired(Timer.Sample.class);
-		Timer timer = Timer.builder(DURATION)
-			.description("Duration of database client operations")
-			.publishPercentileHistogram()
-			// @formatter:off
+		Timer timer = Timer.builder(DURATION).description("Duration of database client operations")
+		// @formatter:off
 			// ExplicitBucketBoundaries of [ 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10 ].
 			.sla(
 				Duration.ofMillis(1),
@@ -118,6 +120,17 @@ public class OpenTelemetryMeterObservationHandler implements ObservationHandler<
 
 	public void setAttributesOverrides(Map<String, String> attributesOverrides) {
 		this.attributesOverrides = attributesOverrides;
+	}
+
+	/**
+	 * Whether to include {@code db.query.text} in the metric. It is an opt-in attribute
+	 * in OpenTelemetry Semantic Conventions as it has high cardinality. Default is
+	 * {@code false}.
+	 * @param includeQueryText {@code true} to include {@code db.query.text}
+	 * @since 1.5.1
+	 */
+	public void setIncludeQueryText(boolean includeQueryText) {
+		this.includeQueryText = includeQueryText;
 	}
 
 }
