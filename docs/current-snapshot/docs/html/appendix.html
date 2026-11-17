@@ -765,6 +765,11 @@ Also, you can define your own properties.
 <td class="tableblock halign-left valign-top"><p class="tableblock">Whether to enable support for OpenTelemetry Semantic Conventions for metrics.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.metrics.include-query-text</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to include "db.query.text" in the "db.client.operation.duration" metric. It is opt-in in OpenTelemetry Semantic Conventions as it causes high cardinality.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.spans.enabled</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Whether to enable support for OpenTelemetry Semantic Conventions for spans.</p></td>

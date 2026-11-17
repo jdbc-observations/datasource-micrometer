@@ -1423,6 +1423,22 @@ jdbc.opentelemetry.metrics.enabled</code></pre>
 </div>
 </div>
 <div class="sect4">
+<h5 id="metrics"><a class="anchor" href="#metrics"></a><a class="link" href="#metrics">Metrics</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">jdbc.opentelemetry.metrics.include-query-text</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Controls whether <code>db.query.text</code> is included in the <code>db.client.operation.duration</code> metric.
+It is disabled by default because <code>db.query.text</code> is an opt-in attribute for this metric in OpenTelemetry Semantic Conventions, and including it creates a separate time series for each distinct query.
+Spans include <code>db.query.text</code> regardless of this setting.</p>
+</div>
+<div class="paragraph">
+<p>The <code>db.client.operation.duration</code> histogram uses the explicit bucket boundaries defined by the specification: <code>[ 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10 ]</code> seconds.</p>
+</div>
+</div>
+<div class="sect4">
 <h5 id="query-analysis"><a class="anchor" href="#query-analysis"></a><a class="link" href="#query-analysis">Query Analysis</a></h5>
 <div class="listingblock">
 <div class="content">
@@ -2035,6 +2051,11 @@ Also, you can define your own properties.
 <td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.metrics.enabled</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Whether to enable support for OpenTelemetry Semantic Conventions for metrics.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.metrics.include-query-text</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to include "db.query.text" in the "db.client.operation.duration" metric. It is opt-in in OpenTelemetry Semantic Conventions as it causes high cardinality.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.spans.enabled</p></td>

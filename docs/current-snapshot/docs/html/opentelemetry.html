@@ -775,6 +775,22 @@ jdbc.opentelemetry.metrics.enabled</code></pre>
 </div>
 </div>
 <div class="sect3">
+<h4 id="_metrics"><a class="link" href="#_metrics">Metrics</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>jdbc.opentelemetry.metrics.include-query-text</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Controls whether <code>db.query.text</code> is included in the <code>db.client.operation.duration</code> metric.
+It is disabled by default because <code>db.query.text</code> is an opt-in attribute for this metric in OpenTelemetry Semantic Conventions, and including it creates a separate time series for each distinct query.
+Spans include <code>db.query.text</code> regardless of this setting.</p>
+</div>
+<div class="paragraph">
+<p>The <code>db.client.operation.duration</code> histogram uses the explicit bucket boundaries defined by the specification: <code>[ 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10 ]</code> seconds.</p>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_query_analysis"><a class="link" href="#_query_analysis">Query Analysis</a></h4>
 <div class="listingblock">
 <div class="content">

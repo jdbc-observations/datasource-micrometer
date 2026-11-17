@@ -136,9 +136,14 @@ implements io.micrometer.observation.ObservationHandler&lt;<a href="../QueryCont
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setAttributesOverrides(java.util.Map)" class="member-name-link">setAttributesOverrides</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;attributesOverrides)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#supportsContext(io.micrometer.observation.Observation.Context)" class="member-name-link">supportsContext</a><wbr>(io.micrometer.observation.Observation.Context&nbsp;context)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setIncludeQueryText(boolean)" class="member-name-link">setIncludeQueryText</a><wbr>(boolean&nbsp;includeQueryText)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Whether to include <code>db.query.text</code> in the metric.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#supportsContext(io.micrometer.observation.Observation.Context)" class="member-name-link">supportsContext</a><wbr>(io.micrometer.observation.Observation.Context&nbsp;context)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -208,6 +213,21 @@ implements io.micrometer.observation.ObservationHandler&lt;<a href="../QueryCont
 <section class="detail" id="setAttributesOverrides(java.util.Map)">
 <h3>setAttributesOverrides</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setAttributesOverrides</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;attributesOverrides)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="setIncludeQueryText(boolean)">
+<h3>setIncludeQueryText</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setIncludeQueryText</span><wbr><span class="parameters">(boolean&nbsp;includeQueryText)</span></div>
+<div class="block">Whether to include <code>db.query.text</code> in the metric. It is an opt-in attribute
+ in OpenTelemetry Semantic Conventions as it has high cardinality. Default is
+ <code>false</code>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>includeQueryText</code> - <code>true</code> to include <code>db.query.text</code></dd>
+<dt>Since:</dt>
+<dd>1.5.1</dd>
+</dl>
 </section>
 </li>
 </ul>
