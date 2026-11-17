@@ -1439,6 +1439,19 @@ Spans include <code>db.query.text</code> regardless of this setting.</p>
 </div>
 </div>
 <div class="sect4">
+<h5 id="attribute-overrides"><a class="anchor" href="#attribute-overrides"></a><a class="link" href="#attribute-overrides">Attribute Overrides</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">jdbc.opentelemetry.attributes.overrides.&lt;attribute-name&gt;=&lt;value&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Overrides the value of the given attribute with a fixed value in both spans and metrics.
+For example, <code>jdbc.opentelemetry.attributes.overrides[server.address]=db.example.com</code> reports <code>server.address</code> as <code>db.example.com</code> regardless of the value derived from the JDBC URL.
+Overrides only replace values of attributes that are present; they do not add or remove attributes.</p>
+</div>
+</div>
+<div class="sect4">
 <h5 id="query-analysis"><a class="anchor" href="#query-analysis"></a><a class="link" href="#query-analysis">Query Analysis</a></h5>
 <div class="listingblock">
 <div class="content">

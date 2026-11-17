@@ -41,6 +41,8 @@ Functionally equivalent to v1.3.0, provided for Spring Boot 4.x.
 ------------------
 * OpenTelemetry metric (`db.client.operation.duration`) no longer includes `db.query.text` by default and no longer publishes a percentile histogram, following OpenTelemetry Semantic Conventions.
   Set `jdbc.opentelemetry.metrics.include-query-text=true` to include `db.query.text`. (#126)
+* Apply `jdbc.opentelemetry.attributes.overrides` to OpenTelemetry metrics (#127)
+* Upgrade to datasource-proxy 1.11.1 (#125)
 
 1.5.0
 ------------------
