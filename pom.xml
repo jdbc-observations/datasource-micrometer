@@ -34,7 +34,7 @@
 
         <micrometer-bom.version>1.17.1</micrometer-bom.version>
         <micrometer-tracing-bom.version>1.7.1</micrometer-tracing-bom.version>
-        <spring-javaformat.version>0.0.47</spring-javaformat.version>
+        <spring-javaformat.version>0.0.48</spring-javaformat.version>
 
         <!-- Tests  -->
         <junit.version>6.0.3</junit.version>
