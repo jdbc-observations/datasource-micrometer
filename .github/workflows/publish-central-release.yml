@@ -22,7 +22,10 @@ jobs:
       - name: Deploy
         run: ./mvnw -B javadoc:jar source:jar deploy -DaltDeploymentRepository=local::file:./target/staging-deploy -DskipTests
       - name: Release
-        run: ./mvnw jreleaser:full-release -pl .
+        # RELEASE_NOTES: top version section of CHANGELOG, used by jreleaser.yml changelog content
+        run: |
+          export RELEASE_NOTES="$(awk '/^-{3,}$/{n++; next} n==1 && /^[0-9]/{exit} n==1' CHANGELOG)"
+          ./mvnw jreleaser:full-release -pl .
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}

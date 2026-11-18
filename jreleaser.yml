@@ -3,6 +3,21 @@ release:
   github:
     owner: jdbc-observations
     username: ttddyy
+    changelog:
+      formatted: ALWAYS
+      format: '- {{commitShortHash}} {{commitTitle}}'
+      # RELEASE_NOTES: latest section of CHANGELOG, set by the release workflow
+      content: |
+        ## What's Changed
+
+        {{{Env.RELEASE_NOTES}}}
+
+        See [CHANGELOG](https://github.com/jdbc-observations/datasource-micrometer/blob/{{tagName}}/CHANGELOG) for all versions.
+
+        ## Commits
+
+        {{changelogChanges}}
+        {{changelogContributors}}
 
 signing:
   active: ALWAYS
