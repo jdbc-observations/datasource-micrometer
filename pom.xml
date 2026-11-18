@@ -32,9 +32,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <micrometer-bom.version>1.17.1</micrometer-bom.version>
-        <micrometer-tracing-bom.version>1.7.1</micrometer-tracing-bom.version>
-        <spring-javaformat.version>0.0.47</spring-javaformat.version>
+        <micrometer-bom.version>1.17.2</micrometer-bom.version>
+        <micrometer-tracing-bom.version>1.7.2</micrometer-tracing-bom.version>
+        <spring-javaformat.version>0.0.48</spring-javaformat.version>
 
         <!-- Tests  -->
         <junit.version>6.0.3</junit.version>
@@ -48,19 +48,19 @@
         <jsqlparser.version>5.3</jsqlparser.version>
 
         <!-- datasource-micrometer-spring-boot module -->
-        <spring-boot.version>4.1.1</spring-boot.version>
+        <spring-boot.version>4.1.2</spring-boot.version>
 
         <!-- Docs -->
         <micrometer-docs-generator.version>1.0.4</micrometer-docs-generator.version>
         <asciidoctor.maven.plugin.version>3.2.0</asciidoctor.maven.plugin.version>
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <exec-maven-plugin.version>3.5.1</exec-maven-plugin.version>
-        <asciidoctorj.version>3.0.0</asciidoctorj.version>
+        <asciidoctorj.version>3.0.1</asciidoctorj.version>
         <jruby-complete.version>10.0.2.0</jruby-complete.version>
         <ant-contrib.version>1.0b3</ant-contrib.version>
         <antelopetasks.version>3.2.10</antelopetasks.version>
         <ant-nodeps.version>1.8.1</ant-nodeps.version>
-        <script-jackson-databind.version>2.20.0</script-jackson-databind.version>
+        <script-jackson-databind.version>2.20.2</script-jackson-databind.version>
         <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
 
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
@@ -84,12 +84,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.4</version>
+                <version>3.5.6</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.0</version>
+                <version>3.14.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -213,7 +213,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.7.2</version>
+                    <version>1.7.3</version>
                     <configuration>
                         <flattenMode>ossrh</flattenMode>
                         <pomElements>
