@@ -5,32 +5,42 @@ Version parity:
 - 1.x for Spring Boot 3.x
 - 2.x for Spring Boot 4.x
 
-2.3.1
+2.3.1 / 1.5.1
 ------------------
-* Upgrade dependencies (#84)
-Functionally equivalent to v1.5.1, provided for Spring Boot 4.x.
+* OpenTelemetry metric (`db.client.operation.duration`) no longer includes `db.query.text` by default and no longer publishes a percentile histogram, following OpenTelemetry Semantic Conventions.
+  Set `jdbc.opentelemetry.metrics.include-query-text=true` to include `db.query.text`. (#126)
+* Apply `jdbc.opentelemetry.attributes.overrides` to OpenTelemetry metrics (#127)
+* Upgrade to datasource-proxy 1.11.1 (#125)
+* Upgrade dependencies (#128) [2.x only]
 
-2.3.0
+2.3.0 / 1.5.0
 ------------------
-Functionally equivalent to v1.5.0, provided for Spring Boot 4.x.
+* Cache connection info per datasource (#119)
+* Add `DataSourceProxyCreationStrategy` to customize proxy creation decision (#117)
 
-2.2.1
+2.2.1 / 1.4.1
 ------------------
-Functionally equivalent to v1.4.1, provided for Spring Boot 4.x.
+* Specify fixed classloader in "SpringJdbcProxyFactory" (#109)
+* Extract connection info retrieval from "DataSourceObservationListener" (#108)
+* Add runtime hints for "SpringJdbcProxyFactory" (#107)
 
-2.2.0
+2.2.0 / 1.4.0
 ------------------
-Functionally equivalent to v1.4.0, provided for Spring Boot 4.x.
+* Make "DataSourceType.SPRING_PROXY" the default proxy strategy (#102)
+* Add "jdbc.hikari.enabled" property for Hikari observation (#100)
+* Add "DataSourceType.SPRING_PROXY" (#99)
+* Exclude jms-core from JSqlParser 5.3 (#96)
 
-2.1.1
+2.1.1 / 1.3.1
 ------------------
-Functionally equivalent to v1.3.1, provided for Spring Boot 4.x.
+* Fix "db.system.name" for PostgreSQL (#95)
 
-2.1.0
+2.1.0 / 1.3.0
 ------------------
-Functionally equivalent to v1.3.0, provided for Spring Boot 4.x.
+* OpenTelemetry Semantic Conventions support (#76)
+* Rename bean "dataSourceNameResolver" to "observationDataSourceNameResolver" (#33)
 
-2.0.1
+2.0.1 / 1.2.1
 ------------------
 * Fix "null" from generated-keys (#88)
 
@@ -41,44 +51,6 @@ Functionally equivalent to v1.3.0, provided for Spring Boot 4.x.
 2.0.0-RC1
 ------------------
 * Support Spring Boot 4.0.0-M3 (#78)
-
-1.5.1
-------------------
-* OpenTelemetry metric (`db.client.operation.duration`) no longer includes `db.query.text` by default and no longer publishes a percentile histogram, following OpenTelemetry Semantic Conventions.
-  Set `jdbc.opentelemetry.metrics.include-query-text=true` to include `db.query.text`. (#126)
-* Apply `jdbc.opentelemetry.attributes.overrides` to OpenTelemetry metrics (#127)
-* Upgrade to datasource-proxy 1.11.1 (#125)
-
-1.5.0
-------------------
-* Cache connection info per datasource (#119)
-* Add `DataSourceProxyCreationStrategy` to customize proxy creation decision (#117)
-
-1.4.1
-------------------
-* Specify fixed classloader in "SpringJdbcProxyFactory" (#109)
-* Extract connection info retrieval from "DataSourceObservationListener" (#108)
-* Add runtime hints for "SpringJdbcProxyFactory" (#107)
-
-1.4.0
-------------------
-* Make "DataSourceType.SPRING_PROXY" the default proxy strategy (#102)
-* Add "jdbc.hikari.enabled" property for Hikari observation (#100)
-* Add "DataSourceType.SPRING_PROXY" (#99)
-* Exclude jms-core from JSqlParser 5.3 (#96)
-
-1.3.1
-------------------
-* Fix "db.system.name" for PostgreSQL (#95)
-
-1.3.0
-------------------
-* OpenTelemetry Semantic Conventions support (#76)
-* Rename bean "dataSourceNameResolver" to "observationDataSourceNameResolver" (#33)
-
-1.2.1
-------------------
-* Fix "null" from generated-keys (#88)
 
 1.2.0
 ------------------
