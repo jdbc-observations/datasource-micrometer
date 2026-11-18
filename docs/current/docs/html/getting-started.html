@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.23">
+<meta name="generator" content="Asciidoctor 2.0.20">
 <title>Getting Started</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -140,7 +140,7 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #content::before{content:none}
 #header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
 #header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
-#header>h1:only-child{border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
 #header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:flex;flex-flow:row wrap}
 #header .details span:first-child{margin-left:-.125em}
 #header .details span.email a{color:rgba(0,0,0,.85)}
@@ -162,7 +162,6 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #toctitle{color:#7a2518;font-size:1.2em}
 @media screen and (min-width:768px){#toctitle{font-size:1.375em}
 body.toc2{padding-left:15em;padding-right:0}
-body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
 #toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
 #toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
 #toc.toc2>ul{font-size:.9em;margin-bottom:0}
@@ -328,7 +327,7 @@ a.image{text-decoration:none;display:inline-block}
 a.image object{pointer-events:none}
 sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
 sup.footnote a,sup.footnoteref a{text-decoration:none}
-sup.footnote a:active,sup.footnoteref a:active,#footnotes .footnote a:first-of-type:active{text-decoration:underline}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
 #footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
 #footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
 #footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
@@ -588,7 +587,7 @@ window.onload = function() {
 <div id="header">
 <h1>Getting Started</h1>
 <div class="details">
-<span id="revnumber">version 2.3.0</span>
+<span id="revnumber">version 1.5.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -656,8 +655,8 @@ instrumenting common database interactions such as:</p>
 <h3 id="getting-started-intro-background"><a class="anchor" href="#getting-started-intro-background"></a><a class="link" href="#getting-started-intro-background">1.1. Background</a></h3>
 <div class="paragraph">
 <p>The Micrometer v1.10.0 introduced the new <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a> and <a href="https://docs.micrometer.io/tracing/reference/">Micrometer Tracing</a> module.
-The <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a> allows measuring(observing) any behavior of interest from code in action, then notifies it to the registered handlers.
-The <a href="https://docs.micrometer.io/tracing/reference/">Micrometer Tracing</a> module provides an observation handler implementation that creates distributed traces (spans). It uses a tracer that abstracts popular tracer implementations and provides vendor-neutral APIs for tracing.</p>
+The <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a> allows measuring(observing) any interested behavior from the code in action. Then, notifies it to the registered handlers.
+The <a href="https://docs.micrometer.io/tracing/reference/">Micrometer Tracing</a> module provides an observation handler implementation that creates distributed traces(spans). It uses a tracer that has abstracted the popular tracer implementations and gives the vendor free APIs for tracing.</p>
 </div>
 <div class="paragraph">
 <p>In Spring Boot 2.x, the <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a> provided the instrumentation to the many components including JDBC operations.
@@ -667,8 +666,8 @@ For example, Spring Framework will provide native instrumentation support for it
 As a result, there will be no <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a> for Spring Boot 3.</p>
 </div>
 <div class="paragraph">
-<p>This Datasource Micrometer project provides instrumentation for JDBC operations to cover what was provided by <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a>, but using the <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a>.
-The initial version aims to help users smoothly transition from Spring Boot 2.x with Spring Cloud Sleuth to Spring Boot 3 for JDBC instrumentation.
+<p>This Datasource Micrometer project provides instrumentation on the JDBC operations to cover what was provided by the <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a> but with the <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a>.
+The initial version aims users to smoothly transition from Spring Boot 2.x with Spring Cloud Sleuth to the Spring Boot 3 in JDBC instrumentation.
 In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a> and <a href="https://docs.micrometer.io/tracing/reference/">Micrometer Tracing</a> are independent from Spring ecosystem, the instrumentation is available to the non-spring applications as well.</p>
 </div>
 </div>
@@ -773,7 +772,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;net.ttddyy.observation&lt;/groupId&gt;
     &lt;artifactId&gt;datasource-micrometer&lt;/artifactId&gt;
-    &lt;version&gt;2.3.0&lt;/version&gt;
+    &lt;version&gt;1.5.1&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -781,7 +780,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <div class="title">Gradle</div>
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    implementation "net.ttddyy.observation:datasource-micrometer:2.3.0"
+    implementation "net.ttddyy.observation:datasource-micrometer:1.5.1"
 }</code></pre>
 </div>
 </div>
@@ -798,7 +797,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;net.ttddyy.observation&lt;/groupId&gt;
     &lt;artifactId&gt;datasource-micrometer-opentelemetry&lt;/artifactId&gt;
-    &lt;version&gt;2.3.0&lt;/version&gt;
+    &lt;version&gt;1.5.1&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -806,7 +805,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <div class="title">Gradle</div>
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    implementation "net.ttddyy.observation:datasource-micrometer-opentelemetry:2.3.0"
+    implementation "net.ttddyy.observation:datasource-micrometer-opentelemetry:1.5.1"
 }</code></pre>
 </div>
 </div>
@@ -823,7 +822,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;net.ttddyy.observation&lt;/groupId&gt;
     &lt;artifactId&gt;datasource-micrometer-spring-boot&lt;/artifactId&gt;
-    &lt;version&gt;2.3.0&lt;/version&gt;
+    &lt;version&gt;1.5.1&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -831,7 +830,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <div class="title">Gradle</div>
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:2.3.0"
+    implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:1.5.1"
 }</code></pre>
 </div>
 </div>
@@ -850,7 +849,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
         &lt;dependency&gt;
             &lt;groupId&gt;net.ttddyy.observation&lt;/groupId&gt;
             &lt;artifactId&gt;datasource-micrometer-bom&lt;/artifactId&gt;
-            &lt;version&gt;2.3.0&lt;/version&gt;
+            &lt;version&gt;1.5.1&lt;/version&gt;
             &lt;type&gt;pom&lt;/type&gt;
             &lt;scope&gt;import&lt;/scope&gt;
         &lt;/dependency&gt;
@@ -862,7 +861,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <div class="title">Gradle</div>
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    implementation platform("net.ttddyy.observation:datasource-micrometer-bom:2.3.0")
+    implementation platform("net.ttddyy.observation:datasource-micrometer-bom:1.5.1")
 }</code></pre>
 </div>
 </div>

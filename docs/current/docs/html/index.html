@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.23">
+<meta name="generator" content="Asciidoctor 2.0.20">
 <meta name="author" content="Tadaya Tsuyukubo">
 <title>Datasource Micrometer Reference Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
@@ -141,7 +141,7 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #content::before{content:none}
 #header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
 #header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
-#header>h1:only-child{border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
 #header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:flex;flex-flow:row wrap}
 #header .details span:first-child{margin-left:-.125em}
 #header .details span.email a{color:rgba(0,0,0,.85)}
@@ -163,7 +163,6 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #toctitle{color:#7a2518;font-size:1.2em}
 @media screen and (min-width:768px){#toctitle{font-size:1.375em}
 body.toc2{padding-left:15em;padding-right:0}
-body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
 #toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
 #toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
 #toc.toc2>ul{font-size:.9em;margin-bottom:0}
@@ -329,7 +328,7 @@ a.image{text-decoration:none;display:inline-block}
 a.image object{pointer-events:none}
 sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
 sup.footnote a,sup.footnoteref a{text-decoration:none}
-sup.footnote a:active,sup.footnoteref a:active,#footnotes .footnote a:first-of-type:active{text-decoration:underline}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
 #footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
 #footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
 #footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
@@ -591,7 +590,7 @@ window.onload = function() {
 <h1>Datasource Micrometer Reference Documentation</h1>
 <div class="details">
 <span id="author" class="author">Tadaya Tsuyukubo</span><br>
-<span id="revnumber">version 2.3.0</span>
+<span id="revnumber">version 1.5.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -748,8 +747,8 @@ instrumenting common database interactions such as:</p>
 <h4 id="getting-started-intro-background"><a class="anchor" href="#getting-started-intro-background"></a><a class="link" href="#getting-started-intro-background">2.1.1. Background</a></h4>
 <div class="paragraph">
 <p>The Micrometer v1.10.0 introduced the new <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a> and <a href="https://docs.micrometer.io/tracing/reference/">Micrometer Tracing</a> module.
-The <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a> allows measuring(observing) any behavior of interest from code in action, then notifies it to the registered handlers.
-The <a href="https://docs.micrometer.io/tracing/reference/">Micrometer Tracing</a> module provides an observation handler implementation that creates distributed traces (spans). It uses a tracer that abstracts popular tracer implementations and provides vendor-neutral APIs for tracing.</p>
+The <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a> allows measuring(observing) any interested behavior from the code in action. Then, notifies it to the registered handlers.
+The <a href="https://docs.micrometer.io/tracing/reference/">Micrometer Tracing</a> module provides an observation handler implementation that creates distributed traces(spans). It uses a tracer that has abstracted the popular tracer implementations and gives the vendor free APIs for tracing.</p>
 </div>
 <div class="paragraph">
 <p>In Spring Boot 2.x, the <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a> provided the instrumentation to the many components including JDBC operations.
@@ -759,8 +758,8 @@ For example, Spring Framework will provide native instrumentation support for it
 As a result, there will be no <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a> for Spring Boot 3.</p>
 </div>
 <div class="paragraph">
-<p>This Datasource Micrometer project provides instrumentation for JDBC operations to cover what was provided by <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a>, but using the <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a>.
-The initial version aims to help users smoothly transition from Spring Boot 2.x with Spring Cloud Sleuth to Spring Boot 3 for JDBC instrumentation.
+<p>This Datasource Micrometer project provides instrumentation on the JDBC operations to cover what was provided by the <a href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a> but with the <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a>.
+The initial version aims users to smoothly transition from Spring Boot 2.x with Spring Cloud Sleuth to the Spring Boot 3 in JDBC instrumentation.
 In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/observation.html">Observation API</a> and <a href="https://docs.micrometer.io/tracing/reference/">Micrometer Tracing</a> are independent from Spring ecosystem, the instrumentation is available to the non-spring applications as well.</p>
 </div>
 </div>
@@ -863,7 +862,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;net.ttddyy.observation&lt;/groupId&gt;
     &lt;artifactId&gt;datasource-micrometer&lt;/artifactId&gt;
-    &lt;version&gt;2.3.0&lt;/version&gt;
+    &lt;version&gt;1.5.1&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -871,7 +870,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <div class="title">Gradle</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencies {
-    implementation "net.ttddyy.observation:datasource-micrometer:2.3.0"
+    implementation "net.ttddyy.observation:datasource-micrometer:1.5.1"
 }</code></pre>
 </div>
 </div>
@@ -888,7 +887,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;net.ttddyy.observation&lt;/groupId&gt;
     &lt;artifactId&gt;datasource-micrometer-opentelemetry&lt;/artifactId&gt;
-    &lt;version&gt;2.3.0&lt;/version&gt;
+    &lt;version&gt;1.5.1&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -896,7 +895,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <div class="title">Gradle</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencies {
-    implementation "net.ttddyy.observation:datasource-micrometer-opentelemetry:2.3.0"
+    implementation "net.ttddyy.observation:datasource-micrometer-opentelemetry:1.5.1"
 }</code></pre>
 </div>
 </div>
@@ -913,7 +912,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;net.ttddyy.observation&lt;/groupId&gt;
     &lt;artifactId&gt;datasource-micrometer-spring-boot&lt;/artifactId&gt;
-    &lt;version&gt;2.3.0&lt;/version&gt;
+    &lt;version&gt;1.5.1&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -921,7 +920,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <div class="title">Gradle</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencies {
-    implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:2.3.0"
+    implementation "net.ttddyy.observation:datasource-micrometer-spring-boot:1.5.1"
 }</code></pre>
 </div>
 </div>
@@ -940,7 +939,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
         &lt;dependency&gt;
             &lt;groupId&gt;net.ttddyy.observation&lt;/groupId&gt;
             &lt;artifactId&gt;datasource-micrometer-bom&lt;/artifactId&gt;
-            &lt;version&gt;2.3.0&lt;/version&gt;
+            &lt;version&gt;1.5.1&lt;/version&gt;
             &lt;type&gt;pom&lt;/type&gt;
             &lt;scope&gt;import&lt;/scope&gt;
         &lt;/dependency&gt;
@@ -952,7 +951,7 @@ In addition, since the <a href="https://docs.micrometer.io/micrometer/reference/
 <div class="title">Gradle</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencies {
-    implementation platform("net.ttddyy.observation:datasource-micrometer-bom:2.3.0")
+    implementation platform("net.ttddyy.observation:datasource-micrometer-bom:1.5.1")
 }</code></pre>
 </div>
 </div>
@@ -1014,7 +1013,7 @@ Most of the JDBC related properties from <code>spring.sleuth.jdbc</code> and <co
 <div class="sect2">
 <h3 id="using-types-of-observation"><a class="anchor" href="#using-types-of-observation"></a><a class="link" href="#using-types-of-observation">3.1. Types of Observations</a></h3>
 <div class="paragraph">
-<p>The Datasource Micrometer creates Connection, Query, Generated Keys (from <code>v1.1</code>), and ResultSet observations.</p>
+<p>The Datasource Micrometer creates Connection, Query, Generated Keys(from <code>v1.1</code>), and ResultSet observations.</p>
 </div>
 <div class="paragraph">
 <p>The Connection observation represents the database connection operations. It is the base observation, as any database access requires a connection.
@@ -1136,7 +1135,7 @@ The name is specified when creating a proxy datasource by <a href="https://githu
 <div class="paragraph">
 <p>Since version <code>1.1</code>, <code>datasource-micrometer-spring-boot</code> can publish Spring&#8217;s application events for query executions and method invocations on proxied JDBC classes.
 This feature is disabled by default and can be enabled by setting the property <code>jdbc.event.enabled=true</code>.
-When enabled, it publishes events: <code>JdbcQueryExecutionEvent</code> and <code>JdbcMethodExecutionEvent</code>.</p>
+When enabled, it publishes events - <code>JdbcQueryExecutionEvent</code> and <code>JdbcMethodExecutionEvenet</code>.</p>
 </div>
 </div>
 </div>
@@ -1422,6 +1421,35 @@ jdbc.opentelemetry.metrics.enabled</code></pre>
 </div>
 </div>
 <div class="sect4">
+<h5 id="metrics"><a class="anchor" href="#metrics"></a><a class="link" href="#metrics">Metrics</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">jdbc.opentelemetry.metrics.include-query-text</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Controls whether <code>db.query.text</code> is included in the <code>db.client.operation.duration</code> metric.
+It is disabled by default because <code>db.query.text</code> is an opt-in attribute for this metric in OpenTelemetry Semantic Conventions, and including it creates a separate time series for each distinct query.
+Spans include <code>db.query.text</code> regardless of this setting.</p>
+</div>
+<div class="paragraph">
+<p>The <code>db.client.operation.duration</code> histogram uses the explicit bucket boundaries defined by the specification: <code>[ 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10 ]</code> seconds.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="attribute-overrides"><a class="anchor" href="#attribute-overrides"></a><a class="link" href="#attribute-overrides">Attribute Overrides</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">jdbc.opentelemetry.attributes.overrides.&lt;attribute-name&gt;=&lt;value&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Overrides the value of the given attribute with a fixed value in both spans and metrics.
+For example, <code>jdbc.opentelemetry.attributes.overrides[server.address]=db.example.com</code> reports <code>server.address</code> as <code>db.example.com</code> regardless of the value derived from the JDBC URL.
+Overrides only replace values of attributes that are present; they do not add or remove attributes.</p>
+</div>
+</div>
+<div class="sect4">
 <h5 id="query-analysis"><a class="anchor" href="#query-analysis"></a><a class="link" href="#query-analysis">Query Analysis</a></h5>
 <div class="listingblock">
 <div class="content">
@@ -1592,7 +1620,7 @@ DataSource instrumented = builder.build();</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-When tracking of <code>ResultSet</code> operations is disabled (see <a href="#how-to-disable-tracking-of-resultset-operations">How to Disable Tracking of ResultSet Operations</a>), the <code>jdbc.generated-keys</code> tag shows an empty value.
+When tracking of <code>ResultSet</code> operations is disabled (see <a href="#how-to-disable-tracking-of-resultset-operations">How to Disable Tracking of ResultSet Operations</a>), the <code>jdbc.genearted-keys</code> tag shows an empty value.
 </td>
 </tr>
 </table>
@@ -1790,7 +1818,7 @@ ObservationPredicate myObservationPredicate() {
 <h4 id="how-to-disable-tracking-of-resultset-operations"><a class="anchor" href="#how-to-disable-tracking-of-resultset-operations"></a><a class="link" href="#how-to-disable-tracking-of-resultset-operations">5.2.13. How to Disable Tracking of ResultSet Operations</a></h4>
 <div class="paragraph">
 <p>Starting from version <code>1.1</code>, interactions with a <code>ResultSet</code> are tracked and made available through <code>ResultSetContext</code>.
-However, in rare cases where a <code>ResultSet</code> is kept open for a long time and accessed heavily, this may lead to memory pressure.</p>
+However, in rare cases - such as a <code>ResultSet</code> is kept open for a long time and heavily interact with - this may lead to memory pressure.</p>
 </div>
 <div class="paragraph">
 <p>To disable this tracking:</p>
@@ -2009,6 +2037,11 @@ Also, you can define your own properties.
 <td class="tableblock halign-left valign-top"><p class="tableblock">Whether to enable support for OpenTelemetry Semantic Conventions for metrics.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.metrics.include-query-text</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to include "db.query.text" in the "db.client.operation.duration" metric. It is opt-in in OpenTelemetry Semantic Conventions as it causes high cardinality.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jdbc.opentelemetry.spans.enabled</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Whether to enable support for OpenTelemetry Semantic Conventions for spans.</p></td>
@@ -2068,7 +2101,7 @@ Also, you can define your own properties.
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p>Span created when a JDBC connection is acquired.</p>
+<p>Span created when a JDBC connection takes place.</p>
 </div>
 </blockquote>
 </div>
@@ -2366,7 +2399,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p>Span created when fetching data from a JDBC result set.</p>
+<p>Span created when working with JDBC result set.</p>
 </div>
 </blockquote>
 </div>
@@ -2452,7 +2485,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p>Span created when a JDBC connection is acquired.</p>
+<p>Span created when a JDBC connection takes place.</p>
 </div>
 </blockquote>
 </div>
@@ -2636,7 +2669,7 @@ All tags must be prefixed with <code>jdbc</code> prefix!
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p>Span created when fetching data from a JDBC result set.</p>
+<p>Span created when working with JDBC result set.</p>
 </div>
 </blockquote>
 </div>
